@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.base.filter;
 
-import com.antelopesystem.authframework.auth.model.ObjectToken;
+import com.antelopesystem.authframework.token.model.ObjectToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

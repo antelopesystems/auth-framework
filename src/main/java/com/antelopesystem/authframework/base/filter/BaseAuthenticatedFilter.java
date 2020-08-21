@@ -1,8 +1,8 @@
 package com.antelopesystem.authframework.base.filter;
 
-import com.antelopesystem.authframework.auth.OperatorAuthenticationHandler;
-import com.antelopesystem.authframework.auth.exception.InvalidTokenException;
-import com.antelopesystem.authframework.auth.model.ObjectToken;
+import com.antelopesystem.authframework.token.TokenHandler;
+import com.antelopesystem.authframework.token.exception.InvalidTokenException;
+import com.antelopesystem.authframework.token.model.ObjectToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +16,8 @@ import java.io.IOException;
 public abstract class BaseAuthenticatedFilter extends AbstractExceptionHandlingFilter {
 	protected final String objectType;
 
-	protected static Log securityLog = LogFactory.getLog("securityfilter");
-
 	@Autowired
-	protected OperatorAuthenticationHandler operatorAuthenticationHandler;
+	protected TokenHandler tokenHandler;
 
 	public BaseAuthenticatedFilter(String objectType) {
 		this.objectType = objectType;
@@ -27,8 +25,8 @@ public abstract class BaseAuthenticatedFilter extends AbstractExceptionHandlingF
 
 	@Override
 	public final void doFilterInner(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if(operatorAuthenticationHandler.isTokenPresent((request))) {
-			ObjectToken token = operatorAuthenticationHandler.getTokenFromRequest(request);
+		if(tokenHandler.isTokenPresent((request))) {
+			ObjectToken token = tokenHandler.getTokenFromRequest(request);
 			if(!token.getObjectType().equals(objectType)) {
 				throw new InvalidTokenException();
 			}
