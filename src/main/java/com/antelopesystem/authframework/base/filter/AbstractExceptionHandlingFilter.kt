@@ -1,40 +1,36 @@
-package com.antelopesystem.authframework.base.filter;
+package com.antelopesystem.authframework.base.filter
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.web.filter.OncePerRequestFilter
+import java.io.IOException
+import javax.servlet.FilterChain
+import javax.servlet.ServletException
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+abstract class AbstractExceptionHandlingFilter : OncePerRequestFilter() {
+    @Throws(ServletException::class, IOException::class)
+    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+        try {
+            doFilterInner(request, response, chain)
+        } catch (e: RequestFailedException) {
+            response.writer.write(e.message)
+            response.status = e.statusCode
+        } catch (e: Throwable) {
+            response.writer.write("Unknown error")
+            response.status = HttpStatus.INTERNAL_SERVER_ERROR.value()
+            logger.error(e.message, e)
+        }
+    }
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+    override fun getAlreadyFilteredAttributeName(): String {
+        return this.javaClass.simpleName
+    }
 
-public abstract class AbstractExceptionHandlingFilter extends OncePerRequestFilter {
+    @Throws(IOException::class, ServletException::class)
+    protected abstract fun doFilterInner(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain)
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractExceptionHandlingFilter.class);
-
-	@Override
-	protected final void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-		try {
-			doFilterInner(request, response, chain);
-		} catch(RequestFailedException e) {
-			response.getWriter().write(e.getMessage());
-			response.setStatus(e.getStatusCode());
-		} catch(Throwable e) {
-			response.getWriter().write("Unknown error");
-			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			logger.error(e.getMessage(), e);
-		}
-	}
-
-	@Override
-	protected String getAlreadyFilteredAttributeName() {
-		return this.getClass().getSimpleName();
-	}
-
-	protected abstract void doFilterInner(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException;
-
-
+    companion object {
+        private val logger = LoggerFactory.getLogger(AbstractExceptionHandlingFilter::class.java)
+    }
 }

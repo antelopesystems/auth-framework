@@ -84,6 +84,3 @@ abstract class AbstractTimestampAuthenticationHandler: TokenTypeHandler {
         const val SESSIONID_NAME = "x-auth-session-id"
     }
 }
-
-fun main() {
-}

@@ -38,12 +38,11 @@ class TokenHandlerImpl : TokenHandler {
 
     override fun getTokenFromRequest(request: HttpServletRequest): ObjectToken {
         val typeHandler = getAuthenticationTypeHandler(request)
-        val token = typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
-        return token
+        return typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
     }
 
 
-    override fun getCurrentToken(): ObjectToken = getTokenFromRequest(request!!)
+    override fun getCurrentToken(): ObjectToken = getTokenFromRequest(request)
 
     override fun deleteCurrentToken() {
         try {

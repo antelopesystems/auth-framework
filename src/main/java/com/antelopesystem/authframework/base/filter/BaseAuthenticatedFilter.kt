@@ -1,45 +1,30 @@
-package com.antelopesystem.authframework.base.filter;
+package com.antelopesystem.authframework.base.filter
 
-import com.antelopesystem.authframework.token.TokenHandler;
-import com.antelopesystem.authframework.token.exception.InvalidTokenException;
-import com.antelopesystem.authframework.token.model.ObjectToken;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.antelopesystem.authframework.token.TokenHandler
+import com.antelopesystem.authframework.token.exception.InvalidTokenException
+import com.antelopesystem.authframework.token.model.ObjectToken
+import org.springframework.beans.factory.annotation.Autowired
+import java.io.IOException
+import javax.servlet.FilterChain
+import javax.servlet.ServletException
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
-public abstract class BaseAuthenticatedFilter extends AbstractExceptionHandlingFilter {
-	protected final String objectType;
+abstract class BaseAuthenticatedFilter(protected val objectType: String, private val tokenHandler: TokenHandler) : AbstractExceptionHandlingFilter() {
+    public override fun doFilterInner(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
+        if (tokenHandler.isTokenPresent(request)) {
+            val token = tokenHandler.getTokenFromRequest(request)
+            if (token.objectType != objectType) {
+                throw InvalidTokenException()
+            }
+            processFilter(token, request, response)
+        }
+        chain.doFilter(request, response)
+    }
 
-	@Autowired
-	protected TokenHandler tokenHandler;
+    override fun getAlreadyFilteredAttributeName(): String = this.javaClass.simpleName
 
-	public BaseAuthenticatedFilter(String objectType) {
-		this.objectType = objectType;
-	}
+    protected abstract fun processFilter(token: ObjectToken?, request: HttpServletRequest?, response: HttpServletResponse?)
 
-	@Override
-	public final void doFilterInner(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if(tokenHandler.isTokenPresent((request))) {
-			ObjectToken token = tokenHandler.getTokenFromRequest(request);
-			if(!token.getObjectType().equals(objectType)) {
-				throw new InvalidTokenException();
-			}
-
-			processFilter(token, request, response);
-		}
-		chain.doFilter(request, response);
-	}
-
-	@Override
-	protected String getAlreadyFilteredAttributeName() {
-		return this.getClass().getSimpleName();
-	}
-
-	protected abstract void processFilter(ObjectToken token, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
 }
