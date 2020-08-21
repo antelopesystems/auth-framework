@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.model
+package com.antelopesystem.authframework.token.model
 
 import com.antelopesystem.authframework.token.model.ObjectToken
 

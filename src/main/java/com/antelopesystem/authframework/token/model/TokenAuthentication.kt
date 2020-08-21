@@ -1,5 +1,6 @@
-package com.antelopesystem.authframework.authentication.model
+package com.antelopesystem.authframework.token.model
 
+import com.antelopesystem.authframework.authentication.model.UserInfo
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 

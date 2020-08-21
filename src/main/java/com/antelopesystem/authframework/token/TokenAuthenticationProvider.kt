@@ -1,10 +1,10 @@
-package com.antelopesystem.authframework.authentication
+package com.antelopesystem.authframework.token
 
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.GrantRO
-import com.antelopesystem.authframework.authentication.model.TokenAuthentication
+import com.antelopesystem.authframework.token.model.TokenAuthentication
 import com.antelopesystem.authframework.authentication.model.UserInfo
-import com.antelopesystem.authframework.authentication.model.TokenAuthenticationRequest
+import com.antelopesystem.authframework.token.model.TokenAuthenticationRequest
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.authentication.AuthenticationProvider
