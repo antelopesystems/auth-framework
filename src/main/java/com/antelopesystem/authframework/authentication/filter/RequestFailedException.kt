@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.base.filter
+package com.antelopesystem.authframework.authentication.filter
 
 import org.springframework.http.HttpStatus
 

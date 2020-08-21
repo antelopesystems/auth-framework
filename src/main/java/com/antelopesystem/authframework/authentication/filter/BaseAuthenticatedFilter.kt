@@ -1,12 +1,9 @@
-package com.antelopesystem.authframework.base.filter
+package com.antelopesystem.authframework.authentication.filter
 
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.exception.InvalidTokenException
 import com.antelopesystem.authframework.token.model.ObjectToken
-import org.springframework.beans.factory.annotation.Autowired
-import java.io.IOException
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 

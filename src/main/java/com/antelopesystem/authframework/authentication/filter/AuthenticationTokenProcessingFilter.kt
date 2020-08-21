@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.base.filter
+package com.antelopesystem.authframework.authentication.filter
 
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.ObjectToken
