@@ -43,5 +43,9 @@ class SecuritySettings(
         var suspiciousLoginCheckEnabled: Boolean = false,
 
         @MappedField
-        var passwordRegex: String = ".*"
+        var passwordRegex: String = ".*",
+
+        var allowRegisterOnLogin: Boolean = false,
+
+        var allowLoginOnRegistration: Boolean = false
 ) : JpaBaseUpdatebleEntity()
