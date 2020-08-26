@@ -12,35 +12,36 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/auth")
 @RestController
 class AuthenticationController(
-        private val authenticationService: AuthenticationService,
-        private val objectType: String = "User"
+        private val authenticationService: AuthenticationService
 ): BaseController() {
 
+    private val objectType: String = "User"
+
     @PostMapping("/{authenticationType}/login/initialize")
-    fun initializeLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, parameters: Map<String, Any>): ResultRO<*> {
+    fun initializeLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult AuthenticationPayload(objectType, authenticationType, parameters, body, tokenType)
+            return@wrapResult authenticationService.initializeLogin(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
         }
     }
 
     @PostMapping("/{authenticationType}/login")
-    fun doLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, parameters: Map<String, Any>): ResultRO<*> {
+    fun doLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult AuthenticationPayload(objectType, authenticationType, parameters, body, tokenType)
+            return@wrapResult authenticationService.doLogin(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
         }
     }
 
     @PostMapping("/{authenticationType}/register/initialize")
-    fun initializeRegistration(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, parameters: Map<String, Any>): ResultRO<*> {
+    fun initializeRegistration(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult AuthenticationPayload(objectType, authenticationType, parameters, body, tokenType)
+            return@wrapResult authenticationService.initializeRegistration(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
         }
     }
 
     @PostMapping("/{authenticationType}/register")
-    fun doRegistration(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, parameters: Map<String, Any>): ResultRO<*> {
+    fun doRegister(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult AuthenticationPayload(objectType, authenticationType, parameters, body, tokenType)
+            return@wrapResult authenticationService.doRegister(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
         }
     }
 }

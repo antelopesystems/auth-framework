@@ -5,7 +5,7 @@ import com.antelopesystem.crudframework.fieldmapper.transformer.annotation.EnumT
 import com.antelopesystem.crudframework.jpa.ro.BaseUpdatableJpaRO
 
 class SecuritySettingsRO(
-        var objectType: String,
+        var objectType: String = "",
         var tokenLifetimeHours: Long = 24L,
 
         var otpRequired: Boolean = false,
@@ -13,9 +13,11 @@ class SecuritySettingsRO(
         var authenticatorOtpEnabled: Boolean = false,
         var authenticatorOtpName: String = "Not configured",
 
-        var smsOtpEnabled: Boolean = false,
-        var smsAuthenticationEnabled: Boolean = false,
-        var smsApiKey: String = "",
+        var nexmoOtpEnabled: Boolean = false,
+        var nexmoAuthenticationEnabled: Boolean = false,
+        var nexmoApiKey: String = "",
+        var nexmoApiSecret: String = "",
+        var nexmoBranding: String = "",
 
         @EnumType(TokenType::class)
         var allowedTokenTypes: List<TokenType> = listOf(),

@@ -9,7 +9,7 @@ interface AuthenticationTypeHandler {
     @get:ComponentMapKey
     val type: AuthenticationType
 
-    fun initializeLogin(payload: AuthenticationPayload) {
+    fun initializeLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
         throw UnsupportedOperationException("initializeLogin is not supported for [ $type ]")
     }
 
@@ -19,6 +19,6 @@ interface AuthenticationTypeHandler {
         throw UnsupportedOperationException("initializeRegistration is not supported for [ $type ]")
     }
 
-    fun doRegister(payload: AuthenticationPayload): AuthenticatedEntity
+    fun doRegister(payload: AuthenticationPayload, authenticatedEntity: AuthenticatedEntity): AuthenticatedEntity
     fun getEntity(payload: AuthenticationPayload): AuthenticatedEntity?
 }

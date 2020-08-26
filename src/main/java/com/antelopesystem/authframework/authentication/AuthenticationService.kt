@@ -6,5 +6,5 @@ interface AuthenticationService {
     fun initializeLogin(payload: AuthenticationPayload)
     fun doLogin(payload: AuthenticationPayload)
     fun initializeRegistration(payload: AuthenticationPayload)
-    fun doRegistration(payload: AuthenticationPayload)
+    fun doRegister(payload: AuthenticationPayload)
 }

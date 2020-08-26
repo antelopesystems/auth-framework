@@ -6,15 +6,16 @@ import com.antelopesystem.authframework.authentication.RegistrationFailedExcepti
 import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
-@Component
 class UsernamePasswordTypeHandlerImpl(
-        private val crudHandler: CrudHandler
-) : AbstractAuthenticationTypeHandler() {
+        private val crudHandler: CrudHandler,
+        securitySettingsHandler: SecuritySettingsHandler
+) : AbstractAuthenticationTypeHandler(securitySettingsHandler) {
     override val type: AuthenticationType
         get() = AuthenticationType.UsernamePassword
 
@@ -36,14 +37,13 @@ class UsernamePasswordTypeHandlerImpl(
         }
     }
 
-    override fun doRegister(payload: AuthenticationPayload): AuthenticatedEntity {
+    override fun doRegister(payload: AuthenticationPayload, authenticatedEntity: AuthenticatedEntity): AuthenticatedEntity {
         val loginPayload = RegistrationPayload(payload)
 
-        return AuthenticatedEntity(
-                loginPayload.username,
-                passwordEncoder.encode(loginPayload.password),
-                payload.type
-        )
+        authenticatedEntity.username = loginPayload.username
+        authenticatedEntity.password = passwordEncoder.encode(loginPayload.password)
+
+        return authenticatedEntity
     }
 
     private class LoginPayload(val payload: AuthenticationPayload)  {

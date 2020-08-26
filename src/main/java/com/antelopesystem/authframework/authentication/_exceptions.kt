@@ -1,5 +1,7 @@
 package com.antelopesystem.authframework.authentication
 
-class LoginFailedException(message: String) : RuntimeException(message)
+abstract class AuthenticationException(message: String) : RuntimeException(message)
 
-class RegistrationFailedException(message: String) : RuntimeException(message)
+class LoginFailedException(message: String) : AuthenticationException(message)
+
+class RegistrationFailedException(message: String) : AuthenticationException(message)

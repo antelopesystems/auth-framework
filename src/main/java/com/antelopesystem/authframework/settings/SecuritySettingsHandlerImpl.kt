@@ -4,7 +4,10 @@ import com.antelopesystem.authframework.settings.model.SecuritySettings
 import com.antelopesystem.authframework.settings.model.SecuritySettingsRO
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
+import org.springframework.context.ApplicationContext
+import org.springframework.stereotype.Component
 
+@Component
 class SecuritySettingsHandlerImpl(
         private val crudHandler: CrudHandler
 ) : SecuritySettingsHandler {

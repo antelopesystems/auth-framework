@@ -15,10 +15,17 @@ class AuthenticatedEntity(
 
         var type: String = "",
 
+        var telephonePrefix: String = "",
+
+        var telephone: String = "",
+
         @get:Fetch(FetchMode.SELECT)
         @get:OneToMany(fetch = FetchType.EAGER, mappedBy = "authenticatedEntity", orphanRemoval = true, cascade = [CascadeType.ALL])
         @JvmTransient
         var grants: MutableList<AuthenticatedEntityGrant> = mutableListOf<AuthenticatedEntityGrant>()
-) : JpaBaseUpdatebleEntity()
+) : JpaBaseUpdatebleEntity() {
+        @get:Transient
+        val fullTelephone: String get() = telephonePrefix + telephone
+}
 
 
