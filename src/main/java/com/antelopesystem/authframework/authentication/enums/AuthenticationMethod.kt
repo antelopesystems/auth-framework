@@ -1,5 +1,5 @@
 package com.antelopesystem.authframework.authentication.enums
 
-enum class AuthenticationType {
+enum class AuthenticationMethod {
     UsernamePassword, Nexmo
 }

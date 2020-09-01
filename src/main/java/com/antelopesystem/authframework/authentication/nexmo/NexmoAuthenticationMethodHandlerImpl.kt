@@ -1,10 +1,10 @@
 package com.antelopesystem.authframework.authentication.nexmo
 
-import com.antelopesystem.authframework.authentication.AbstractAuthenticationTypeHandler
+import com.antelopesystem.authframework.authentication.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.GenericPayloadWrapper
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
-import com.antelopesystem.authframework.authentication.enums.AuthenticationType
+import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
 import com.antelopesystem.authframework.controller.AuthenticationPayload
@@ -12,13 +12,13 @@ import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 
-class NexmoAuthenticationTypeHandlerImpl(
+class NexmoAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler,
         private val nexmoClientProvider: NexmoClientProvider,
         private val securitySettingsHandler: SecuritySettingsHandler
-) : AbstractAuthenticationTypeHandler() {
-    override val type: AuthenticationType
-        get() = AuthenticationType.Nexmo
+) : AbstractAuthenticationMethodHandler() {
+    override val method: AuthenticationMethod
+        get() = AuthenticationMethod.Nexmo
 
     override fun isPasswordBased(): Boolean = false
 
@@ -30,7 +30,7 @@ class NexmoAuthenticationTypeHandlerImpl(
         return crudHandler.showBy(where {
             "param1" Equal genericPayload.telephonePrefix
             "param2" Equal genericPayload.telephone
-            "type" Equal AuthenticationType.Nexmo
+            "type" Equal AuthenticationMethod.Nexmo
             "entity.type" Equal payload.type
         }, AuthenticatedEntityAuthenticationMethod::class.java)
                 .execute()
@@ -81,7 +81,7 @@ class NexmoAuthenticationTypeHandlerImpl(
             throw RegistrationFailedException(e)
         }
 
-        val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationType.Nexmo)
+        val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationMethod.Nexmo)
         method.telephone(registrationPayload.telephonePrefix, registrationPayload.telephone)
         return method
     }

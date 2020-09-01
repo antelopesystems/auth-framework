@@ -1,14 +1,12 @@
 package com.antelopesystem.authframework.authentication.nexmo
 
-import com.antelopesystem.authframework.authentication.LoginFailedException
-import com.antelopesystem.authframework.authentication.enums.AuthenticationType
+import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
 import com.antelopesystem.crudframework.crud.handler.CrudHandlerImpl
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.*
 
 internal class NexmoAuthenticationTypeHandlerImplTest {
@@ -17,7 +15,7 @@ internal class NexmoAuthenticationTypeHandlerImplTest {
 
     private val nexmoClientProvider = mock<NexmoClientProvider>()
 
-    private val handler = NexmoAuthenticationTypeHandlerImpl(CrudHandlerImpl(), nexmoClientProvider, any())
+    private val handler = NexmoAuthenticationMethodHandlerImpl(CrudHandlerImpl(), nexmoClientProvider, any())
 
     @BeforeEach
     fun init() {
@@ -26,7 +24,7 @@ internal class NexmoAuthenticationTypeHandlerImplTest {
 
     @Test
     fun `type should return correct type`() {
-        assertEquals(AuthenticationType.Nexmo, handler.type)
+        assertEquals(AuthenticationMethod.Nexmo, handler.method)
     }
 
     @Test

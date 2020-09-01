@@ -1,6 +1,5 @@
 package com.antelopesystem.authframework.authentication
 
-import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 import com.antelopesystem.authframework.authentication.listener.LoginListener
 import com.antelopesystem.authframework.authentication.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity

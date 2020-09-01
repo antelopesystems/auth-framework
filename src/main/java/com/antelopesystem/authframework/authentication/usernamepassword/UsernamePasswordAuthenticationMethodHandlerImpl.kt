@@ -1,9 +1,9 @@
 package com.antelopesystem.authframework.authentication.usernamepassword
 
-import com.antelopesystem.authframework.authentication.AbstractAuthenticationTypeHandler
+import com.antelopesystem.authframework.authentication.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
-import com.antelopesystem.authframework.authentication.enums.AuthenticationType
+import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
 import com.antelopesystem.authframework.controller.AuthenticationPayload
@@ -11,11 +11,11 @@ import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
-class UsernamePasswordTypeHandlerImpl(
+class UsernamePasswordAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler
-) : AbstractAuthenticationTypeHandler() {
-    override val type: AuthenticationType
-        get() = AuthenticationType.UsernamePassword
+) : AbstractAuthenticationMethodHandler() {
+    override val method: AuthenticationMethod
+        get() = AuthenticationMethod.UsernamePassword
 
     override fun isPasswordBased(): Boolean = true
 
@@ -23,7 +23,7 @@ class UsernamePasswordTypeHandlerImpl(
         val loginPayload = LoginPayload(payload)
         return crudHandler.showBy(where {
             "param1" Equal loginPayload.username
-            "type" Equal AuthenticationType.UsernamePassword
+            "type" Equal AuthenticationMethod.UsernamePassword
             "entity.type" Equal payload.type
         }, AuthenticatedEntityAuthenticationMethod::class.java)
                 .execute()
@@ -41,7 +41,7 @@ class UsernamePasswordTypeHandlerImpl(
     override fun doRegister(payload: AuthenticationPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
         val loginPayload = RegistrationPayload(payload)
 
-        val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationType.UsernamePassword)
+        val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
         method.username(loginPayload.username)
         method.password(passwordEncoder.encode(loginPayload.password))
         return method

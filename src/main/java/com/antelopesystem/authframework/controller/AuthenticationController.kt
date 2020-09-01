@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.controller
 
 import com.antelopesystem.authframework.authentication.AuthenticationService
-import com.antelopesystem.authframework.authentication.enums.AuthenticationType
+import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.web.controller.BaseController
 import com.antelopesystem.crudframework.web.ro.ResultRO
@@ -17,38 +17,38 @@ class AuthenticationController(
 
     private val objectType: String = "User"
 
-    @PostMapping("/{authenticationType}/login/initialize")
-    fun initializeLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    @PostMapping("/{authenticationMethod}/login/initialize")
+    fun initializeLogin(@PathVariable authenticationMethod: AuthenticationMethod, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.initializeLogin(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
+            return@wrapResult authenticationService.initializeLogin(AuthenticationPayload(objectType, authenticationMethod, mapOf(), body, tokenType))
         }
     }
 
-    @PostMapping("/{authenticationType}/login")
-    fun doLogin(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    @PostMapping("/{authenticationMethod}/login")
+    fun doLogin(@PathVariable authenticationMethod: AuthenticationMethod, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.doLogin(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
+            return@wrapResult authenticationService.doLogin(AuthenticationPayload(objectType, authenticationMethod, mapOf(), body, tokenType))
         }
     }
 
-    @PostMapping("/{authenticationType}/register/initialize")
-    fun initializeRegistration(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    @PostMapping("/{authenticationMethod}/register/initialize")
+    fun initializeRegistration(@PathVariable authenticationMethod: AuthenticationMethod, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.initializeRegistration(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
+            return@wrapResult authenticationService.initializeRegistration(AuthenticationPayload(objectType, authenticationMethod, mapOf(), body, tokenType))
         }
     }
 
-    @PostMapping("/{authenticationType}/register")
-    fun doRegister(@PathVariable authenticationType: AuthenticationType, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    @PostMapping("/{authenticationMethod}/register")
+    fun doRegister(@PathVariable authenticationMethod: AuthenticationMethod, @RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.doRegister(AuthenticationPayload(objectType, authenticationType, mapOf(), body, tokenType))
+            return@wrapResult authenticationService.doRegister(AuthenticationPayload(objectType, authenticationMethod, mapOf(), body, tokenType))
         }
     }
 }
 
 open class AuthenticationPayload (
         val type: String,
-        val authenticationType: AuthenticationType,
+        val authenticationMethod: AuthenticationMethod,
         val queryParameters: Map<String, Any>,
         val body: String,
         val tokenType: TokenType

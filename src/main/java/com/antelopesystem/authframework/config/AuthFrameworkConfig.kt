@@ -3,9 +3,9 @@ package com.antelopesystem.authframework.config
 import com.antelopesystem.authframework.authentication.*
 import com.antelopesystem.authframework.authentication.listener.LoginListener
 import com.antelopesystem.authframework.authentication.listener.RegistrationListener
-import com.antelopesystem.authframework.authentication.nexmo.NexmoAuthenticationTypeHandlerImpl
+import com.antelopesystem.authframework.authentication.nexmo.NexmoAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.authentication.nexmo.NexmoClientProvider
-import com.antelopesystem.authframework.authentication.usernamepassword.UsernamePasswordTypeHandlerImpl
+import com.antelopesystem.authframework.authentication.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 import com.antelopesystem.authframework.token.TokenHandler
@@ -36,10 +36,10 @@ class AuthFrameworkConfig(
     fun nexmoClientProvider() = NexmoClientProvider(securitySettingsHandler())
 
     @Bean
-    fun nexmoAuthenticationTypeHandler(): AuthenticationTypeHandler = NexmoAuthenticationTypeHandlerImpl(crudHandler, nexmoClientProvider(), securitySettingsHandler())
+    fun nexmoAuthenticationTypeHandler(): AuthenticationMethodHandler = NexmoAuthenticationMethodHandlerImpl(crudHandler, nexmoClientProvider(), securitySettingsHandler())
 
     @Bean
-    fun usernamePasswordAuthenticationTypeHandler(): AuthenticationTypeHandler = UsernamePasswordTypeHandlerImpl(crudHandler)
+    fun usernamePasswordAuthenticationTypeHandler(): AuthenticationMethodHandler = UsernamePasswordAuthenticationMethodHandlerImpl(crudHandler)
 
     @Bean
     fun authenticationNotifier(): AuthenticationNotifier = AuthenticationNotifierImpl(loginListeners, registrationListeners)
