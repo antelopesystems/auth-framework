@@ -1,11 +1,11 @@
 package com.antelopesystem.authframework.authentication
 
-import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
 import com.antelopesystem.authframework.token.model.TokenResponse
 
 interface AuthenticationService {
-    fun initializeLogin(payload: AuthenticationPayload)
-    fun doLogin(payload: AuthenticationPayload): TokenResponse
-    fun initializeRegistration(payload: AuthenticationPayload)
-    fun doRegister(payload: AuthenticationPayload): TokenResponse
+    fun initializeLogin(payload: AuthenticationRequestPayload)
+    fun doLogin(payload: AuthenticationRequestPayload): TokenResponse
+    fun initializeRegistration(payload: AuthenticationRequestPayload)
+    fun doRegister(payload: AuthenticationRequestPayload): TokenResponse
 }

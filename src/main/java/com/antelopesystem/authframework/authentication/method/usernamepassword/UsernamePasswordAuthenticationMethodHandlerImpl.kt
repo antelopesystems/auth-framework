@@ -1,13 +1,13 @@
-package com.antelopesystem.authframework.authentication.usernamepassword
+package com.antelopesystem.authframework.authentication.method.usernamepassword
 
-import com.antelopesystem.authframework.authentication.AbstractAuthenticationMethodHandler
+import com.antelopesystem.authframework.authentication.method.base.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.AuthenticationMethodException
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
-import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
-import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -21,7 +21,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     override fun isPasswordBased(): Boolean = true
 
-    override fun getEntityMethod(payload: AuthenticationPayload): AuthenticatedEntityAuthenticationMethod? {
+    override fun getEntityMethod(payload: AuthenticationRequestPayload): AuthenticatedEntityAuthenticationMethod? {
         try {
             return crudHandler.showBy(where {
                 "param1" Equal payload.username()
@@ -35,7 +35,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     }
 
-    override fun doLogin(payload: AuthenticationPayload, method: AuthenticatedEntityAuthenticationMethod) {
+    override fun doLogin(payload: AuthenticationRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
         try {
             val usernameMatches = payload.username() == method.username()
             if (!usernameMatches) {
@@ -50,7 +50,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun doRegister(payload: AuthenticationPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
+    override fun doRegister(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
         try {
             val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
             method.username(payload.username())
@@ -73,9 +73,9 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     private fun AuthenticatedEntityAuthenticationMethod.password() = this.param2
 
-    private fun AuthenticationPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
+    private fun AuthenticationRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
 
-    private fun AuthenticationPayload.password() = (this.bodyMap["password"] ?: throw error("Password not specified")).toString()
+    private fun AuthenticationRequestPayload.password() = (this.bodyMap["password"] ?: throw error("Password not specified")).toString()
 
     companion object {
         private val passwordEncoder = BCryptPasswordEncoder()

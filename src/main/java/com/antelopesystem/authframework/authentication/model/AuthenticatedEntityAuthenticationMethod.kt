@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.authentication.model
 
-import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.crudframework.jpa.model.JpaBaseUpdatebleEntity
 import javax.persistence.*
 

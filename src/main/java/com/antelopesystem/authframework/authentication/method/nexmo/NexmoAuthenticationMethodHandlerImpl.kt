@@ -1,13 +1,13 @@
-package com.antelopesystem.authframework.authentication.nexmo
+package com.antelopesystem.authframework.authentication.method.nexmo
 
-import com.antelopesystem.authframework.authentication.AbstractAuthenticationMethodHandler
+import com.antelopesystem.authframework.authentication.method.base.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.AuthenticationMethodException
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
-import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
-import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
@@ -26,7 +26,7 @@ class NexmoAuthenticationMethodHandlerImpl(
     override fun isSupportedForType(type: String): Boolean = securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
 
     // todo cleanTelephone
-    override fun getEntityMethod(payload: AuthenticationPayload): AuthenticatedEntityAuthenticationMethod? {
+    override fun getEntityMethod(payload: AuthenticationRequestPayload): AuthenticatedEntityAuthenticationMethod? {
         try {
             return crudHandler.showBy(where {
                 "param1" Equal payload.telephonePrefix()
@@ -40,7 +40,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeLogin(payload: AuthenticationPayload, method: AuthenticatedEntityAuthenticationMethod) {
+    override fun initializeLogin(payload: AuthenticationRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             client.requestVerification(method.telephonePrefix() + method.telephone())
@@ -52,7 +52,7 @@ class NexmoAuthenticationMethodHandlerImpl(
 
     }
 
-    override fun doLogin(payload: AuthenticationPayload, method: AuthenticatedEntityAuthenticationMethod) {
+    override fun doLogin(payload: AuthenticationRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             val result = client.validateVerification(method.telephonePrefix() + method.telephone(), payload.code())
@@ -66,7 +66,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeRegistration(payload: AuthenticationPayload) {
+    override fun initializeRegistration(payload: AuthenticationRequestPayload) {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             client.requestVerification(payload.telephonePrefix() + payload.telephone())
@@ -78,7 +78,7 @@ class NexmoAuthenticationMethodHandlerImpl(
 
     }
 
-    override fun doRegister(payload: AuthenticationPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
+    override fun doRegister(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             val fullTelephone = payload.telephonePrefix() + payload.telephone()
@@ -98,11 +98,11 @@ class NexmoAuthenticationMethodHandlerImpl(
         return method
     }
 
-    private fun AuthenticationPayload.telephonePrefix() = (this.bodyMap["telephonePrefix"] ?: throw error("Telephone prefix not specified")).toString()
+    private fun AuthenticationRequestPayload.telephonePrefix() = (this.bodyMap["telephonePrefix"] ?: throw error("Telephone prefix not specified")).toString()
 
-    private fun AuthenticationPayload.telephone() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
+    private fun AuthenticationRequestPayload.telephone() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
 
-    private fun AuthenticationPayload.code() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
+    private fun AuthenticationRequestPayload.code() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
 
     private fun AuthenticatedEntityAuthenticationMethod.telephonePrefix(): String {
         return this.param2

@@ -1,8 +1,10 @@
 package com.antelopesystem.authframework.authentication
 
-import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.*
@@ -20,7 +22,7 @@ class AuthenticationServiceImpl(
     @ComponentMap(key = AuthenticationMethod::class, value = AuthenticationMethodHandler::class)
     private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
-    override fun initializeLogin(payload: AuthenticationPayload) {
+    override fun initializeLogin(payload: AuthenticationRequestPayload) {
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
@@ -34,7 +36,7 @@ class AuthenticationServiceImpl(
         methodHandler.initializeLogin(payload, entity)
     }
 
-    override fun doLogin(payload: AuthenticationPayload): TokenResponse {
+    override fun doLogin(payload: AuthenticationRequestPayload): TokenResponse {
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
@@ -60,7 +62,7 @@ class AuthenticationServiceImpl(
         }
     }
 
-    override fun initializeRegistration(payload: AuthenticationPayload) {
+    override fun initializeRegistration(payload: AuthenticationRequestPayload) {
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
@@ -73,7 +75,7 @@ class AuthenticationServiceImpl(
         methodHandler.initializeRegistration(payload)
     }
 
-    override fun doRegister(payload: AuthenticationPayload): TokenResponse {
+    override fun doRegister(payload: AuthenticationRequestPayload): TokenResponse {
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
@@ -102,7 +104,7 @@ class AuthenticationServiceImpl(
         }
     }
 
-    private fun validateTokenType(payload: AuthenticationPayload) {
+    private fun validateTokenType(payload: AuthenticationRequestPayload) {
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         if(!settings.getAllowedTokenTypeEnums().contains(payload.tokenType)) {
             error("Unsupported token type")

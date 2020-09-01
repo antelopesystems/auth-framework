@@ -1,9 +1,9 @@
-package com.antelopesystem.authframework.authentication
+package com.antelopesystem.authframework.authentication.notifier
 
-import com.antelopesystem.authframework.authentication.listener.LoginListener
-import com.antelopesystem.authframework.authentication.listener.RegistrationListener
+import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
+import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
 import org.springframework.beans.factory.annotation.Autowired
 
 
@@ -13,25 +13,25 @@ class AuthenticationNotifierImpl(
         @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf()
 ) : AuthenticationNotifier {
 
-    override fun onLoginSuccess(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
+    override fun onLoginSuccess(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity) {
         getLoginListenersForEntity(entity.type).forEach {
             it.onLoginSuccess(payload, entity)
         }
     }
 
-    override fun onLoginFailure(payload: AuthenticationPayload, entity: AuthenticatedEntity, error: String) {
+    override fun onLoginFailure(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity, error: String) {
         getLoginListenersForEntity(entity.type).forEach {
             it.onLoginFailure(payload, entity, error)
         }
     }
 
-    override fun onRegistrationSuccess(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
+    override fun onRegistrationSuccess(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity) {
         getRegistrationListenersForEntity(entity.type).forEach {
             it.onRegistrationSuccess(payload, entity)
         }
     }
 
-    override fun onRegistrationFailure(payload: AuthenticationPayload, error: String) {
+    override fun onRegistrationFailure(payload: AuthenticationRequestPayload, error: String) {
         getRegistrationListenersForEntity(payload.type).forEach {
             it.onRegistrationFailure(payload, error)
         }

@@ -1,11 +1,14 @@
 package com.antelopesystem.authframework.config
 
 import com.antelopesystem.authframework.authentication.*
-import com.antelopesystem.authframework.authentication.listener.LoginListener
-import com.antelopesystem.authframework.authentication.listener.RegistrationListener
-import com.antelopesystem.authframework.authentication.nexmo.NexmoAuthenticationMethodHandlerImpl
-import com.antelopesystem.authframework.authentication.nexmo.NexmoClientProvider
-import com.antelopesystem.authframework.authentication.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
+import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
+import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
+import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
+import com.antelopesystem.authframework.authentication.method.nexmo.NexmoAuthenticationMethodHandlerImpl
+import com.antelopesystem.authframework.authentication.method.nexmo.NexmoClientProvider
+import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 import com.antelopesystem.authframework.token.TokenHandler

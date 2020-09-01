@@ -4,7 +4,7 @@
 //import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 //import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 //import com.antelopesystem.authframework.authentication.usernamepassword.UsernamePasswordTypeHandlerImpl
-//import com.antelopesystem.authframework.controller.AuthenticationPayload
+//import com.antelopesystem.authframework.authentication.model.AuthenticationPayload
 //import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 //import com.antelopesystem.authframework.token.type.enums.TokenType
 //import com.antelopesystem.crudframework.crud.handler.CrudHandlerImpl

@@ -1,6 +1,6 @@
-package com.antelopesystem.authframework.authentication.nexmo
+package com.antelopesystem.authframework.authentication.method.nexmo
 
-import com.antelopesystem.authframework.authentication.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.crudframework.crud.handler.CrudHandlerImpl
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
