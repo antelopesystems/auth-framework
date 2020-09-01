@@ -7,10 +7,5 @@ import com.antelopesystem.authframework.settings.model.SecuritySettingsRO
 abstract class GenericPayloadWrapper(val payload: AuthenticationPayload) {
 }
 
-abstract class AbstractAuthenticationTypeHandler(
-        protected val securitySettingsHandler: SecuritySettingsHandler
-) : AuthenticationTypeHandler {
-    protected fun getSecuritySettings(objectType: String): SecuritySettingsRO {
-        return securitySettingsHandler.getSecuritySettings(objectType)
-    }
+abstract class AbstractAuthenticationTypeHandler : AuthenticationTypeHandler {
 }

@@ -13,9 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
 
 class UsernamePasswordTypeHandlerImpl(
-        private val crudHandler: CrudHandler,
-        securitySettingsHandler: SecuritySettingsHandler
-) : AbstractAuthenticationTypeHandler(securitySettingsHandler) {
+        private val crudHandler: CrudHandler
+) : AbstractAuthenticationTypeHandler() {
     override val type: AuthenticationType
         get() = AuthenticationType.UsernamePassword
 
