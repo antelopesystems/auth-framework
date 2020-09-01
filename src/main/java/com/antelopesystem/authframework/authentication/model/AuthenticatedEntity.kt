@@ -9,15 +9,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "authenticated_entity")
 class AuthenticatedEntity(
-        var username: String = "",
-
-        var password: String = "",
-
         var type: String = "",
-
-        var telephonePrefix: String = "",
-
-        var telephone: String = "",
 
         @get:Column(name = "is_active")
         var active: Boolean = true,
@@ -25,10 +17,11 @@ class AuthenticatedEntity(
         @get:Fetch(FetchMode.SELECT)
         @get:OneToMany(fetch = FetchType.EAGER, mappedBy = "authenticatedEntity", orphanRemoval = true, cascade = [CascadeType.ALL])
         @JvmTransient
-        var grants: MutableList<AuthenticatedEntityGrant> = mutableListOf<AuthenticatedEntityGrant>()
-) : JpaBaseUpdatebleEntity() {
-        @get:Transient
-        val fullTelephone: String get() = telephonePrefix + telephone
-}
+        var grants: MutableList<AuthenticatedEntityGrant> = mutableListOf<AuthenticatedEntityGrant>(),
+
+        @get:Fetch(FetchMode.SELECT)
+        @get:OneToMany(fetch = FetchType.EAGER, targetEntity = AuthenticatedEntityAuthenticationMethod::class, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])
+        var authenticationMethods: MutableList<AuthenticatedEntityAuthenticationMethod> = mutableListOf()
+) : JpaBaseUpdatebleEntity()
 
 

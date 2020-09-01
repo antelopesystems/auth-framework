@@ -6,6 +6,7 @@ import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
 import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
 import com.antelopesystem.authframework.controller.AuthenticationPayload
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
@@ -19,35 +20,36 @@ class NexmoAuthenticationTypeHandlerImpl(
     override val type: AuthenticationType
         get() = AuthenticationType.Nexmo
 
-    override fun isSupportedForType(type: String): Boolean {
-        return securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
-    }
+    override fun isPasswordBased(): Boolean = false
+
+    override fun isSupportedForType(type: String): Boolean = securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
 
     // todo cleanTelephone
-    override fun getEntity(payload: AuthenticationPayload): AuthenticatedEntity? {
+    override fun getEntityAuthenticationType(payload: AuthenticationPayload): AuthenticatedEntityAuthenticationMethod? {
         val genericPayload = LoginPayload(payload)
         return crudHandler.showBy(where {
-            "telephonePrefix" Equal genericPayload.telephonePrefix
-            "telephone" Equal genericPayload.telephone
-            "type" Equal payload.type
-        }, AuthenticatedEntity::class.java)
+            "param1" Equal genericPayload.telephonePrefix
+            "param2" Equal genericPayload.telephone
+            "type" Equal AuthenticationType.Nexmo
+            "entity.type" Equal payload.type
+        }, AuthenticatedEntityAuthenticationMethod::class.java)
                 .execute()
     }
 
-    override fun initializeLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
+    override fun initializeLogin(payload: AuthenticationPayload, entity: AuthenticatedEntityAuthenticationMethod) {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
-            client.requestVerification(entity.fullTelephone)
+            client.requestVerification(entity.telephone())
         } catch(e: NexmoException) {
             throw LoginFailedException(e)
         }
     }
 
-    override fun doLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
+    override fun doLogin(payload: AuthenticationPayload, entity: AuthenticatedEntityAuthenticationMethod) {
         val loginPayload = LoginPayload(payload)
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
-            val result = client.validateVerification(entity.fullTelephone, loginPayload.code)
+            val result = client.validateVerification(entity.telephone(), loginPayload.code)
             if(!result) {
                 throw LoginFailedException("Invalid code")
             }
@@ -66,7 +68,7 @@ class NexmoAuthenticationTypeHandlerImpl(
         }
     }
 
-    override fun doRegister(payload: AuthenticationPayload, authenticatedEntity: AuthenticatedEntity): AuthenticatedEntity {
+    override fun doRegister(payload: AuthenticationPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
         val registrationPayload = RegistrationPayload(payload)
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         val fullTelephone = registrationPayload.telephonePrefix + registrationPayload.telephone
@@ -79,11 +81,9 @@ class NexmoAuthenticationTypeHandlerImpl(
             throw RegistrationFailedException(e)
         }
 
-        authenticatedEntity.username = fullTelephone
-        authenticatedEntity.telephonePrefix = registrationPayload.telephonePrefix
-        authenticatedEntity.telephone = registrationPayload.telephone
-
-        return authenticatedEntity
+        val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationType.Nexmo)
+        method.telephone(registrationPayload.telephonePrefix, registrationPayload.telephone)
+        return method
     }
 
     private open class InitializeLoginPayload(payload: AuthenticationPayload) : GenericPayloadWrapper(payload)  {
@@ -104,5 +104,12 @@ class NexmoAuthenticationTypeHandlerImpl(
         val code: String get() = (payload.bodyMap["code"] ?: throw RegistrationFailedException("Code not specified")).toString()
     }
 
+    private fun AuthenticatedEntityAuthenticationMethod.telephone(): String {
+        return this.param1 + this.param2
+    }
 
+    private fun AuthenticatedEntityAuthenticationMethod.telephone(telephonePrefix: String, telephone: String) {
+        this.param1 = telephonePrefix
+        this.param2 = telephone
+    }
 }

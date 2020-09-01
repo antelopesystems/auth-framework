@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired
 
 
 // todo: modify component map to support lists
-class AuthenticationNotifierImpl @Autowired(required=false) constructor(
-        private val loginListeners: List<LoginListener> = listOf(),
-        private val registrationListeners: List<RegistrationListener> = listOf()
+class AuthenticationNotifierImpl(
+        @Autowired(required=false) private val loginListeners: List<LoginListener> = listOf(),
+        @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf()
 ) : AuthenticationNotifier {
 
     override fun onLoginSuccess(payload: AuthenticationPayload, entity: AuthenticatedEntity) {

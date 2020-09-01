@@ -24,7 +24,7 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val provider = getTypeProvider(payload.authenticationType, payload.type)
-        val entity = provider.getEntity(payload)
+        val entity = provider.getEntityAuthenticationType(payload)
         if(entity == null) {
             if(settings.allowRegistrationOnLogin) {
                 return initializeRegistration(payload)
@@ -38,8 +38,8 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val provider = getTypeProvider(payload.authenticationType, payload.type)
-        val entity = provider.getEntity(payload)
-        if(entity == null) {
+        val method = provider.getEntityAuthenticationType(payload)
+        if(method == null) {
             if(settings.allowRegistrationOnLogin) {
                 return doRegister(payload)
             }
@@ -47,15 +47,15 @@ class AuthenticationServiceImpl(
         }
 
         try {
-            provider.doLogin(payload, entity)
-            authenticationNotifier.onLoginSuccess(payload, entity)
-            val request = buildTokenRequest(payload.tokenType, entity, payload.bodyMap)
+            provider.doLogin(payload, method)
+            authenticationNotifier.onLoginSuccess(payload, method.entity)
+            val request = buildTokenRequest(payload.tokenType, method.entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: LoginFailedException) {
-            authenticationNotifier.onLoginFailure(payload, entity, e.message.toString())
+            authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
             throw e
         } catch(e: Exception) {
-            authenticationNotifier.onLoginFailure(payload, entity, UNHANDLED_EXCEPTION)
+            authenticationNotifier.onLoginFailure(payload, method.entity, UNHANDLED_EXCEPTION)
             throw LoginFailedException(UNHANDLED_EXCEPTION)
         }
     }
@@ -64,7 +64,7 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val provider = getTypeProvider(payload.authenticationType, payload.type)
-        provider.getEntity(payload)?.let {
+        provider.getEntityAuthenticationType(payload)?.let {
             if(settings.allowLoginOnRegistration) {
                 return initializeLogin(payload)
             }
@@ -83,7 +83,9 @@ class AuthenticationServiceImpl(
                 return doLogin(payload)
             }
 
-            var entity = provider.doRegister(payload, AuthenticatedEntity(type = payload.type))
+            var entity = AuthenticatedEntity(type = payload.type)
+            val method = provider.doRegister(payload, entity)
+            entity.authenticationMethods.add(method)
             entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
 
