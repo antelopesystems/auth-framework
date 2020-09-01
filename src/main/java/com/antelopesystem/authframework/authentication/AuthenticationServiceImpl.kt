@@ -24,7 +24,7 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
-        val entity = methodHandler.getEntityAuthenticationType(payload)
+        val entity = methodHandler.getEntityMethod(payload)
         if(entity == null) {
             if(settings.allowRegistrationOnLogin) {
                 return initializeRegistration(payload)
@@ -38,7 +38,7 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
-        val method = methodHandler.getEntityAuthenticationType(payload)
+        val method = methodHandler.getEntityMethod(payload)
         if(method == null) {
             if(settings.allowRegistrationOnLogin) {
                 return doRegister(payload)
@@ -51,7 +51,7 @@ class AuthenticationServiceImpl(
             authenticationNotifier.onLoginSuccess(payload, method.entity)
             val request = buildTokenRequest(payload.tokenType, method.entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
-        } catch(e: LoginFailedException) {
+        } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
             throw e
         } catch(e: Exception) {
@@ -64,7 +64,7 @@ class AuthenticationServiceImpl(
         validateTokenType(payload)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
-        methodHandler.getEntityAuthenticationType(payload)?.let {
+        methodHandler.getEntityMethod(payload)?.let {
             if(settings.allowLoginOnRegistration) {
                 return initializeLogin(payload)
             }
@@ -78,7 +78,7 @@ class AuthenticationServiceImpl(
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
         try {
-            methodHandler.getEntityAuthenticationType(payload)?.let {
+            methodHandler.getEntityMethod(payload)?.let {
                 if(settings.allowLoginOnRegistration) {
                     return doRegister(payload)
                 }
@@ -93,7 +93,7 @@ class AuthenticationServiceImpl(
 
             val request = buildTokenRequest(payload.tokenType, entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
-        } catch(e: RegistrationFailedException) {
+        } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
             throw e
         } catch(e: Exception) {

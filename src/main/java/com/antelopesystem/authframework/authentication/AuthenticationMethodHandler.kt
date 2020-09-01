@@ -26,5 +26,5 @@ interface AuthenticationMethodHandler  {
 
     fun doRegister(payload: AuthenticationPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod
 
-    fun getEntityAuthenticationType(payload: AuthenticationPayload): AuthenticatedEntityAuthenticationMethod?
+    fun getEntityMethod(payload: AuthenticationPayload): AuthenticatedEntityAuthenticationMethod?
 }
