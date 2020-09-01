@@ -8,7 +8,6 @@ import com.antelopesystem.authframework.token.type.enums.TokenType
 import org.springframework.stereotype.Component
 
 
-@Component
 class TimestampAuthenticationHandlerImpl: AbstractTimestampAuthenticationHandler() {
 
     override val type: TokenType = TokenType.Timestamp

@@ -5,7 +5,6 @@ import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.stereotype.Component
 
-@Component
 class SecuritySettingsHandlerImpl(
         private val crudHandler: CrudHandler
 ) : SecuritySettingsHandler {
