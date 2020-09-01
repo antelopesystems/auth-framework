@@ -17,7 +17,7 @@ internal class NexmoAuthenticationTypeHandlerImplTest {
 
     private val nexmoClientProvider = mock<NexmoClientProvider>()
 
-    private val handler = NexmoAuthenticationTypeHandlerImpl(CrudHandlerImpl(), nexmoClientProvider)
+    private val handler = NexmoAuthenticationTypeHandlerImpl(CrudHandlerImpl(), nexmoClientProvider, any())
 
     @BeforeEach
     fun init() {

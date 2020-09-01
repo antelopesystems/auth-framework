@@ -22,15 +22,30 @@ class AuthenticationServiceImpl(
 
     override fun initializeLogin(payload: AuthenticationPayload) {
         validateTokenType(payload)
-        val handler = getTypeProvider(payload.authenticationType, payload.type)
-        val entity = handler.getEntity(payload) ?: error(ENTITY_NOT_FOUND)
-        handler.initializeLogin(payload, entity)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
+        val provider = getTypeProvider(payload.authenticationType, payload.type)
+        val entity = provider.getEntity(payload)
+        if(entity == null) {
+            if(settings.allowRegistrationOnLogin) {
+                return initializeRegistration(payload)
+            }
+            error(ENTITY_NOT_FOUND)
+        }
+        provider.initializeLogin(payload, entity)
     }
 
     override fun doLogin(payload: AuthenticationPayload): TokenResponse {
         validateTokenType(payload)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val provider = getTypeProvider(payload.authenticationType, payload.type)
-        val entity = provider.getEntity(payload) ?: error(ENTITY_NOT_FOUND)
+        val entity = provider.getEntity(payload)
+        if(entity == null) {
+            if(settings.allowRegistrationOnLogin) {
+                return doRegister(payload)
+            }
+            error(ENTITY_NOT_FOUND)
+        }
+
         try {
             provider.doLogin(payload, entity)
             authenticationNotifier.onLoginSuccess(payload, entity)
@@ -47,17 +62,25 @@ class AuthenticationServiceImpl(
 
     override fun initializeRegistration(payload: AuthenticationPayload) {
         validateTokenType(payload)
-        val handler = getTypeProvider(payload.authenticationType, payload.type)
-        handler.initializeRegistration(payload)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
+        val provider = getTypeProvider(payload.authenticationType, payload.type)
+        provider.getEntity(payload)?.let {
+            if(settings.allowLoginOnRegistration) {
+                return initializeLogin(payload)
+            }
+            throw RegistrationFailedException("Entity already exists")
+        }
+        provider.initializeRegistration(payload)
     }
 
     override fun doRegister(payload: AuthenticationPayload): TokenResponse {
         validateTokenType(payload)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val provider = getTypeProvider(payload.authenticationType, payload.type)
         try {
 
-            provider.getEntity(payload)?.let {
-                throw RegistrationFailedException("Entity already exists")
+            if(settings.allowLoginOnRegistration) {
+                return doLogin(payload)
             }
 
             var entity = provider.doRegister(payload, AuthenticatedEntity(type = payload.type))
@@ -77,7 +100,7 @@ class AuthenticationServiceImpl(
 
     private fun validateTokenType(payload: AuthenticationPayload) {
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        if(!settings.allowedTokenTypes.contains(payload.tokenType)) {
+        if(!settings.getAllowedTokenTypeEnums().contains(payload.tokenType)) {
             error("Unsupported token type")
         }
     }
