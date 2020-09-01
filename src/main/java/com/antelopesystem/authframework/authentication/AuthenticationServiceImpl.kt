@@ -3,27 +3,33 @@ package com.antelopesystem.authframework.authentication
 import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.*
 import com.antelopesystem.authframework.token.type.enums.TokenType
+import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 
 // todo: Logging, security settings
 class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
-        private val authenticationNotifier: AuthenticationNotifier
+        private val authenticationNotifier: AuthenticationNotifier,
+        private val crudHandler: CrudHandler,
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationService {
     @ComponentMap(key = AuthenticationType::class, value = AuthenticationTypeHandler::class)
     private lateinit var authenticationTypeHandlers: Map<AuthenticationType, AuthenticationTypeHandler>
 
     override fun initializeLogin(payload: AuthenticationPayload) {
-        val handler = getTypeProvider(payload.authenticationType)
+        validateTokenType(payload)
+        val handler = getTypeProvider(payload.authenticationType, payload.type)
         val entity = handler.getEntity(payload) ?: error(ENTITY_NOT_FOUND)
         handler.initializeLogin(payload, entity)
     }
 
     override fun doLogin(payload: AuthenticationPayload): TokenResponse {
-        val provider = getTypeProvider(payload.authenticationType)
+        validateTokenType(payload)
+        val provider = getTypeProvider(payload.authenticationType, payload.type)
         val entity = provider.getEntity(payload) ?: error(ENTITY_NOT_FOUND)
         try {
             provider.doLogin(payload, entity)
@@ -40,15 +46,24 @@ class AuthenticationServiceImpl(
     }
 
     override fun initializeRegistration(payload: AuthenticationPayload) {
-        val handler = getTypeProvider(payload.authenticationType)
+        validateTokenType(payload)
+        val handler = getTypeProvider(payload.authenticationType, payload.type)
         handler.initializeRegistration(payload)
     }
 
     override fun doRegister(payload: AuthenticationPayload): TokenResponse {
-        val provider = getTypeProvider(payload.authenticationType)
+        validateTokenType(payload)
+        val provider = getTypeProvider(payload.authenticationType, payload.type)
         try {
-            val entity = provider.doRegister(payload, AuthenticatedEntity(type = payload.type))
+
+            provider.getEntity(payload)?.let {
+                throw RegistrationFailedException("Entity already exists")
+            }
+
+            var entity = provider.doRegister(payload, AuthenticatedEntity(type = payload.type))
+            entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
+
             val request = buildTokenRequest(payload.tokenType, entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: RegistrationFailedException) {
@@ -60,8 +75,21 @@ class AuthenticationServiceImpl(
         }
     }
 
-    private fun getTypeProvider(authenticationType: AuthenticationType): AuthenticationTypeHandler {
-        return authenticationTypeHandlers[authenticationType] ?: error("Handler for authentication type [ $authenticationType ] not found")
+    private fun validateTokenType(payload: AuthenticationPayload) {
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
+        if(!settings.allowedTokenTypes.contains(payload.tokenType)) {
+            error("Unsupported token type")
+        }
+    }
+
+    private fun getTypeProvider(authenticationType: AuthenticationType, type: String): AuthenticationTypeHandler {
+        val provider = authenticationTypeHandlers[authenticationType] ?: error("Provider for authentication type [ $authenticationType ] not found")
+
+        if(!provider.isSupportedForType(type)) {
+            error("Authentication type [ $authenticationType ] is not supported")
+        }
+
+        return provider
     }
 
     private fun buildTokenRequest(type: TokenType, entity: AuthenticatedEntity, parameters: Map<String, Any>): TokenRequest {

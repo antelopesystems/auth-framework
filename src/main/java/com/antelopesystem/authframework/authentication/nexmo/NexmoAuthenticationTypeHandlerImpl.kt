@@ -7,15 +7,21 @@ import com.antelopesystem.authframework.authentication.RegistrationFailedExcepti
 import com.antelopesystem.authframework.authentication.enums.AuthenticationType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.controller.AuthenticationPayload
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 
 class NexmoAuthenticationTypeHandlerImpl(
         private val crudHandler: CrudHandler,
-        private val nexmoClientProvider: NexmoClientProvider
+        private val nexmoClientProvider: NexmoClientProvider,
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : AbstractAuthenticationTypeHandler() {
     override val type: AuthenticationType
         get() = AuthenticationType.Nexmo
+
+    override fun isSupportedForType(type: String): Boolean {
+        return securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
+    }
 
     // todo cleanTelephone
     override fun getEntity(payload: AuthenticationPayload): AuthenticatedEntity? {

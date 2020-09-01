@@ -9,6 +9,8 @@ interface AuthenticationTypeHandler {
     @get:ComponentMapKey
     val type: AuthenticationType
 
+    fun isSupportedForType(type: String): Boolean = true
+
     fun initializeLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
         throw UnsupportedOperationException("initializeLogin is not supported for [ $type ]")
     }

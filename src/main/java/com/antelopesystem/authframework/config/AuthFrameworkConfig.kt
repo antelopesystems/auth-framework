@@ -30,13 +30,13 @@ class AuthFrameworkConfig(
     fun securitySettingsHandler(): SecuritySettingsHandler = SecuritySettingsHandlerImpl(crudHandler)
 
     @Bean
-    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier())
+    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier(), crudHandler, securitySettingsHandler())
 
     @Autowired
     fun nexmoClientProvider() = NexmoClientProvider(securitySettingsHandler())
 
     @Bean
-    fun nexmoAuthenticationTypeHandler(): AuthenticationTypeHandler = NexmoAuthenticationTypeHandlerImpl(crudHandler, nexmoClientProvider())
+    fun nexmoAuthenticationTypeHandler(): AuthenticationTypeHandler = NexmoAuthenticationTypeHandlerImpl(crudHandler, nexmoClientProvider(), securitySettingsHandler())
 
     @Bean
     fun usernamePasswordAuthenticationTypeHandler(): AuthenticationTypeHandler = UsernamePasswordTypeHandlerImpl(crudHandler)
