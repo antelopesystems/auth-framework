@@ -19,6 +19,9 @@ class AuthenticatedEntity(
 
         var telephone: String = "",
 
+        @get:Column(name = "is_active")
+        var active: Boolean = true,
+
         @get:Fetch(FetchMode.SELECT)
         @get:OneToMany(fetch = FetchType.EAGER, mappedBy = "authenticatedEntity", orphanRemoval = true, cascade = [CascadeType.ALL])
         @JvmTransient

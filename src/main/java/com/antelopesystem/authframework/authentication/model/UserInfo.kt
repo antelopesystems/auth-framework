@@ -5,8 +5,6 @@ data class UserInfo(
 
         val entityType: String,
 
-        var blocked: Boolean,
-
         val grants: List<GrantRO> = listOf(),
 
         val suspiciousness: Suspiciousness = Suspiciousness.Low

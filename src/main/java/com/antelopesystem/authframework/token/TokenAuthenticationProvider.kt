@@ -1,5 +1,7 @@
 package com.antelopesystem.authframework.token
 
+import com.antelopesystem.authframework.authentication.AccessDeniedException
+import com.antelopesystem.authframework.authentication.constraint.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.GrantRO
 import com.antelopesystem.authframework.token.model.TokenAuthentication
@@ -7,13 +9,15 @@ import com.antelopesystem.authframework.authentication.model.UserInfo
 import com.antelopesystem.authframework.token.model.TokenAuthenticationRequest
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 
 
 class TokenAuthenticationProvider(
-        private val crudHandler: CrudHandler
+        private val crudHandler: CrudHandler,
+        @Autowired(required=false) private val constraintValidators: List<AuthenticationConstraintValidator> = emptyList()
 ) : AuthenticationProvider {
     override fun supports(authentication: Class<*>): Boolean {
         return TokenAuthenticationRequest::class.java.isAssignableFrom(authentication)
@@ -25,14 +29,18 @@ class TokenAuthenticationProvider(
             "id" Equal authentication.token.objectId
             "type" Equal authentication.token.objectType
         }, AuthenticatedEntity::class.java)
-                .execute() ?: throw BadCredentialsException("Access Denied")
+                .execute() ?: throw AccessDeniedException("Entity not found")
+        for (constraintValidator in constraintValidators) {
+            constraintValidator.validate(entity, authentication.token)
+        }
+
         val userInfo = UserInfo(
                 entity.id,
                 entity.type,
-                false,
                 crudHandler.getROs(entity.grants, GrantRO::class.java)
-
         )
+
+
         return TokenAuthentication(userInfo)
     }
 }

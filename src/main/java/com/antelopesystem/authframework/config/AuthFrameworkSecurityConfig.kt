@@ -1,6 +1,8 @@
 package com.antelopesystem.authframework.config
 
 import com.antelopesystem.authframework.authentication.CustomAuthenticationEntryPoint
+import com.antelopesystem.authframework.authentication.constraint.ActiveConstraintValidator
+import com.antelopesystem.authframework.authentication.constraint.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.filter.AuthenticationTokenProcessingFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler
@@ -26,6 +28,9 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
     @Autowired
     private lateinit var tokenHandler: TokenHandler
 
+    @Autowired(required=false)
+    private val constraintValidators: List<AuthenticationConstraintValidator> = emptyList()
+
     override fun configure(http: HttpSecurity) {
         http
                 .csrf().disable()
@@ -42,7 +47,10 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun tokenAuthenticationProvder() = TokenAuthenticationProvider(crudHandler)
+    fun activeConstraintValidator() = ActiveConstraintValidator()
+
+    @Bean
+    fun tokenAuthenticationProvder() = TokenAuthenticationProvider(crudHandler, constraintValidators)
 
     /* Beans */
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER, "authenticationManager"])
