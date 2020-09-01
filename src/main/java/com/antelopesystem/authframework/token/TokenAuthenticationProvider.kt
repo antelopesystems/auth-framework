@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.token
 
 import com.antelopesystem.authframework.authentication.AccessDeniedException
-import com.antelopesystem.authframework.authentication.constraint.AuthenticationConstraintValidator
+import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.GrantRO
 import com.antelopesystem.authframework.token.model.TokenAuthentication
@@ -11,7 +11,6 @@ import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 
 

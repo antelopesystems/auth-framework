@@ -1,5 +1,6 @@
-package com.antelopesystem.authframework.authentication.filter
+package com.antelopesystem.authframework.authentication.filter.base
 
+import com.antelopesystem.authframework.authentication.RequestFailedException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.filter.OncePerRequestFilter

@@ -1,3 +1,0 @@
-package com.antelopesystem.authframework.authentication.method.base
-
-abstract class AbstractAuthenticationMethodHandler: AuthenticationMethodHandler

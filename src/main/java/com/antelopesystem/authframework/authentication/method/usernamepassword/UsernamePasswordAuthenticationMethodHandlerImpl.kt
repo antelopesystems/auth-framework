@@ -1,9 +1,9 @@
 package com.antelopesystem.authframework.authentication.method.usernamepassword
 
-import com.antelopesystem.authframework.authentication.method.base.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.AuthenticationMethodException
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
+import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
@@ -15,7 +15,7 @@ import kotlin.IllegalStateException
 
 class UsernamePasswordAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler
-) : AbstractAuthenticationMethodHandler() {
+) : AuthenticationMethodHandler {
     override val method: AuthenticationMethod
         get() = AuthenticationMethod.UsernamePassword
 

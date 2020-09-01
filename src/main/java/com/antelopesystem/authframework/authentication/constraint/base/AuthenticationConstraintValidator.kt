@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.constraint
+package com.antelopesystem.authframework.authentication.constraint.base
 
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.token.model.ObjectToken

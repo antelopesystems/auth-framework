@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.filter
+package com.antelopesystem.authframework.authentication.filter.base
 
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.exception.InvalidTokenException
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-abstract class BaseAuthenticatedFilter(protected val objectType: String, private val tokenHandler: TokenHandler) : AbstractExceptionHandlingFilter() {
+abstract class AbstractAuthenticatedFilter(protected val objectType: String, private val tokenHandler: TokenHandler) : AbstractExceptionHandlingFilter() {
     public override fun doFilterInner(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         if (tokenHandler.isTokenPresent(request)) {
             val token = tokenHandler.getTokenFromRequest(request)

@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.authentication.constraint
 
 import com.antelopesystem.authframework.authentication.AccessDeniedException
+import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.token.model.ObjectToken
 

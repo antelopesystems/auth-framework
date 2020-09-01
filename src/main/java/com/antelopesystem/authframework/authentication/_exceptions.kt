@@ -1,7 +1,20 @@
 package com.antelopesystem.authframework.authentication
 
-import com.antelopesystem.authframework.authentication.filter.RequestFailedException
 import org.springframework.http.HttpStatus
+
+abstract class RequestFailedException : RuntimeException {
+    val statusCode: Int
+
+    @JvmOverloads
+    constructor(statusCode: Int = HttpStatus.FORBIDDEN.value()) : super("Request Failed") {
+        this.statusCode = statusCode
+    }
+
+    @JvmOverloads
+    constructor(message: String?, statusCode: Int = HttpStatus.FORBIDDEN.value()) : super(message) {
+        this.statusCode = statusCode
+    }
+}
 
 open class AuthenticationMethodException(message: String) : RuntimeException(message) {
     constructor(cause: Throwable) : this(cause.message.toString()) {

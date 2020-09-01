@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.config
 
 import com.antelopesystem.authframework.authentication.CustomAuthenticationEntryPoint
 import com.antelopesystem.authframework.authentication.constraint.ActiveConstraintValidator
-import com.antelopesystem.authframework.authentication.constraint.AuthenticationConstraintValidator
+import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.filter.AuthenticationTokenProcessingFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler

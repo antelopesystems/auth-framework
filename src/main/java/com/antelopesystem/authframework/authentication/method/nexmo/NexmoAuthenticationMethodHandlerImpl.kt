@@ -1,9 +1,9 @@
 package com.antelopesystem.authframework.authentication.method.nexmo
 
-import com.antelopesystem.authframework.authentication.method.base.AbstractAuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.AuthenticationMethodException
 import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
+import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
@@ -11,13 +11,12 @@ import com.antelopesystem.authframework.authentication.model.AuthenticationReque
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
-import kotlin.IllegalStateException
 
 class NexmoAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler,
         private val nexmoClientProvider: NexmoClientProvider,
         private val securitySettingsHandler: SecuritySettingsHandler
-) : AbstractAuthenticationMethodHandler() {
+) : AuthenticationMethodHandler {
     override val method: AuthenticationMethod
         get() = AuthenticationMethod.Nexmo
 
