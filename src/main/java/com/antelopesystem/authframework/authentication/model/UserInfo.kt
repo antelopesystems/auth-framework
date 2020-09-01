@@ -17,5 +17,5 @@ enum class Suspiciousness {
 }
 
 data class GrantRO(
-        val name: String
+        val name: String? = null
 )

@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.authentication.filter
 
 import org.springframework.http.HttpStatus
 
-class RequestFailedException : RuntimeException {
+abstract class RequestFailedException : RuntimeException {
     val statusCode: Int
 
     @JvmOverloads

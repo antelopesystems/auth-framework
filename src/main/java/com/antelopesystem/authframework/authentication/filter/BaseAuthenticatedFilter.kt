@@ -22,6 +22,6 @@ abstract class BaseAuthenticatedFilter(protected val objectType: String, private
 
     override fun getAlreadyFilteredAttributeName(): String = this.javaClass.simpleName
 
-    protected abstract fun processFilter(token: ObjectToken?, request: HttpServletRequest?, response: HttpServletResponse?)
+    protected abstract fun processFilter(token: ObjectToken, request: HttpServletRequest, response: HttpServletResponse)
 
 }

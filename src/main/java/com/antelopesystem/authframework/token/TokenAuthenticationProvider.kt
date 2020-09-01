@@ -22,8 +22,8 @@ class TokenAuthenticationProvider(
     override fun authenticate(authentication: Authentication): Authentication {
         authentication as TokenAuthenticationRequest
         val entity = crudHandler.showBy(where {
-            "entityId" Equal authentication.token.objectId
-            "entityType" Equal authentication.token.objectType
+            "id" Equal authentication.token.objectId
+            "type" Equal authentication.token.objectType
         }, AuthenticatedEntity::class.java)
                 .execute() ?: throw BadCredentialsException("Access Denied")
         val userInfo = UserInfo(

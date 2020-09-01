@@ -2,6 +2,7 @@ package com.antelopesystem.authframework.authentication.filter
 
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.ObjectToken
+import com.antelopesystem.authframework.token.model.TokenAuthenticationRequest
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,9 +19,9 @@ class AuthenticationTokenProcessingFilter
         private val authenticationManager: AuthenticationManager
 ) : BaseAuthenticatedFilter(objectType, tokenHandler) {
     @Throws(IOException::class, ServletException::class)
-    override fun processFilter(token: ObjectToken?, request: HttpServletRequest?, response: HttpServletResponse?) {
-        val authentication = UsernamePasswordAuthenticationToken(token!!.objectId, "")
-        authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+    override fun processFilter(token: ObjectToken, request: HttpServletRequest, response: HttpServletResponse) {
+        val authentication = TokenAuthenticationRequest(token)
+//        authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
         SecurityContextHolder.getContext().authentication = authenticationManager.authenticate(authentication)
     }
 }
