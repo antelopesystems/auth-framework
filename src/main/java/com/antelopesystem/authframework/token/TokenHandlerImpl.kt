@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import javax.servlet.http.HttpServletRequest
 
-@Component("authenticationHandler")
 class TokenHandlerImpl : TokenHandler {
 
     @ComponentMap(key = TokenType::class, value = TokenTypeHandler::class)

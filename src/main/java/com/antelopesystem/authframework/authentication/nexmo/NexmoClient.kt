@@ -84,6 +84,8 @@ class NexmoClient(apiKey: String, apiSecret: String, private val brand: String) 
 
 data class NumberRequestDTO(val requestId: String, val timeOfRequest: Long = System.currentTimeMillis())
 
-data class NexmoGeneralError(override val message: String) : RuntimeException(message)
-class NexmoRequestNotFoundException : RuntimeException("No request found")
-data class NexmoCooldownException(val secondsRemaining: Long) : RuntimeException("Please try again in $secondsRemaining seconds")
+abstract class NexmoException(message: String) : RuntimeException(message)
+
+data class NexmoGeneralError(override val message: String) : NexmoException(message)
+class NexmoRequestNotFoundException : NexmoException("No request found")
+data class NexmoCooldownException(val secondsRemaining: Long) : NexmoException("Please try again in $secondsRemaining seconds")

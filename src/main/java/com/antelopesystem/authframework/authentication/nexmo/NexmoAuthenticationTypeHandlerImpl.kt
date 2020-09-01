@@ -30,31 +30,47 @@ class NexmoAuthenticationTypeHandlerImpl(
 
     override fun initializeLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
-        client.requestVerification(entity.fullTelephone)
+        try {
+            client.requestVerification(entity.fullTelephone)
+        } catch(e: NexmoException) {
+            throw LoginFailedException(e)
+        }
     }
 
     override fun doLogin(payload: AuthenticationPayload, entity: AuthenticatedEntity) {
         val loginPayload = LoginPayload(payload)
         val client = nexmoClientProvider.getNexmoClient(payload.type)
-        val result = client.validateVerification(entity.fullTelephone, loginPayload.code)
-        if(!result) {
-            throw LoginFailedException("Invalid code")
+        try {
+            val result = client.validateVerification(entity.fullTelephone, loginPayload.code)
+            if(!result) {
+                throw LoginFailedException("Invalid code")
+            }
+        } catch(e: NexmoException) {
+            throw LoginFailedException(e)
         }
     }
 
     override fun initializeRegistration(payload: AuthenticationPayload) {
         val registrationPayload = InitializeRegistrationPayload(payload)
         val client = nexmoClientProvider.getNexmoClient(payload.type)
-        client.requestVerification(registrationPayload.telephonePrefix + registrationPayload.telephone)
+        try {
+            client.requestVerification(registrationPayload.telephonePrefix + registrationPayload.telephone)
+        } catch(e: NexmoException) {
+            throw RegistrationFailedException(e)
+        }
     }
 
     override fun doRegister(payload: AuthenticationPayload, authenticatedEntity: AuthenticatedEntity): AuthenticatedEntity {
         val registrationPayload = RegistrationPayload(payload)
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         val fullTelephone = registrationPayload.telephonePrefix + registrationPayload.telephone
-        val result = client.validateVerification(fullTelephone, registrationPayload.code)
-        if(!result) {
-            throw LoginFailedException("Invalid code")
+        try {
+            val result = client.validateVerification(fullTelephone, registrationPayload.code)
+            if(!result) {
+                throw RegistrationFailedException("Invalid code")
+            }
+        } catch(e: NexmoException) {
+            throw RegistrationFailedException(e)
         }
 
         authenticatedEntity.username = fullTelephone
