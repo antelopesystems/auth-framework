@@ -38,8 +38,6 @@ class TokenAuthenticationProvider(
                 entity.type,
                 crudHandler.getROs(entity.grants, GrantRO::class.java)
         )
-
-
         return TokenAuthentication(userInfo)
     }
 }

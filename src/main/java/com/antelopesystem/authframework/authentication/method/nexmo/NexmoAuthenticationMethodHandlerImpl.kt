@@ -25,6 +25,7 @@ class NexmoAuthenticationMethodHandlerImpl(
     override fun isSupportedForType(type: String): Boolean = securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
 
     // todo cleanTelephone
+    // telephone, telephonePrefix
     override fun getEntityMethod(payload: AuthenticationRequestPayload): AuthenticatedEntityAuthenticationMethod? {
         try {
             return crudHandler.showBy(where {
