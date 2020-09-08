@@ -4,13 +4,15 @@ import com.antelopesystem.authframework.authentication.notifier.listener.LoginLi
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
+import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import org.springframework.beans.factory.annotation.Autowired
 
 
 // todo: modify component map to support lists
 class AuthenticationNotifierImpl(
         @Autowired(required=false) private val loginListeners: List<LoginListener> = listOf(),
-        @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf()
+        @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf(),
+        @Autowired(required=false) private val forgotPasswordListeners: List<ForgotPasswordListener> = listOf()
 ) : AuthenticationNotifier {
 
     override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
@@ -37,6 +39,22 @@ class AuthenticationNotifierImpl(
         }
     }
 
+    override fun onForgotPasswordInitialized(token: String, entity: AuthenticatedEntity) {
+        getForgotPasswordListenersForEntity(entity.type).forEach {
+            it.onForgotPasswordInitialized(token, entity)
+        }
+    }
+
+    override fun onForgotPasswordSuccess(entity: AuthenticatedEntity) {
+        getForgotPasswordListenersForEntity(entity.type).forEach {
+            it.onForgotPasswordSuccess(entity)
+        }
+    }
+
+    private fun getForgotPasswordListenersForEntity(type: String): List<ForgotPasswordListener> {
+        return forgotPasswordListeners.filter { it.type == type }
+    }
+
     private fun getLoginListenersForEntity(type: String): List<LoginListener> {
         return loginListeners.filter { it.type == type }
     }
@@ -44,4 +62,6 @@ class AuthenticationNotifierImpl(
     private fun getRegistrationListenersForEntity(type: String): List<RegistrationListener> {
         return registrationListeners.filter { it.type == type }
     }
+
+
 }

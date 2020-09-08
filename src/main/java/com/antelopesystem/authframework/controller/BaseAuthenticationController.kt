@@ -1,7 +1,6 @@
 package com.antelopesystem.authframework.controller
 
 import com.antelopesystem.authframework.authentication.AuthenticationService
-import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.web.controller.BaseController
@@ -44,6 +43,20 @@ abstract class BaseAuthenticationController(
     fun doRegister(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
         return wrapResult {
             return@wrapResult authenticationService.doRegister(MethodRequestPayload(objectType, mapOf(), body), tokenType)
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    fun initializeForgotPassword(@RequestBody(required = false) body: String): ResultRO<*> {
+        return wrapVoidResult {
+            authenticationService.initializeForgotPassword(MethodRequestPayload(objectType, mapOf(), body))
+        }
+    }
+
+    @PostMapping("/forgot-password/redeem/{token}")
+    fun redeemForgotPasswordToken(@PathVariable token: String, @RequestParam newPassword: String): ResultRO<*> {
+        return wrapVoidResult {
+            authenticationService.redeemForgotPasswordToken(token, newPassword, objectType)
         }
     }
 }

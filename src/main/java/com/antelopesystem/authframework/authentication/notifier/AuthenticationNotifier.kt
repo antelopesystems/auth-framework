@@ -8,4 +8,6 @@ interface AuthenticationNotifier {
     fun onLoginFailure(payload: MethodRequestPayload, entity: AuthenticatedEntity, error: String)
     fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity)
     fun onRegistrationFailure(payload: MethodRequestPayload, error: String)
+    fun onForgotPasswordInitialized(token: String, entity: AuthenticatedEntity)
+    fun onForgotPasswordSuccess(entity: AuthenticatedEntity)
 }

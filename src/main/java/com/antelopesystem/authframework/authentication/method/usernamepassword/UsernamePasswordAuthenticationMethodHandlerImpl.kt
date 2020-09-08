@@ -6,7 +6,7 @@ import com.antelopesystem.authframework.authentication.RegistrationFailedExcepti
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
+import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
@@ -23,25 +23,23 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     override fun isSupportedForPayload(payload: MethodRequestPayload): Boolean = try {
         payload.username()
-        payload.password()
         true
     } catch(e: Exception) { false}
 
-    override fun getEntityMethod(payload: MethodRequestPayload): AuthenticatedEntityAuthenticationMethod? {
+    override fun getEntityMethod(payload: MethodRequestPayload): EntityAuthenticationMethod? {
         try {
             return crudHandler.showBy(where {
                 "param1" Equal payload.username()
                 "method" Equal AuthenticationMethod.UsernamePassword
                 "entity.type" Equal payload.type
-            }, AuthenticatedEntityAuthenticationMethod::class.java)
+            }, EntityAuthenticationMethod::class.java)
                     .execute()
         } catch(e: IllegalStateException) {
             throw AuthenticationMethodException(e)
         }
-
     }
 
-    override fun doLogin(payload: MethodRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
+    override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
         try {
             val usernameMatches = payload.username() == method.username()
             if (!usernameMatches) {
@@ -56,9 +54,9 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         try {
-            val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
+            val method = EntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
             method.username(payload.username())
             method.password(passwordEncoder.encode(payload.password()))
             return method
@@ -67,17 +65,21 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
-    private fun AuthenticatedEntityAuthenticationMethod.username(username: String) {
+    override fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
+        method.password(passwordEncoder.encode(newPassword))
+    }
+
+    private fun EntityAuthenticationMethod.username(username: String) {
         this.param1 = username
     }
 
-    private fun AuthenticatedEntityAuthenticationMethod.password(password: String) {
+    private fun EntityAuthenticationMethod.password(password: String) {
         this.param2 = password
     }
 
-    private fun AuthenticatedEntityAuthenticationMethod.username() = this.param1
+    private fun EntityAuthenticationMethod.username() = this.param1
 
-    private fun AuthenticatedEntityAuthenticationMethod.password() = this.param2
+    private fun EntityAuthenticationMethod.password() = this.param2
 
     private fun MethodRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
 

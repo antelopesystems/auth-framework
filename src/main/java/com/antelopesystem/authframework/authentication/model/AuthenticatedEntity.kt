@@ -20,8 +20,8 @@ class AuthenticatedEntity(
         var grants: MutableList<AuthenticatedEntityGrant> = mutableListOf<AuthenticatedEntityGrant>(),
 
         @get:Fetch(FetchMode.SELECT)
-        @get:OneToMany(fetch = FetchType.EAGER, targetEntity = AuthenticatedEntityAuthenticationMethod::class, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])
-        var authenticationMethods: MutableList<AuthenticatedEntityAuthenticationMethod> = mutableListOf()
+        @get:OneToMany(fetch = FetchType.EAGER, targetEntity = EntityAuthenticationMethod::class, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])
+        var authenticationMethods: MutableList<EntityAuthenticationMethod> = mutableListOf()
 ) : JpaBaseUpdatebleEntity()
 
 

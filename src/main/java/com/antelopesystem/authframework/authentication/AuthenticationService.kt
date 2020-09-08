@@ -9,4 +9,6 @@ interface AuthenticationService {
     fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse
     fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType)
     fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse
+    fun initializeForgotPassword(payload: MethodRequestPayload)
+    fun redeemForgotPasswordToken(tokenString: String, newPassword: String, objectType: String)
 }

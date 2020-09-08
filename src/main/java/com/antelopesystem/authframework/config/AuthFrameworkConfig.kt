@@ -9,6 +9,7 @@ import com.antelopesystem.authframework.authentication.method.nexmo.NexmoClientP
 import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl
+import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 import com.antelopesystem.authframework.token.TokenHandler
@@ -32,14 +33,14 @@ class AuthFrameworkConfig(
     @Autowired(required = false)
     private var registrationListeners: List<RegistrationListener> = listOf()
 
-    @Autowired
-    private lateinit var authenticationMethodHandlers: List<AuthenticationMethodHandler>
+    @Autowired(required = false)
+    private var forgotPasswordListeners: List<ForgotPasswordListener> = listOf()
 
     @Bean
     fun securitySettingsHandler(): SecuritySettingsHandler = SecuritySettingsHandlerImpl(crudHandler)
 
     @Bean
-    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier(), crudHandler, securitySettingsHandler(), authenticationMethodHandlers)
+    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier(), crudHandler, securitySettingsHandler())
 
     @Autowired
     fun nexmoClientProvider() = NexmoClientProvider(securitySettingsHandler())
@@ -51,7 +52,7 @@ class AuthFrameworkConfig(
     fun usernamePasswordAuthenticationTypeHandler(): AuthenticationMethodHandler = UsernamePasswordAuthenticationMethodHandlerImpl(crudHandler)
 
     @Bean
-    fun authenticationNotifier(): AuthenticationNotifier = AuthenticationNotifierImpl(loginListeners, registrationListeners)
+    fun authenticationNotifier(): AuthenticationNotifier = AuthenticationNotifierImpl(loginListeners, registrationListeners, forgotPasswordListeners)
 
     @Bean
     fun tokenHandler(): TokenHandler = TokenHandlerImpl()

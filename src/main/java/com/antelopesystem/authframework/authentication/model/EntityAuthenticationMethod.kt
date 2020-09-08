@@ -5,9 +5,8 @@ import com.antelopesystem.crudframework.jpa.model.JpaBaseUpdatebleEntity
 import javax.persistence.*
 
 @Entity
-@Table(name = "authenticated_entity_authentication_method")
-class AuthenticatedEntityAuthenticationMethod(
-
+@Table
+class EntityAuthenticationMethod(
         @get:ManyToOne(fetch = FetchType.EAGER)
         @get:JoinColumn(name = "entity_id")
         var entity: AuthenticatedEntity,

@@ -1,8 +1,9 @@
 package com.antelopesystem.authframework.authentication
 
-import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.ForgotPasswordToken
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
@@ -10,6 +11,7 @@ import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.*
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
+import com.antelopesystem.crudframework.modelfilter.dsl.where
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 
 // todo: Logging
@@ -17,14 +19,16 @@ class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
         private val authenticationNotifier: AuthenticationNotifier,
         private val crudHandler: CrudHandler,
-        private val securitySettingsHandler: SecuritySettingsHandler,
-        private val authenticationMethodHandlers: List<AuthenticationMethodHandler>
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationService {
+
+    @ComponentMap(key = AuthenticationMethod::class, value=AuthenticationMethodHandler::class)
+    private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
     override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType) {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload, payload.type)
+        val methodHandler = getMethodHandler(payload)
         val entity = methodHandler.getEntityMethod(payload)
         if(entity == null) {
             if(settings.allowRegistrationOnLogin) {
@@ -38,7 +42,7 @@ class AuthenticationServiceImpl(
     override fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload, payload.type)
+        val methodHandler = getMethodHandler(payload)
         val method = methodHandler.getEntityMethod(payload)
         if(method == null) {
             if(settings.allowRegistrationOnLogin) {
@@ -61,10 +65,42 @@ class AuthenticationServiceImpl(
         }
     }
 
+    override fun initializeForgotPassword(payload: MethodRequestPayload) {
+        val methodHandler = getMethodHandler(payload)
+        if(!methodHandler.isPasswordBased()) {
+            throw error("Method [ ${methodHandler.method} ] is not supported")
+        }
+
+        val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
+
+        val token = crudHandler.create(ForgotPasswordToken(method)).execute()
+        authenticationNotifier.onForgotPasswordInitialized(token.token, method.entity)
+    }
+
+    override fun redeemForgotPasswordToken(tokenString: String, newPassword: String, objectType: String) {
+        val token = crudHandler.showBy(where {
+            "token" Equal tokenString
+        }, ForgotPasswordToken::class.java)
+                .execute()
+                ?: error("Invalid token")
+
+        val method = token.entityMethod
+        val methodHandler = getMethodHandlerByType(method.method, objectType)
+
+        if(!methodHandler.isPasswordBased()) {
+            throw error("Method [ ${methodHandler.method} ] is not supported")
+        }
+
+        methodHandler.changePassword(newPassword, method)
+        crudHandler.update(method).execute()
+        crudHandler.delete(token.id, ForgotPasswordToken::class.java).execute()
+        authenticationNotifier.onForgotPasswordSuccess(method.entity)
+    }
+
     override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType) {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload, payload.type)
+        val methodHandler = getMethodHandler(payload)
         methodHandler.getEntityMethod(payload)?.let {
             if(settings.allowLoginOnRegistration) {
                 return initializeLogin(payload, tokenType)
@@ -77,7 +113,7 @@ class AuthenticationServiceImpl(
     override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload, payload.type)
+        val methodHandler = getMethodHandler(payload)
         try {
             methodHandler.getEntityMethod(payload)?.let {
                 if(settings.allowLoginOnRegistration) {
@@ -110,8 +146,18 @@ class AuthenticationServiceImpl(
         }
     }
 
-    private fun getMethodHandler(payload: MethodRequestPayload, type: String): AuthenticationMethodHandler {
-        val methodHandler = authenticationMethodHandlers.find { it.isSupportedForPayload(payload) } ?: throw error("Not suitable method found")
+    private fun getMethodHandler(payload: MethodRequestPayload): AuthenticationMethodHandler {
+        val methodHandler = authenticationMethodHandlers.values.find { it.isSupportedForPayload(payload) } ?: throw error("Not suitable method found")
+
+        if(!methodHandler.isSupportedForType(payload.type)) {
+            error("Method [ ${methodHandler.method} ] is not supported")
+        }
+
+        return methodHandler
+    }
+
+    private fun getMethodHandlerByType(method: AuthenticationMethod, type: String): AuthenticationMethodHandler {
+        val methodHandler = authenticationMethodHandlers[method] ?: throw error("Not suitable method found")
 
         if(!methodHandler.isSupportedForType(type)) {
             error("Method [ ${methodHandler.method} ] is not supported")
@@ -153,4 +199,20 @@ class AuthenticationServiceImpl(
         private val ENTITY_NOT_FOUND = "Entity not found"
         private val UNHANDLED_EXCEPTION = "Unhandled exception"
     }
+}
+
+fun bla(value: String, setup: () -> Unit = {}): Unit {
+    setup()
+}
+
+fun bla2(value: String = "") {
+
+}
+
+fun main() {
+    bla("bla") {
+
+    }
+    bla("bla")
+    bla2()
 }
