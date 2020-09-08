@@ -32,11 +32,14 @@ class AuthFrameworkConfig(
     @Autowired(required = false)
     private var registrationListeners: List<RegistrationListener> = listOf()
 
+    @Autowired
+    private lateinit var authenticationMethodHandlers: List<AuthenticationMethodHandler>
+
     @Bean
     fun securitySettingsHandler(): SecuritySettingsHandler = SecuritySettingsHandlerImpl(crudHandler)
 
     @Bean
-    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier(), crudHandler, securitySettingsHandler())
+    fun authenticationService(): AuthenticationService = AuthenticationServiceImpl(tokenHandler(), authenticationNotifier(), crudHandler, securitySettingsHandler(), authenticationMethodHandlers)
 
     @Autowired
     fun nexmoClientProvider() = NexmoClientProvider(securitySettingsHandler())

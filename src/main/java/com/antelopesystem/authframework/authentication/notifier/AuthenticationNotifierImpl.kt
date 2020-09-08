@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication.notifier
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
+import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import org.springframework.beans.factory.annotation.Autowired
 
 
@@ -13,25 +13,25 @@ class AuthenticationNotifierImpl(
         @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf()
 ) : AuthenticationNotifier {
 
-    override fun onLoginSuccess(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
         getLoginListenersForEntity(entity.type).forEach {
             it.onLoginSuccess(payload, entity)
         }
     }
 
-    override fun onLoginFailure(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity, error: String) {
+    override fun onLoginFailure(payload: MethodRequestPayload, entity: AuthenticatedEntity, error: String) {
         getLoginListenersForEntity(entity.type).forEach {
             it.onLoginFailure(payload, entity, error)
         }
     }
 
-    override fun onRegistrationSuccess(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
         getRegistrationListenersForEntity(entity.type).forEach {
             it.onRegistrationSuccess(payload, entity)
         }
     }
 
-    override fun onRegistrationFailure(payload: AuthenticationRequestPayload, error: String) {
+    override fun onRegistrationFailure(payload: MethodRequestPayload, error: String) {
         getRegistrationListenersForEntity(payload.type).forEach {
             it.onRegistrationFailure(payload, error)
         }

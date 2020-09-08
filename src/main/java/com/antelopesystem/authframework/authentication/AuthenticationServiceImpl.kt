@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
+import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
@@ -17,33 +17,32 @@ class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
         private val authenticationNotifier: AuthenticationNotifier,
         private val crudHandler: CrudHandler,
-        private val securitySettingsHandler: SecuritySettingsHandler
+        private val securitySettingsHandler: SecuritySettingsHandler,
+        private val authenticationMethodHandlers: List<AuthenticationMethodHandler>
 ) : AuthenticationService {
-    @ComponentMap(key = AuthenticationMethod::class, value = AuthenticationMethodHandler::class)
-    private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
-    override fun initializeLogin(payload: AuthenticationRequestPayload) {
-        validateTokenType(payload)
+    override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType) {
+        validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
+        val methodHandler = getMethodHandler(payload, payload.type)
         val entity = methodHandler.getEntityMethod(payload)
         if(entity == null) {
             if(settings.allowRegistrationOnLogin) {
-                return initializeRegistration(payload)
+                return initializeRegistration(payload, tokenType)
             }
             error(ENTITY_NOT_FOUND)
         }
         methodHandler.initializeLogin(payload, entity)
     }
 
-    override fun doLogin(payload: AuthenticationRequestPayload): TokenResponse {
-        validateTokenType(payload)
+    override fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
+        validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
+        val methodHandler = getMethodHandler(payload, payload.type)
         val method = methodHandler.getEntityMethod(payload)
         if(method == null) {
             if(settings.allowRegistrationOnLogin) {
-                return doRegister(payload)
+                return doRegister(payload, tokenType)
             }
             error(ENTITY_NOT_FOUND)
         }
@@ -51,7 +50,7 @@ class AuthenticationServiceImpl(
         try {
             methodHandler.doLogin(payload, method)
             authenticationNotifier.onLoginSuccess(payload, method.entity)
-            val request = buildTokenRequest(payload.tokenType, method.entity, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, method.entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
@@ -62,27 +61,27 @@ class AuthenticationServiceImpl(
         }
     }
 
-    override fun initializeRegistration(payload: AuthenticationRequestPayload) {
-        validateTokenType(payload)
+    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType) {
+        validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
+        val methodHandler = getMethodHandler(payload, payload.type)
         methodHandler.getEntityMethod(payload)?.let {
             if(settings.allowLoginOnRegistration) {
-                return initializeLogin(payload)
+                return initializeLogin(payload, tokenType)
             }
             throw RegistrationFailedException("Entity already exists")
         }
         methodHandler.initializeRegistration(payload)
     }
 
-    override fun doRegister(payload: AuthenticationRequestPayload): TokenResponse {
-        validateTokenType(payload)
+    override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
+        validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload.authenticationMethod, payload.type)
+        val methodHandler = getMethodHandler(payload, payload.type)
         try {
             methodHandler.getEntityMethod(payload)?.let {
                 if(settings.allowLoginOnRegistration) {
-                    return doRegister(payload)
+                    return doRegister(payload, tokenType)
                 }
                 throw RegistrationFailedException("Entity already exists")
             }
@@ -93,7 +92,7 @@ class AuthenticationServiceImpl(
             entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
 
-            val request = buildTokenRequest(payload.tokenType, entity, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, entity, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
@@ -104,18 +103,18 @@ class AuthenticationServiceImpl(
         }
     }
 
-    private fun validateTokenType(payload: AuthenticationRequestPayload) {
+    private fun validateTokenType(payload: MethodRequestPayload, tokenType: TokenType) {
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        if(!settings.getAllowedTokenTypeEnums().contains(payload.tokenType)) {
+        if(!settings.getAllowedTokenTypeEnums().contains(tokenType)) {
             error("Unsupported token type")
         }
     }
 
-    private fun getMethodHandler(method: AuthenticationMethod, type: String): AuthenticationMethodHandler {
-        val methodHandler = authenticationMethodHandlers[method] ?: error("Handler for method [ $method ] not found")
+    private fun getMethodHandler(payload: MethodRequestPayload, type: String): AuthenticationMethodHandler {
+        val methodHandler = authenticationMethodHandlers.find { it.isSupportedForPayload(payload) } ?: throw error("Not suitable method found")
 
         if(!methodHandler.isSupportedForType(type)) {
-            error("Method [ $method ] is not supported")
+            error("Method [ ${methodHandler.method} ] is not supported")
         }
 
         return methodHandler

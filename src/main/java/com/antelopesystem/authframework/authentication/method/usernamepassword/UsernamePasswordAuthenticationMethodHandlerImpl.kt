@@ -7,7 +7,7 @@ import com.antelopesystem.authframework.authentication.method.base.Authenticatio
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntityAuthenticationMethod
-import com.antelopesystem.authframework.authentication.model.AuthenticationRequestPayload
+import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -21,7 +21,13 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     override fun isPasswordBased(): Boolean = true
 
-    override fun getEntityMethod(payload: AuthenticationRequestPayload): AuthenticatedEntityAuthenticationMethod? {
+    override fun isSupportedForPayload(payload: MethodRequestPayload): Boolean = try {
+        payload.username()
+        payload.password()
+        true
+    } catch(e: Exception) { false}
+
+    override fun getEntityMethod(payload: MethodRequestPayload): AuthenticatedEntityAuthenticationMethod? {
         try {
             return crudHandler.showBy(where {
                 "param1" Equal payload.username()
@@ -35,7 +41,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     }
 
-    override fun doLogin(payload: AuthenticationRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
+    override fun doLogin(payload: MethodRequestPayload, method: AuthenticatedEntityAuthenticationMethod) {
         try {
             val usernameMatches = payload.username() == method.username()
             if (!usernameMatches) {
@@ -50,7 +56,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun doRegister(payload: AuthenticationRequestPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): AuthenticatedEntityAuthenticationMethod {
         try {
             val method = AuthenticatedEntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
             method.username(payload.username())
@@ -73,9 +79,9 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     private fun AuthenticatedEntityAuthenticationMethod.password() = this.param2
 
-    private fun AuthenticationRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
+    private fun MethodRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
 
-    private fun AuthenticationRequestPayload.password() = (this.bodyMap["password"] ?: throw error("Password not specified")).toString()
+    private fun MethodRequestPayload.password() = (this.bodyMap["password"] ?: throw error("Password not specified")).toString()
 
     companion object {
         private val passwordEncoder = BCryptPasswordEncoder()
