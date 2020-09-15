@@ -22,10 +22,10 @@ class AuthenticationServiceImpl(
         private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationService {
 
-    @ComponentMap(key = AuthenticationMethod::class, value=AuthenticationMethodHandler::class)
+    @ComponentMap
     private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
-    override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType) {
+    override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): Any? {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
@@ -36,7 +36,7 @@ class AuthenticationServiceImpl(
             }
             error(ENTITY_NOT_FOUND)
         }
-        methodHandler.initializeLogin(payload, entity)
+        return methodHandler.initializeLogin(payload, entity)
     }
 
     override fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
@@ -97,7 +97,17 @@ class AuthenticationServiceImpl(
         authenticationNotifier.onForgotPasswordSuccess(method.entity)
     }
 
-    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType) {
+    override fun changePassword(payload: MethodRequestPayload, newPassword: String, objectType: String) {
+        val methodHandler = getMethodHandler(payload)
+        val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
+        if(!methodHandler.checkPassword(payload, method)) {
+            error("Old password does not match")
+        }
+
+        methodHandler.changePassword(newPassword, method)
+    }
+
+    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): Any? {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
@@ -107,7 +117,7 @@ class AuthenticationServiceImpl(
             }
             throw RegistrationFailedException("Entity already exists")
         }
-        methodHandler.initializeRegistration(payload)
+        return methodHandler.initializeRegistration(payload)
     }
 
     override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
@@ -117,7 +127,7 @@ class AuthenticationServiceImpl(
         try {
             methodHandler.getEntityMethod(payload)?.let {
                 if(settings.allowLoginOnRegistration) {
-                    return doRegister(payload, tokenType)
+                    return doLogin(payload, tokenType)
                 }
                 throw RegistrationFailedException("Entity already exists")
             }
@@ -199,20 +209,4 @@ class AuthenticationServiceImpl(
         private val ENTITY_NOT_FOUND = "Entity not found"
         private val UNHANDLED_EXCEPTION = "Unhandled exception"
     }
-}
-
-fun bla(value: String, setup: () -> Unit = {}): Unit {
-    setup()
-}
-
-fun bla2(value: String = "") {
-
-}
-
-fun main() {
-    bla("bla") {
-
-    }
-    bla("bla")
-    bla2()
 }

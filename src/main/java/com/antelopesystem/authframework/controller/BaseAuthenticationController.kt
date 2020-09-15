@@ -59,5 +59,12 @@ abstract class BaseAuthenticationController(
             authenticationService.redeemForgotPasswordToken(token, newPassword, objectType)
         }
     }
+
+    @PostMapping("/change-password")
+    fun changePassword(@RequestBody(required = false) body: String, @RequestParam newPassword: String): ResultRO<*> {
+        return wrapResult {
+            return@wrapResult authenticationService.changePassword(MethodRequestPayload(objectType, mapOf(), body), newPassword, objectType)
+        }
+    }
 }
 

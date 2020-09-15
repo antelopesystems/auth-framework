@@ -45,7 +45,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
             if (!usernameMatches) {
                 throw LoginFailedException("Username is invalid")
             }
-            val passwordMatches = passwordEncoder.matches(payload.password(), method.password())
+            val passwordMatches = checkPassword(payload, method)
             if (!passwordMatches) {
                 throw LoginFailedException("Password is invalid")
             }
@@ -67,6 +67,10 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
 
     override fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
         method.password(passwordEncoder.encode(newPassword))
+    }
+
+    override fun checkPassword(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Boolean {
+        return passwordEncoder.matches(payload.password(), method.password())
     }
 
     private fun EntityAuthenticationMethod.username(username: String) {

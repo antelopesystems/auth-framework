@@ -46,7 +46,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
+    override fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Any? {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             client.requestVerification(method.telephonePrefix() + method.telephone())
@@ -56,6 +56,7 @@ class NexmoAuthenticationMethodHandlerImpl(
             throw LoginFailedException(e)
         }
 
+        return null
     }
 
     override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
@@ -72,7 +73,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeRegistration(payload: MethodRequestPayload) {
+    override fun initializeRegistration(payload: MethodRequestPayload): Any? {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             client.requestVerification(payload.telephonePrefix() + payload.telephone())
@@ -82,6 +83,7 @@ class NexmoAuthenticationMethodHandlerImpl(
             throw RegistrationFailedException(e)
         }
 
+        return null
     }
 
     override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
@@ -108,14 +110,14 @@ class NexmoAuthenticationMethodHandlerImpl(
 
     private fun MethodRequestPayload.telephone() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
 
-    private fun MethodRequestPayload.code() = (this.bodyMap["code"] ?: throw error("Codex not specified")).toString()
+    private fun MethodRequestPayload.code() = (this.bodyMap["code"] ?: throw error("Code not specified")).toString()
 
     private fun EntityAuthenticationMethod.telephonePrefix(): String {
-        return this.param2
+        return this.param1
     }
 
     private fun EntityAuthenticationMethod.telephone(): String {
-        return this.param1
+        return this.param2
     }
 
     private fun EntityAuthenticationMethod.telephonePrefix(telephonePrefix: String) {

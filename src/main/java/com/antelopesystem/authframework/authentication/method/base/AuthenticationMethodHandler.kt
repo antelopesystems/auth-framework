@@ -1,5 +1,6 @@
 package com.antelopesystem.authframework.authentication.method.base
 
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
@@ -7,7 +8,7 @@ import com.antelopesystem.crudframework.utils.component.componentmap.annotation.
 
 interface AuthenticationMethodHandler  {
     @get:ComponentMapKey
-    val method: com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
+    val method: AuthenticationMethod
 
     fun isSupportedForType(type: String): Boolean = true
 
@@ -15,13 +16,13 @@ interface AuthenticationMethodHandler  {
 
     fun isPasswordBased(): Boolean
 
-    fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
+    fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Any? {
         throw UnsupportedOperationException("initializeLogin is not supported for [ ${this.method} ]")
     }
 
     fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod)
 
-    fun initializeRegistration(payload: MethodRequestPayload) {
+    fun initializeRegistration(payload: MethodRequestPayload): Any? {
         throw UnsupportedOperationException("initializeRegistration is not supported for [ $method ]")
     }
 
@@ -31,5 +32,9 @@ interface AuthenticationMethodHandler  {
 
     fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
         throw UnsupportedOperationException("changePassword is not supported for [ ${this.method} ]")
+    }
+
+    fun checkPassword(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Boolean {
+        throw UnsupportedOperationException("checkPassword is not supported for [ ${this.method} ]")
     }
 }

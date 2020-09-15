@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest
 
 class TokenHandlerImpl : TokenHandler {
 
-    @ComponentMap(key = TokenType::class, value = TokenTypeHandler::class)
+    @ComponentMap
     private lateinit var authenticationTypeHandlers: Map<TokenType, TokenTypeHandler>
 
     @Autowired

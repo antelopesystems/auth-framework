@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.config
 
 import com.antelopesystem.authframework.authentication.*
+import com.antelopesystem.authframework.authentication.method.authenticator.AuthenticatorMethodHandlerImpl
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
@@ -50,6 +51,9 @@ class AuthFrameworkConfig(
 
     @Bean
     fun usernamePasswordAuthenticationTypeHandler(): AuthenticationMethodHandler = UsernamePasswordAuthenticationMethodHandlerImpl(crudHandler)
+
+    @Bean
+    fun authenticatorMethodHandler()  = AuthenticatorMethodHandlerImpl(crudHandler)
 
     @Bean
     fun authenticationNotifier(): AuthenticationNotifier = AuthenticationNotifierImpl(loginListeners, registrationListeners, forgotPasswordListeners)
