@@ -5,11 +5,13 @@ import com.google.gson.reflect.TypeToken
 
 class MethodRequestPayload(
         val type: String,
-        val queryParameters: Map<String, Any>,
+        val queryParameters: Map<String, Array<String>>,
         val body: String
 ) {
-    val bodyMap: Map<String, Any> = try {
-        Gson().fromJson(body, object : TypeToken<Map<String, Any>>() {}.type)
+    val parameters: Map<String, Any> = try {
+        val map: MutableMap<String, Any> = Gson().fromJson(body, object : TypeToken<MutableMap<String, Any>>() {}.type)
+        map.putAll(queryParameters.map { it.key to it.value.first() })
+        map
     } catch(e: Exception) {
         emptyMap()
     }

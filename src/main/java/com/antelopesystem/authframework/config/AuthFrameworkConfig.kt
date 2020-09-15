@@ -17,6 +17,7 @@ import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.TokenHandlerImpl
 import com.antelopesystem.authframework.token.type.FingerprintedTimestampAuthenticationHandlerImpl
 import com.antelopesystem.authframework.token.type.LegacyAuthenticationHandlerImpl
+import com.antelopesystem.authframework.token.type.PFTAuthenticationHandlerImpl
 import com.antelopesystem.authframework.token.type.TimestampAuthenticationHandlerImpl
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -69,4 +70,7 @@ class AuthFrameworkConfig(
 
     @Bean
     fun timestampAuthenticationHandler() = TimestampAuthenticationHandlerImpl()
+
+    @Bean
+    fun pftAuthenticationandler() = PFTAuthenticationHandlerImpl()
 }

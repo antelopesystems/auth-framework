@@ -10,6 +10,10 @@ import com.antelopesystem.authframework.authentication.notifier.AuthenticationNo
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.*
+import com.antelopesystem.authframework.token.model.request.FingerprintedTimestampTokenRequest
+import com.antelopesystem.authframework.token.model.request.LegacyTokenRequest
+import com.antelopesystem.authframework.token.model.request.PFTTokenRequest
+import com.antelopesystem.authframework.token.model.request.TimestampTokenRequest
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
@@ -55,7 +59,7 @@ class AuthenticationServiceImpl(
         try {
             methodHandler.doLogin(payload, method)
             authenticationNotifier.onLoginSuccess(payload, method.entity)
-            val request = buildTokenRequest(tokenType, method, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, method, payload.parameters)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
@@ -144,7 +148,7 @@ class AuthenticationServiceImpl(
             entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
 
-            val request = buildTokenRequest(tokenType, method, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, method, payload.parameters)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
@@ -207,6 +211,15 @@ class AuthenticationServiceImpl(
                     false
             )
             TokenType.FingerprintedTimestamp -> FingerprintedTimestampTokenRequest(
+                    entity.id,
+                    entity.type,
+                    "ip",
+                    parameters["publicKey"].toString(),
+                    parameters["fingerprint"].toString(),
+                    passwordChangeRequired,
+                    false
+            )
+            TokenType.PFT -> PFTTokenRequest(
                     entity.id,
                     entity.type,
                     "ip",

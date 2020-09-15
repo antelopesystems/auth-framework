@@ -1,5 +1,5 @@
 package com.antelopesystem.authframework.token.type.enums
 
 enum class TokenType {
-    Legacy, Timestamp, FingerprintedTimestamp
+    Legacy, Timestamp, FingerprintedTimestamp, PFT
 }

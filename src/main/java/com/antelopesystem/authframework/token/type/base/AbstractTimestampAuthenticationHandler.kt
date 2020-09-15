@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.token.type.base
 
 import com.antelopesystem.authframework.token.model.ObjectToken
-import com.antelopesystem.authframework.token.model.TimestampTokenRequest
+import com.antelopesystem.authframework.token.model.request.TimestampTokenRequest
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.apache.commons.codec.digest.DigestUtils
@@ -20,7 +20,7 @@ abstract class AbstractTimestampAuthenticationHandler: TokenTypeHandler {
     @Autowired
     lateinit var crudHandler: CrudHandler
 
-    abstract fun getStringToHash(token: ObjectToken, timestamp: String): String
+    abstract fun getStringToHash(token: ObjectToken, timestamp: String, request: HttpServletRequest): String
 
     final override fun getTokenFromRequest(request: HttpServletRequest): ObjectToken? {
         val hashedAuthToken = request.getHeader(AUTH_TOKEN_NAME)
@@ -33,7 +33,7 @@ abstract class AbstractTimestampAuthenticationHandler: TokenTypeHandler {
                 .fromCache()
                 .execute()
 
-        if(token == null || hashedAuthToken != DigestUtils.sha256Hex(getStringToHash(token, timestamp))) {
+        if(token == null || hashedAuthToken != DigestUtils.sha256Hex(getStringToHash(token, timestamp, request))) {
             return null
         }
 

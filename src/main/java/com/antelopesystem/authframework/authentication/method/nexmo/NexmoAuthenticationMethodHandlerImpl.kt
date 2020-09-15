@@ -106,11 +106,11 @@ class NexmoAuthenticationMethodHandlerImpl(
         return method
     }
 
-    private fun MethodRequestPayload.telephonePrefix() = (this.bodyMap["telephonePrefix"] ?: throw error("Telephone prefix not specified")).toString()
+    private fun MethodRequestPayload.telephonePrefix() = (this.parameters["telephonePrefix"] ?: throw error("Telephone prefix not specified")).toString()
 
-    private fun MethodRequestPayload.telephone() = (this.bodyMap["telephone"] ?: throw error("Telephone not specified")).toString()
+    private fun MethodRequestPayload.telephone() = (this.parameters["telephone"] ?: throw error("Telephone not specified")).toString()
 
-    private fun MethodRequestPayload.code() = (this.bodyMap["code"] ?: throw error("Code not specified")).toString()
+    private fun MethodRequestPayload.code() = (this.parameters["code"] ?: throw error("Code not specified")).toString()
 
     private fun EntityAuthenticationMethod.telephonePrefix(): String {
         return this.param1

@@ -17,14 +17,18 @@ abstract class AbstractAuthenticatedFilter(protected val objectType: String, pri
     private lateinit var mappings: RequestMappingHandlerMapping
 
     public override fun doFilterInner(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
-        if (tokenHandler.isTokenPresent(request)) {
-            val token = tokenHandler.getTokenFromRequest(request)
+        var requestWrapper = request
+        if(request !is RequestWrapper) {
+            requestWrapper = RequestWrapper(request)
+        }
+        if (tokenHandler.isTokenPresent(requestWrapper)) {
+            val token = tokenHandler.getTokenFromRequest(requestWrapper)
             if (token.objectType != objectType) {
                 throw InvalidTokenException()
             }
-            processFilter(token, request, response)
+            processFilter(token, requestWrapper, response)
         }
-        chain.doFilter(request, response)
+        chain.doFilter(requestWrapper, response)
     }
 
     override fun getAlreadyFilteredAttributeName(): String = this.javaClass.simpleName

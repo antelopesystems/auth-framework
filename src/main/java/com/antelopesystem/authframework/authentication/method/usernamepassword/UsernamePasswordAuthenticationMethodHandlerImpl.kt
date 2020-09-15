@@ -100,9 +100,9 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     private fun EntityAuthenticationMethod.passwordExpiryTime(time: Date) = time.time.toString()
 
 
-    private fun MethodRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
+    private fun MethodRequestPayload.username() = (this.parameters["username"] ?: throw error("Username not specified")).toString()
 
-    private fun MethodRequestPayload.password() = (this.bodyMap["password"] ?: throw error("Password not specified")).toString()
+    private fun MethodRequestPayload.password() = (this.parameters["password"] ?: throw error("Password not specified")).toString()
 
     companion object {
         private val passwordEncoder = BCryptPasswordEncoder()

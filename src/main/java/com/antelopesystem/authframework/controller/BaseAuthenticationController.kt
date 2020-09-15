@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
+import javax.servlet.http.HttpServletRequest
 
 abstract class BaseAuthenticationController(
         private val objectType: String
@@ -20,37 +21,37 @@ abstract class BaseAuthenticationController(
     private lateinit var authenticationService: AuthenticationService
 
     @PostMapping("/login/initialize")
-    fun initializeLogin(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    fun initializeLogin(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.initializeLogin(MethodRequestPayload(objectType, mapOf(), body), tokenType)
+            return@wrapResult authenticationService.initializeLogin(MethodRequestPayload(objectType, request.parameterMap, body), tokenType)
         }
     }
 
     @PostMapping("/login")
-    fun doLogin(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    fun doLogin(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.doLogin(MethodRequestPayload(objectType, mapOf(), body), tokenType)
+            return@wrapResult authenticationService.doLogin(MethodRequestPayload(objectType, request.parameterMap, body), tokenType)
         }
     }
 
     @PostMapping("/register/initialize")
-    fun initializeRegistration(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    fun initializeRegistration(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.initializeRegistration(MethodRequestPayload(objectType, mapOf(), body), tokenType)
+            return@wrapResult authenticationService.initializeRegistration(MethodRequestPayload(objectType, request.parameterMap, body), tokenType)
         }
     }
 
     @PostMapping("/register")
-    fun doRegister(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType): ResultRO<*> {
+    fun doRegister(@RequestBody(required = false) body: String, @RequestParam tokenType: TokenType, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.doRegister(MethodRequestPayload(objectType, mapOf(), body), tokenType)
+            return@wrapResult authenticationService.doRegister(MethodRequestPayload(objectType, request.parameterMap, body), tokenType)
         }
     }
 
     @PostMapping("/forgot-password")
-    fun initializeForgotPassword(@RequestBody(required = false) body: String): ResultRO<*> {
+    fun initializeForgotPassword(@RequestBody(required = false) body: String, request: HttpServletRequest): ResultRO<*> {
         return wrapVoidResult {
-            authenticationService.initializeForgotPassword(MethodRequestPayload(objectType, mapOf(), body))
+            authenticationService.initializeForgotPassword(MethodRequestPayload(objectType, request.parameterMap, body))
         }
     }
 
@@ -63,9 +64,9 @@ abstract class BaseAuthenticationController(
 
     @PostMapping("/change-password")
     @BypassPasswordExpiredCheck
-    fun changePassword(@RequestBody(required = false) body: String, @RequestParam newPassword: String): ResultRO<*> {
+    fun changePassword(@RequestBody(required = false) body: String, @RequestParam newPassword: String, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
-            return@wrapResult authenticationService.changePassword(MethodRequestPayload(objectType, mapOf(), body), newPassword, objectType)
+            return@wrapResult authenticationService.changePassword(MethodRequestPayload(objectType, request.parameterMap, body), newPassword, objectType)
         }
     }
 }

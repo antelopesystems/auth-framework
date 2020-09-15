@@ -67,9 +67,9 @@ class AuthenticatorMethodHandlerImpl(
         }
     }
 
-    private fun MethodRequestPayload.authenticatorUsername() = (this.bodyMap["authenticatorUsername"] ?: throw error("Authenticator Username not specified")).toString()
+    private fun MethodRequestPayload.authenticatorUsername() = (this.parameters["authenticatorUsername"] ?: throw error("Authenticator Username not specified")).toString()
 
-    private fun MethodRequestPayload.code() = (this.bodyMap["code"] ?: throw error("Code not specified")).toString().toInt()
+    private fun MethodRequestPayload.code() = (this.parameters["code"] ?: throw error("Code not specified")).toString().toInt()
 
     private fun EntityAuthenticationMethod.authenticatorUsername() = this.param1
 
