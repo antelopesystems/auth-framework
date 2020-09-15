@@ -37,4 +37,8 @@ interface AuthenticationMethodHandler  {
     fun checkPassword(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Boolean {
         throw UnsupportedOperationException("checkPassword is not supported for [ ${this.method} ]")
     }
+
+    fun isPasswordExpired(method: EntityAuthenticationMethod): Boolean {
+        throw UnsupportedOperationException("isPasswordExpired is not supported for [ ${this.method} ]")
+    }
 }

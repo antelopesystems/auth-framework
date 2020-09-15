@@ -3,6 +3,7 @@ package com.antelopesystem.authframework.authentication
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.ForgotPasswordToken
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
@@ -54,7 +55,7 @@ class AuthenticationServiceImpl(
         try {
             methodHandler.doLogin(payload, method)
             authenticationNotifier.onLoginSuccess(payload, method.entity)
-            val request = buildTokenRequest(tokenType, method.entity, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, method, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
@@ -105,6 +106,11 @@ class AuthenticationServiceImpl(
         }
 
         methodHandler.changePassword(newPassword, method)
+        if(tokenHandler.isCurrentTokenPresent()) {
+            val token = tokenHandler.getCurrentToken()
+            token.passwordChangeRequired = false
+            crudHandler.update(token).execute()
+        }
     }
 
     override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): Any? {
@@ -138,7 +144,7 @@ class AuthenticationServiceImpl(
             entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
 
-            val request = buildTokenRequest(tokenType, entity, payload.bodyMap)
+            val request = buildTokenRequest(tokenType, method, payload.bodyMap)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
             authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
@@ -176,13 +182,20 @@ class AuthenticationServiceImpl(
         return methodHandler
     }
 
-    private fun buildTokenRequest(type: TokenType, entity: AuthenticatedEntity, parameters: Map<String, Any>): TokenRequest {
+    private fun buildTokenRequest(type: TokenType, method: EntityAuthenticationMethod, parameters: Map<String, Any>): TokenRequest {
+        val entity = method.entity
+        val methodHandler = getMethodHandlerByType(method.method, entity.type)
+        var passwordChangeRequired = false
+        if(methodHandler.isPasswordBased()) {
+            passwordChangeRequired = methodHandler.isPasswordExpired(method)
+        }
+
         return when(type) {
             TokenType.Legacy -> LegacyTokenRequest(
                     entity.id,
                     entity.type,
                     "ip", //todo
-                    false,
+                    passwordChangeRequired,
                     false
             )
             TokenType.Timestamp -> TimestampTokenRequest(
@@ -190,7 +203,7 @@ class AuthenticationServiceImpl(
                     entity.type,
                     "ip",
                     parameters["publicKey"].toString(),
-                    false,
+                    passwordChangeRequired,
                     false
             )
             TokenType.FingerprintedTimestamp -> FingerprintedTimestampTokenRequest(
@@ -199,7 +212,7 @@ class AuthenticationServiceImpl(
                     "ip",
                     parameters["publicKey"].toString(),
                     parameters["fingerprint"].toString(),
-                    false,
+                    passwordChangeRequired,
                     false
             )
         }

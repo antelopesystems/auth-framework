@@ -4,6 +4,7 @@ import com.antelopesystem.authframework.authentication.CustomAuthenticationEntry
 import com.antelopesystem.authframework.authentication.constraint.ActiveConstraintValidator
 import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.filter.AuthenticationTokenProcessingFilter
+import com.antelopesystem.authframework.authentication.filter.PasswordExpiryFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
@@ -18,6 +19,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.web.filter.CompositeFilter
 
 @Configuration
 class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
@@ -36,7 +38,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(CustomAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(authenticationTokenProcessingFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                .addFilterBefore(compositeSecurityFilter(), UsernamePasswordAuthenticationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .cors()
@@ -58,7 +60,27 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         return super.authenticationManagerBean()
     }
 
-    /* Validates the operator is not blocked */
+    /* Composite security filter */
+    @Bean
+    fun compositeSecurityFilter(): CompositeFilter {
+        val compositeSecurityFilter = CompositeFilter()
+        compositeSecurityFilter.setFilters(mutableListOf(
+                authenticationTokenProcessingFilter(),
+                passwordExpiryFilter()
+        ))
+        return compositeSecurityFilter
+    }
+
+    @Bean
+    fun compositeSecurityFilterRegistration(): FilterRegistrationBean<CompositeFilter> {
+        val registration = FilterRegistrationBean<CompositeFilter>()
+        registration.filter = compositeSecurityFilter()
+        registration.isEnabled = false
+        return registration
+    }
+
+
+    /* Validates token */
     @Bean
     fun authenticationTokenProcessingFilter() = AuthenticationTokenProcessingFilter("User", tokenHandler, authenticationManagerBean())
 
@@ -66,6 +88,18 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
     fun authenticationTokenProcessingFilterRegistration(): FilterRegistrationBean<AuthenticationTokenProcessingFilter> {
         val registration = FilterRegistrationBean<AuthenticationTokenProcessingFilter>()
         registration.filter = authenticationTokenProcessingFilter()
+        registration.isEnabled = false
+        return registration
+    }
+
+    /* Validates the operator is not blocked */
+    @Bean
+    fun passwordExpiryFilter() = PasswordExpiryFilter("User", tokenHandler)
+
+    @Bean
+    fun passwordExpiryFilterRegistration(): FilterRegistrationBean<PasswordExpiryFilter> {
+        val registration = FilterRegistrationBean<PasswordExpiryFilter>()
+        registration.filter = passwordExpiryFilter()
         registration.isEnabled = false
         return registration
     }

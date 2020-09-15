@@ -8,13 +8,16 @@ import com.antelopesystem.authframework.authentication.method.enums.Authenticati
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.util.*
 import kotlin.IllegalStateException
 
 class UsernamePasswordAuthenticationMethodHandlerImpl(
-        private val crudHandler: CrudHandler
+        private val crudHandler: CrudHandler,
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationMethodHandler {
     override val method: AuthenticationMethod
         get() = AuthenticationMethod.UsernamePassword
@@ -58,7 +61,7 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         try {
             val method = EntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
             method.username(payload.username())
-            method.password(passwordEncoder.encode(payload.password()))
+            changePassword(payload.password(), method)
             return method
         } catch (e: IllegalStateException) {
             throw RegistrationFailedException(e)
@@ -66,11 +69,18 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     }
 
     override fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
+        val securitySettings = securitySettingsHandler.getSecuritySettings(method.entity.type)
         method.password(passwordEncoder.encode(newPassword))
+        method.passwordExpiryTime(Date(System.currentTimeMillis() + securitySettings.passwordExpiryDays * 24L * 60L * 60L * 1000L))
     }
 
     override fun checkPassword(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Boolean {
         return passwordEncoder.matches(payload.password(), method.password())
+    }
+
+    override fun isPasswordExpired(method: EntityAuthenticationMethod): Boolean {
+        if(method.param3.isBlank()) return false
+        return method.passwordExpiryTime().before(Date())
     }
 
     private fun EntityAuthenticationMethod.username(username: String) {
@@ -84,6 +94,11 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     private fun EntityAuthenticationMethod.username() = this.param1
 
     private fun EntityAuthenticationMethod.password() = this.param2
+
+    private fun EntityAuthenticationMethod.passwordExpiryTime() = Date(this.param3.toLong())
+
+    private fun EntityAuthenticationMethod.passwordExpiryTime(time: Date) = time.time.toString()
+
 
     private fun MethodRequestPayload.username() = (this.bodyMap["username"] ?: throw error("Username not specified")).toString()
 

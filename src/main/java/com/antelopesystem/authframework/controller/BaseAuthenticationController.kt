@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.controller
 
 import com.antelopesystem.authframework.authentication.AuthenticationService
+import com.antelopesystem.authframework.authentication.annotations.BypassPasswordExpiredCheck
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.web.controller.BaseController
@@ -61,6 +62,7 @@ abstract class BaseAuthenticationController(
     }
 
     @PostMapping("/change-password")
+    @BypassPasswordExpiredCheck
     fun changePassword(@RequestBody(required = false) body: String, @RequestParam newPassword: String): ResultRO<*> {
         return wrapResult {
             return@wrapResult authenticationService.changePassword(MethodRequestPayload(objectType, mapOf(), body), newPassword, objectType)

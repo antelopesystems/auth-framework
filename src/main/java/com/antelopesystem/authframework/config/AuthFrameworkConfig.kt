@@ -50,7 +50,7 @@ class AuthFrameworkConfig(
     fun nexmoAuthenticationTypeHandler(): AuthenticationMethodHandler = NexmoAuthenticationMethodHandlerImpl(crudHandler, nexmoClientProvider(), securitySettingsHandler())
 
     @Bean
-    fun usernamePasswordAuthenticationTypeHandler(): AuthenticationMethodHandler = UsernamePasswordAuthenticationMethodHandlerImpl(crudHandler)
+    fun usernamePasswordAuthenticationTypeHandler(): AuthenticationMethodHandler = UsernamePasswordAuthenticationMethodHandlerImpl(crudHandler, securitySettingsHandler())
 
     @Bean
     fun authenticatorMethodHandler()  = AuthenticatorMethodHandlerImpl(crudHandler)

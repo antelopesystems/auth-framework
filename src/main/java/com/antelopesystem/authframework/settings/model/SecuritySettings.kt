@@ -51,6 +51,8 @@ class SecuritySettings(
         @get:Column
         var passwordRegex: String = ".*",
 
+        var passwordExpiryDays: Long = 0,
+
         @get:Column
         var allowRegistrationOnLogin: Boolean = false,
 
