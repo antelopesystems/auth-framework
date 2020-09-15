@@ -6,10 +6,7 @@ import com.antelopesystem.crudframework.crud.annotation.DeleteColumn
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
 import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Enumerated
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "object_token")
@@ -51,8 +48,7 @@ data class ObjectToken(
         @get:Column(name = "fingerprint")
         var fingerprint: String? = "",
 
-        @DeleteColumn
-        @get:Column(name = "is_expired", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-        var expired: Boolean = false
-
+        @get:Temporal(TemporalType.TIMESTAMP)
+        @get:Column(name = "expiry_time")
+        var expiryTime: Date? = null
 ): JpaBaseEntity()

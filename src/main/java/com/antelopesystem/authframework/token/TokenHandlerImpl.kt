@@ -1,5 +1,6 @@
 package com.antelopesystem.authframework.token
 
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.exception.InvalidTokenException
 import com.antelopesystem.authframework.token.model.ObjectToken
 import com.antelopesystem.authframework.token.model.TokenRequest
@@ -8,10 +9,13 @@ import com.antelopesystem.authframework.token.type.base.TokenTypeHandler
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
+import com.antelopesystem.crudframework.utils.cluster.leaderelection.LeaderElector
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 class TokenHandlerImpl : TokenHandler {
@@ -21,6 +25,9 @@ class TokenHandlerImpl : TokenHandler {
 
     @Autowired
     private lateinit var crudHandler: CrudHandler
+
+    @Autowired
+    private lateinit var securitySettingsHandler: SecuritySettingsHandler
 
     @Autowired
     private lateinit var request: HttpServletRequest
@@ -37,7 +44,12 @@ class TokenHandlerImpl : TokenHandler {
 
     override fun getTokenFromRequest(request: HttpServletRequest): ObjectToken {
         val typeHandler = getAuthenticationTypeHandler(request)
-        return typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
+        val token = typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
+        if(token.expiryTime!!.before(Date())) {
+            log.info("Attempted usage of expired token (ID: ${token.id})") // todo: add useragent, ip etc.
+            throw InvalidTokenException()
+        }
+        return token;
     }
 
 
@@ -59,6 +71,7 @@ class TokenHandlerImpl : TokenHandler {
 
     override fun <T : TokenRequest> generateToken(payload: T): TokenResponse {
         // todo. add settings such as supported token types for object etc.
+        val securitySettings = securitySettingsHandler.getSecuritySettings(payload.objectType)
         val typeHandler = authenticationTypeHandlers[payload.type]
 
         val objectToken = ObjectToken(
@@ -68,7 +81,8 @@ class TokenHandlerImpl : TokenHandler {
                 originalObjectId = payload.originalObjectId,
                 ip = payload.ip,
                 passwordChangeRequired = payload.passwordChangeRequired,
-                totpApproved = payload.totpApproved
+                totpApproved = payload.totpApproved,
+                expiryTime = Date(System.currentTimeMillis() + securitySettings.tokenLifetimeHours * 60L * 60L * 1000L)
         )
 
         val processedToken = typeHandler!!.generateToken(objectToken, payload)
@@ -117,5 +131,9 @@ class TokenHandlerImpl : TokenHandler {
         }
 
         return authenticationTypeHandlers.getValue(authType)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(TokenHandlerImpl::class.java)
     }
 }
