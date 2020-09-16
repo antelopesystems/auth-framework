@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken
 class MethodRequestPayload(
         val type: String,
         val queryParameters: Map<String, Array<String>>,
-        val body: String
+        val body: String?
 ) {
     val parameters: Map<String, Any> = try {
         val map: MutableMap<String, Any> = Gson().fromJson(body, object : TypeToken<MutableMap<String, Any>>() {}.type)

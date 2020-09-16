@@ -34,14 +34,14 @@ class AuthenticationServiceImpl(
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
-        val entity = methodHandler.getEntityMethod(payload)
-        if(entity == null) {
+        val method = methodHandler.getEntityMethod(payload)
+        if(method == null) {
             if(settings.allowRegistrationOnLogin) {
                 return initializeRegistration(payload, tokenType)
             }
             error(ENTITY_NOT_FOUND)
         }
-        return methodHandler.initializeLogin(payload, entity)
+        return methodHandler.initializeLogin(payload, method)
     }
 
     override fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
@@ -194,13 +194,15 @@ class AuthenticationServiceImpl(
             passwordChangeRequired = methodHandler.isPasswordExpired(method)
         }
 
+        val mfaRequired = entity.mfaMethods.isNotEmpty()
+
         return when(type) {
             TokenType.Legacy -> LegacyTokenRequest(
                     entity.id,
                     entity.type,
                     "ip", //todo
                     passwordChangeRequired,
-                    false
+                    mfaRequired
             )
             TokenType.Timestamp -> TimestampTokenRequest(
                     entity.id,
@@ -208,7 +210,7 @@ class AuthenticationServiceImpl(
                     "ip",
                     parameters["publicKey"].toString(),
                     passwordChangeRequired,
-                    false
+                    mfaRequired
             )
             TokenType.FingerprintedTimestamp -> FingerprintedTimestampTokenRequest(
                     entity.id,
@@ -217,7 +219,7 @@ class AuthenticationServiceImpl(
                     parameters["publicKey"].toString(),
                     parameters["fingerprint"].toString(),
                     passwordChangeRequired,
-                    false
+                    mfaRequired
             )
             TokenType.PFT -> PFTTokenRequest(
                     entity.id,
@@ -226,7 +228,7 @@ class AuthenticationServiceImpl(
                     parameters["publicKey"].toString(),
                     parameters["fingerprint"].toString(),
                     passwordChangeRequired,
-                    false
+                    mfaRequired
             )
         }
     }

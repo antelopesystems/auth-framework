@@ -8,9 +8,14 @@ import com.antelopesystem.authframework.authentication.method.base.Authenticatio
 import com.antelopesystem.authframework.authentication.method.nexmo.NexmoAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
+import com.antelopesystem.authframework.authentication.mfa.MfaService
+import com.antelopesystem.authframework.authentication.mfa.MfaServiceImpl
+import com.antelopesystem.authframework.authentication.mfa.method.NexmoMfaProvider
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
+import com.antelopesystem.authframework.entity.EntityHandler
+import com.antelopesystem.authframework.entity.EntityHandlerImpl
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 import com.antelopesystem.authframework.token.TokenHandler
@@ -72,5 +77,14 @@ class AuthFrameworkConfig(
     fun timestampAuthenticationHandler() = TimestampAuthenticationHandlerImpl()
 
     @Bean
+    fun entityHandler(): EntityHandler = EntityHandlerImpl(crudHandler)
+
+    @Bean
     fun pftAuthenticationandler() = PFTAuthenticationHandlerImpl()
+
+    @Bean
+    fun nexmoMfaProvider() = NexmoMfaProvider(nexmoClientProvider())
+
+    @Bean
+    fun mfaService() = MfaServiceImpl(crudHandler, securitySettingsHandler(), entityHandler(), tokenHandler())
 }

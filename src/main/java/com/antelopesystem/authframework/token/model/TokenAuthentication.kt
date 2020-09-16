@@ -4,7 +4,7 @@ import com.antelopesystem.authframework.authentication.model.UserInfo
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-class TokenAuthentication(private val userInfo: UserInfo) : Authentication {
+class TokenAuthentication(val userInfo: UserInfo) : Authentication {
 
     override fun getName(): String {
         return userInfo.entityId.toString()

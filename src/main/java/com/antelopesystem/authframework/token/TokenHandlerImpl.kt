@@ -9,11 +9,9 @@ import com.antelopesystem.authframework.token.type.base.TokenTypeHandler
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
-import com.antelopesystem.crudframework.utils.cluster.leaderelection.LeaderElector
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import java.util.*
 import javax.servlet.http.HttpServletRequest
@@ -80,7 +78,7 @@ class TokenHandlerImpl : TokenHandler {
                 objectType = payload.objectType,
                 ip = payload.ip,
                 passwordChangeRequired = payload.passwordChangeRequired,
-                totpApproved = payload.totpApproved,
+                mfaRequired = payload.mfaRequired,
                 expiryTime = Date(System.currentTimeMillis() + securitySettings.tokenLifetimeHours * 60L * 60L * 1000L)
         )
 

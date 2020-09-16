@@ -4,6 +4,7 @@ import com.antelopesystem.authframework.authentication.CustomAuthenticationEntry
 import com.antelopesystem.authframework.authentication.constraint.ActiveConstraintValidator
 import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.filter.AuthenticationTokenProcessingFilter
+import com.antelopesystem.authframework.authentication.filter.MfaFilter
 import com.antelopesystem.authframework.authentication.filter.PasswordExpiryFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler
@@ -66,6 +67,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         val compositeSecurityFilter = CompositeFilter()
         compositeSecurityFilter.setFilters(mutableListOf(
                 authenticationTokenProcessingFilter(),
+                mfaFilter(),
                 passwordExpiryFilter()
         ))
         return compositeSecurityFilter
@@ -100,6 +102,18 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
     fun passwordExpiryFilterRegistration(): FilterRegistrationBean<PasswordExpiryFilter> {
         val registration = FilterRegistrationBean<PasswordExpiryFilter>()
         registration.filter = passwordExpiryFilter()
+        registration.isEnabled = false
+        return registration
+    }
+
+    /* Validates the operator is not blocked */
+    @Bean
+    fun mfaFilter() = MfaFilter("User", tokenHandler)
+
+    @Bean
+    fun mfaFilterRegistration(): FilterRegistrationBean<MfaFilter> {
+        val registration = FilterRegistrationBean<MfaFilter>()
+        registration.filter = mfaFilter()
         registration.isEnabled = false
         return registration
     }

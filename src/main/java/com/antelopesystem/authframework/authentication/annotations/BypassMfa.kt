@@ -1,0 +1,3 @@
+package com.antelopesystem.authframework.authentication.annotations
+
+annotation class BypassMfa

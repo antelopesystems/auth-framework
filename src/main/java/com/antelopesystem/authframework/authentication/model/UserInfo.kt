@@ -8,7 +8,11 @@ data class UserInfo(
         val grants: List<GrantRO> = listOf(),
 
         val suspiciousness: Suspiciousness = Suspiciousness.Low
-)
+) {
+    fun getEntityPair() = EntityPair(entityId, entityType)
+}
+
+data class EntityPair(val entityId: Long, val type: String)
 
 enum class Suspiciousness {
     Low, Medium, High

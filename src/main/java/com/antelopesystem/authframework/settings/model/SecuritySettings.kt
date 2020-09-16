@@ -19,16 +19,13 @@ class SecuritySettings(
         var tokenLifetimeHours: Long = 24L,
 
         @get:Column
-        var otpRequired: Boolean = false,
+        var authenticatorMfaEnabled: Boolean = false,
 
         @get:Column
-        var authenticatorOtpEnabled: Boolean = false,
+        var authenticatorName: String? = "Not configured",
 
         @get:Column
-        var authenticatorOtpName: String? = "Not configured",
-
-        @get:Column
-        var nexmoOtpEnabled: Boolean = false,
+        var nexmoMfaEnabled: Boolean = false,
 
         @get:Column
         var nexmoAuthenticationEnabled: Boolean = false,
