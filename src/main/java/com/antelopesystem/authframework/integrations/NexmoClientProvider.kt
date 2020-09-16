@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.method.nexmo
+package com.antelopesystem.authframework.integrations
 
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 
@@ -10,7 +10,7 @@ class NexmoClientProvider(
     fun getNexmoClient(objectType: String) : NexmoClient {
         return nexmoClients.getOrPut(objectType) {
             val settings = securitySettingsHandler.getSecuritySettings(objectType)
-            NexmoClient(settings.nexmoApiKey, settings.nexmoApiSecret,  settings.nexmoBranding)
+            NexmoClient(settings.nexmoApiKey, settings.nexmoApiSecret, settings.nexmoBranding)
         }
     }
 }

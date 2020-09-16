@@ -6,7 +6,7 @@ import com.antelopesystem.authframework.authentication.notifier.listener.LoginLi
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.nexmo.NexmoAuthenticationMethodHandlerImpl
-import com.antelopesystem.authframework.authentication.method.nexmo.NexmoClientProvider
+import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl

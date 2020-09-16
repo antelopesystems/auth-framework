@@ -8,6 +8,8 @@ import com.antelopesystem.authframework.authentication.method.enums.Authenticati
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
+import com.antelopesystem.authframework.integrations.NexmoClientProvider
+import com.antelopesystem.authframework.integrations.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where

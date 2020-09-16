@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.method.nexmo
+package com.antelopesystem.authframework.integrations
 
 import com.nexmo.client.NexmoClient
 import com.nexmo.client.verify.VerifyRequest
