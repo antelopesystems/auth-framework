@@ -78,7 +78,6 @@ class TokenHandlerImpl : TokenHandler {
                 tokenType = payload.type,
                 objectId = payload.objectId,
                 objectType = payload.objectType,
-                originalObjectId = payload.originalObjectId,
                 ip = payload.ip,
                 passwordChangeRequired = payload.passwordChangeRequired,
                 totpApproved = payload.totpApproved,

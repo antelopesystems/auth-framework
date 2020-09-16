@@ -27,9 +27,6 @@ data class ObjectToken(
         @get:Column(name = "object_type")
         var objectType: String,
 
-        @get:Column(name = "original_object_id", nullable = false, columnDefinition = "BIGINT(11) DEFAULT 0")
-        var originalObjectId: Long,
-
         @get:Column(name = "ip")
         var ip: String?,
 
