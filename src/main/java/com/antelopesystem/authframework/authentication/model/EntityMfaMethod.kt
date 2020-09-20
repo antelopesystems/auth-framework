@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.model
 
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
-import com.antelopesystem.crudframework.jpa.model.JpaBaseUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import javax.persistence.*
 
 @Entity
@@ -16,4 +16,4 @@ class EntityMfaMethod(
         var param3: String = "",
         var param4: String = "",
         var param5: String = ""
-) : JpaBaseUpdatebleEntity()
+) : BaseJpaUpdatebleEntity()

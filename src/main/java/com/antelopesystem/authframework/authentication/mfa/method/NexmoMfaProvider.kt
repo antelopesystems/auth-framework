@@ -7,13 +7,19 @@ import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.integrations.NexmoException
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import org.springframework.stereotype.Component
 
 class NexmoMfaProvider(
-        private val nexmoClientProvider: NexmoClientProvider
+        private val nexmoClientProvider: NexmoClientProvider,
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : MfaProvider {
     override val type: MfaType
         get() = MfaType.Nexmo
+
+    override fun isSupportedForType(entityType: String): Boolean {
+        return securitySettingsHandler.getSecuritySettings(entityType).nexmoMfaEnabled
+    }
 
     override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityMfaMethod {
         return EntityMfaMethod(

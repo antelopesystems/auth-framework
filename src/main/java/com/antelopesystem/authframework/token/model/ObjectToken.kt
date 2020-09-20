@@ -2,9 +2,8 @@ package com.antelopesystem.authframework.token.model
 
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.annotation.CachedBy
-import com.antelopesystem.crudframework.crud.annotation.DeleteColumn
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
-import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity
 import java.util.*
 import javax.persistence.*
 
@@ -36,4 +35,4 @@ data class ObjectToken(
 
         @get:Temporal(TemporalType.TIMESTAMP)
         var expiryTime: Date? = null
-): JpaBaseEntity()
+): BaseJpaEntity()

@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.model
 
 import com.antelopesystem.authframework.util.JvmTransient
-import com.antelopesystem.crudframework.jpa.model.JpaBaseUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
 import javax.persistence.*
@@ -26,6 +26,6 @@ class AuthenticatedEntity(
         @get:Fetch(FetchMode.SELECT)
         @get:OneToMany(fetch = FetchType.EAGER, targetEntity = EntityMfaMethod::class, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])
 var mfaMethods: MutableList<EntityMfaMethod> = mutableListOf()
-) : JpaBaseUpdatebleEntity()
+) : BaseJpaUpdatebleEntity()
 
 

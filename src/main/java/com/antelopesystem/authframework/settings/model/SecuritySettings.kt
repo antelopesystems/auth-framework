@@ -1,9 +1,7 @@
 package com.antelopesystem.authframework.settings.model
 
 import com.antelopesystem.authframework.token.type.enums.TokenType
-import com.antelopesystem.crudframework.fieldmapper.transformer.annotation.EnumType
-import com.antelopesystem.crudframework.jpa.model.JpaBaseUpdatebleEntity
-import java.util.*
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -22,7 +20,7 @@ class SecuritySettings(
         var authenticatorMfaEnabled: Boolean = false,
 
         @get:Column
-        var authenticatorName: String? = "Not configured",
+        var authenticatorName: String? = "Not configured", // change to issuer todo
 
         @get:Column
         var nexmoMfaEnabled: Boolean = false,
@@ -55,7 +53,7 @@ class SecuritySettings(
 
         @get:Column
         var allowLoginOnRegistration: Boolean = false
-) : JpaBaseUpdatebleEntity() {
+) : BaseJpaUpdatebleEntity() {
         @Transient
         fun getAllowedTokenTypeEnums() : List<TokenType> {
                 return allowedTokenTypes.split(",")

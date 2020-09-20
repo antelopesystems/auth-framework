@@ -16,6 +16,7 @@ import com.antelopesystem.authframework.authentication.notifier.AuthenticationNo
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.entity.EntityHandler
 import com.antelopesystem.authframework.entity.EntityHandlerImpl
+import com.antelopesystem.authframework.integrations.AuthenticatorClientProvider
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandlerImpl
 import com.antelopesystem.authframework.token.TokenHandler
@@ -52,6 +53,9 @@ class AuthFrameworkConfig(
     @Autowired
     fun nexmoClientProvider() = NexmoClientProvider(securitySettingsHandler())
 
+    @Autowired
+    fun authenticatorClientProvider() = AuthenticatorClientProvider(securitySettingsHandler())
+
     @Bean
     fun nexmoAuthenticationTypeHandler(): AuthenticationMethodHandler = NexmoAuthenticationMethodHandlerImpl(crudHandler, nexmoClientProvider(), securitySettingsHandler())
 
@@ -83,7 +87,7 @@ class AuthFrameworkConfig(
     fun pftAuthenticationandler() = PFTAuthenticationHandlerImpl()
 
     @Bean
-    fun nexmoMfaProvider() = NexmoMfaProvider(nexmoClientProvider())
+    fun nexmoMfaProvider() = NexmoMfaProvider(nexmoClientProvider(), securitySettingsHandler())
 
     @Bean
     fun mfaService() = MfaServiceImpl(crudHandler, securitySettingsHandler(), entityHandler(), tokenHandler())
