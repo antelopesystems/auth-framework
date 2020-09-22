@@ -13,9 +13,11 @@ import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.stereotype.Component
 import java.util.*
 import kotlin.IllegalStateException
 
+@Component
 class UsernamePasswordAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler,
         private val securitySettingsHandler: SecuritySettingsHandler

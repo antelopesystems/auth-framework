@@ -24,15 +24,11 @@ import org.springframework.web.filter.CompositeFilter
 
 @Configuration
 class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
-
-    @Autowired
-    private lateinit var crudHandler: CrudHandler
-
     @Autowired
     private lateinit var tokenHandler: TokenHandler
 
-    @Autowired(required=false)
-    private val constraintValidators: List<AuthenticationConstraintValidator> = emptyList()
+    @Autowired
+    private lateinit var tokenAuthenticationProvder: TokenAuthenticationProvider
 
     override fun configure(http: HttpSecurity) {
         http
@@ -46,14 +42,8 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
     }
 
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.authenticationProvider(tokenAuthenticationProvder())
+        auth.authenticationProvider(tokenAuthenticationProvder)
     }
-
-    @Bean
-    fun activeConstraintValidator() = ActiveConstraintValidator()
-
-    @Bean
-    fun tokenAuthenticationProvder() = TokenAuthenticationProvider(crudHandler, constraintValidators)
 
     /* Beans */
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER, "authenticationManager"])
@@ -80,7 +70,6 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         registration.isEnabled = false
         return registration
     }
-
 
     /* Validates token */
     @Bean

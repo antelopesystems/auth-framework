@@ -12,7 +12,9 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.integrations.AuthenticatorClient
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
+import org.springframework.stereotype.Component
 
+@Component
 class AuthenticatorMethodHandlerImpl(
         private val crudHandler: CrudHandler
 ) : AuthenticationMethodHandler {

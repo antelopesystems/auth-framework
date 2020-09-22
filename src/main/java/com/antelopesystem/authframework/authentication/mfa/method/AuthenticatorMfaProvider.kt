@@ -8,7 +8,9 @@ import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.integrations.AuthenticatorClientProvider
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
+import org.springframework.stereotype.Component
 
+@Component
 class AuthenticatorMfaProvider(
         private val authenticatorClientProvider: AuthenticatorClientProvider,
         private val securitySettingsHandler: SecuritySettingsHandler

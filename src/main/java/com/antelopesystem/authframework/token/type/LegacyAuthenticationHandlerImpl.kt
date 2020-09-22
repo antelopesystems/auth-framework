@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
+@Component
 class LegacyAuthenticationHandlerImpl : TokenTypeHandler {
 
     override val type = TokenType.Legacy

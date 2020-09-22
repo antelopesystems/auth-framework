@@ -5,8 +5,10 @@ import com.antelopesystem.authframework.token.model.ObjectToken
 import com.antelopesystem.authframework.token.model.TokenRequest
 import com.antelopesystem.authframework.token.type.base.AbstractTimestampAuthenticationHandler
 import com.antelopesystem.authframework.token.type.enums.TokenType
+import org.springframework.stereotype.Component
 import javax.servlet.http.HttpServletRequest
 
+@Component
 open class FingerprintedTimestampAuthenticationHandlerImpl: AbstractTimestampAuthenticationHandler() {
 
     override val type: TokenType = TokenType.FingerprintedTimestamp

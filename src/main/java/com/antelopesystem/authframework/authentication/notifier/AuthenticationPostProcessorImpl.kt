@@ -10,9 +10,11 @@ import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cglib.beans.ImmutableBean
+import org.springframework.stereotype.Component
 
 
 // todo: modify component map to support lists
+@Component
 class AuthenticationPostProcessorImpl(
         @Autowired(required=false) private val loginListeners: List<LoginListener> = listOf(),
         @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf(),

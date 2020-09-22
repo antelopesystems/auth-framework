@@ -9,7 +9,9 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.integrations.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
+import org.springframework.stereotype.Component
 
+@Component
 class NexmoMfaProvider(
         private val nexmoClientProvider: NexmoClientProvider,
         private val securitySettingsHandler: SecuritySettingsHandler

@@ -12,8 +12,9 @@ import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
+import org.springframework.stereotype.Component
 
-
+@Component
 class TokenAuthenticationProvider(
         private val crudHandler: CrudHandler,
         @Autowired(required=false) private val constraintValidators: List<AuthenticationConstraintValidator> = emptyList()

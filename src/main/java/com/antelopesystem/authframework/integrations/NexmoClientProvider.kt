@@ -1,7 +1,9 @@
 package com.antelopesystem.authframework.integrations
 
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
+import org.springframework.stereotype.Component
 
+@Component
 class NexmoClientProvider(
         private val securitySettingsHandler: SecuritySettingsHandler
 ) {

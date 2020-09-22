@@ -15,8 +15,10 @@ import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
+import org.springframework.stereotype.Component
 
 // todo: Logging
+@Component
 class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
         private val authenticationPostProcessor: AuthenticationPostProcessor,

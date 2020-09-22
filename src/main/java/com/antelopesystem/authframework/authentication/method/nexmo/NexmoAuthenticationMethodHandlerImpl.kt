@@ -14,7 +14,9 @@ import com.antelopesystem.authframework.integrations.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
+import org.springframework.stereotype.Component
 
+@Component
 class NexmoAuthenticationMethodHandlerImpl(
         private val crudHandler: CrudHandler,
         private val nexmoClientProvider: NexmoClientProvider,

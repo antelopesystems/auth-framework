@@ -12,10 +12,12 @@ import com.antelopesystem.crudframework.modelfilter.dsl.where
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 
+@Component
 class TokenHandlerImpl : TokenHandler {
 
     @ComponentMap
