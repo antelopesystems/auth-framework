@@ -49,7 +49,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Any? {
+    override fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): CustomParamsDTO {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             client.requestVerification(method.telephonePrefix() + method.telephone())
@@ -59,7 +59,7 @@ class NexmoAuthenticationMethodHandlerImpl(
             throw LoginFailedException(e)
         }
 
-        return null
+        return CustomParamsDTO()
     }
 
     override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {

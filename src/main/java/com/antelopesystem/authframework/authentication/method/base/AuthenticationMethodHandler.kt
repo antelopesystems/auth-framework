@@ -19,9 +19,7 @@ interface AuthenticationMethodHandler  {
 
     fun isPasswordBased(): Boolean
 
-    fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Any? {
-        throw UnsupportedOperationException("initializeLogin is not supported for [ ${this.method} ]")
-    }
+    fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): CustomParamsDTO = CustomParamsDTO()
 
     fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod)
 

@@ -6,7 +6,7 @@ import com.antelopesystem.authframework.token.model.TokenResponse
 import com.antelopesystem.authframework.token.type.enums.TokenType
 
 interface AuthenticationService {
-    fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): Any?
+    fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): CustomParamsDTO
     fun doLogin(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse
     fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): CustomParamsDTO
     fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse

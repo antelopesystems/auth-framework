@@ -21,7 +21,7 @@ class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
         private val authenticationNotifier: AuthenticationNotifier,
         private val crudHandler: CrudHandler,
-        private val securitySettingsHandler: SecuritySettingsHandler,
+        private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationService {
 
     private val setups = mutableMapOf<UserPair, CustomParamsDTO>()
@@ -75,7 +75,7 @@ class AuthenticationServiceImpl(
         }
     }
 
-    override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): Any? {
+    override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): CustomParamsDTO {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
