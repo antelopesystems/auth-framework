@@ -44,6 +44,7 @@ class AuthenticatorMethodHandlerImpl(
     override fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO {
         val response = client.setup(payload.authenticatorUsername())
         return CustomParamsDTO(
+                payload.authenticatorUsername(),
                 response.key,
                 response.keyUrl
         )

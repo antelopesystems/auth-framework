@@ -10,6 +10,7 @@ import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.authentication.mfa.MfaService
 import com.antelopesystem.authframework.authentication.mfa.MfaServiceImpl
+import com.antelopesystem.authframework.authentication.mfa.method.AuthenticatorMfaProvider
 import com.antelopesystem.authframework.authentication.mfa.method.NexmoMfaProvider
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl
@@ -85,6 +86,9 @@ class AuthFrameworkConfig(
 
     @Bean
     fun pftAuthenticationandler() = PFTAuthenticationHandlerImpl()
+
+    @Bean
+    fun authenticatorMfaProvider() = AuthenticatorMfaProvider(authenticatorClientProvider(), securitySettingsHandler())
 
     @Bean
     fun nexmoMfaProvider() = NexmoMfaProvider(nexmoClientProvider(), securitySettingsHandler())

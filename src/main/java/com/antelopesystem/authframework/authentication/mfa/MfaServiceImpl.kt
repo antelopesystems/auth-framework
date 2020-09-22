@@ -75,7 +75,6 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
     override fun getAvailableProviders(userInfo: UserInfo): List<ProviderDTO> {
         val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
         val providers = mutableListOf<ProviderDTO>()
-        val securitySettings = securitySettingsHandler.getSecuritySettings(userInfo.entityType)
         for (mfaProvider in mfaProviders.values) {
             if(mfaProvider.isSupportedForType(userInfo.entityType)) {
                 providers.add(ProviderDTO(
