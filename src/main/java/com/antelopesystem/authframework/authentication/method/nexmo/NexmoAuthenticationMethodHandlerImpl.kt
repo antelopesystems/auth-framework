@@ -88,6 +88,10 @@ class NexmoAuthenticationMethodHandlerImpl(
         return null
     }
 
+    override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
+        return payload.telephonePrefix() + payload.telephone()
+    }
+
     override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {

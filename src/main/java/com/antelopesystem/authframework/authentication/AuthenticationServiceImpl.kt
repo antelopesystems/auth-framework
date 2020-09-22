@@ -30,6 +30,49 @@ class AuthenticationServiceImpl(
     @ComponentMap
     private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
+    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): Any? {
+        validateTokenType(payload, tokenType)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
+        val methodHandler = getMethodHandler(payload)
+        methodHandler.getEntityMethod(payload)?.let {
+            if(settings.allowLoginOnRegistration) {
+                return initializeLogin(payload, tokenType)
+            }
+            throw RegistrationFailedException("Entity already exists")
+        }
+
+        return methodHandler.initializeRegistration(payload)
+    }
+
+    override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
+        validateTokenType(payload, tokenType)
+        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
+        val methodHandler = getMethodHandler(payload)
+        try {
+            methodHandler.getEntityMethod(payload)?.let {
+                if(settings.allowLoginOnRegistration) {
+                    return doLogin(payload, tokenType)
+                }
+                throw RegistrationFailedException("Entity already exists")
+            }
+
+            var entity = AuthenticatedEntity(type = payload.type)
+            val method = methodHandler.doRegister(payload, entity)
+            entity.authenticationMethods.add(method)
+            entity = crudHandler.create(entity).execute()
+            authenticationNotifier.onRegistrationSuccess(payload, entity)
+
+            val request = buildTokenRequest(tokenType, method, payload.parameters)
+            return tokenHandler.generateToken(request)
+        } catch(e: AuthenticationMethodException) {
+            authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
+            throw e
+        } catch(e: Exception) {
+            authenticationNotifier.onRegistrationFailure(payload, UNHANDLED_EXCEPTION)
+            throw RegistrationFailedException(UNHANDLED_EXCEPTION)
+        }
+    }
+
     override fun initializeLogin(payload: MethodRequestPayload, tokenType: TokenType): Any? {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
@@ -114,48 +157,6 @@ class AuthenticationServiceImpl(
             val token = tokenHandler.getCurrentToken()
             token.passwordChangeRequired = false
             crudHandler.update(token).execute()
-        }
-    }
-
-    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): Any? {
-        validateTokenType(payload, tokenType)
-        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload)
-        methodHandler.getEntityMethod(payload)?.let {
-            if(settings.allowLoginOnRegistration) {
-                return initializeLogin(payload, tokenType)
-            }
-            throw RegistrationFailedException("Entity already exists")
-        }
-        return methodHandler.initializeRegistration(payload)
-    }
-
-    override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
-        validateTokenType(payload, tokenType)
-        val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        val methodHandler = getMethodHandler(payload)
-        try {
-            methodHandler.getEntityMethod(payload)?.let {
-                if(settings.allowLoginOnRegistration) {
-                    return doLogin(payload, tokenType)
-                }
-                throw RegistrationFailedException("Entity already exists")
-            }
-
-            var entity = AuthenticatedEntity(type = payload.type)
-            val method = methodHandler.doRegister(payload, entity)
-            entity.authenticationMethods.add(method)
-            entity = crudHandler.create(entity).execute()
-            authenticationNotifier.onRegistrationSuccess(payload, entity)
-
-            val request = buildTokenRequest(tokenType, method, payload.parameters)
-            return tokenHandler.generateToken(request)
-        } catch(e: AuthenticationMethodException) {
-            authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
-            throw e
-        } catch(e: Exception) {
-            authenticationNotifier.onRegistrationFailure(payload, UNHANDLED_EXCEPTION)
-            throw RegistrationFailedException(UNHANDLED_EXCEPTION)
         }
     }
 

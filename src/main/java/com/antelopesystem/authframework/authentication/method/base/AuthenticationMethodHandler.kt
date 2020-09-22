@@ -14,6 +14,8 @@ interface AuthenticationMethodHandler  {
 
     fun isSupportedForPayload(payload: MethodRequestPayload): Boolean
 
+    fun getUsernameFromPayload(payload: MethodRequestPayload) : String
+
     fun isPasswordBased(): Boolean
 
     fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Any? {

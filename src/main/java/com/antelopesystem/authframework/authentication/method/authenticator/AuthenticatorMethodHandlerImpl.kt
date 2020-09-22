@@ -44,6 +44,10 @@ class AuthenticatorMethodHandlerImpl(
         return client.setup(payload.authenticatorUsername())
     }
 
+    override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
+        return payload.authenticatorUsername()
+    }
+
     override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         try {
             val responsePayload = client.completeSetup(payload.authenticatorUsername(), payload.code())

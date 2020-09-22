@@ -68,6 +68,10 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
+    override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
+        return payload.username()
+    }
+
     override fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
         val securitySettings = securitySettingsHandler.getSecuritySettings(method.entity.type)
         method.password(passwordEncoder.encode(newPassword))
