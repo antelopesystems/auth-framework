@@ -2,10 +2,7 @@ package com.antelopesystem.authframework.authentication
 
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
-import com.antelopesystem.authframework.authentication.model.ForgotPasswordToken
-import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
+import com.antelopesystem.authframework.authentication.model.*
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
@@ -24,13 +21,15 @@ class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
         private val authenticationNotifier: AuthenticationNotifier,
         private val crudHandler: CrudHandler,
-        private val securitySettingsHandler: SecuritySettingsHandler
+        private val securitySettingsHandler: SecuritySettingsHandler,
 ) : AuthenticationService {
+
+    private val setups = mutableMapOf<UserPair, CustomParamsDTO>()
 
     @ComponentMap
     private lateinit var authenticationMethodHandlers: Map<AuthenticationMethod, AuthenticationMethodHandler>
 
-    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): Any? {
+    override fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): CustomParamsDTO {
         validateTokenType(payload, tokenType)
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
@@ -41,7 +40,10 @@ class AuthenticationServiceImpl(
             throw RegistrationFailedException("Entity already exists")
         }
 
-        return methodHandler.initializeRegistration(payload)
+        val username = methodHandler.getUsernameFromPayload(payload)
+        val params = methodHandler.initializeRegistration(payload)
+        setups[UserPair(username, methodHandler.method)] = params
+        return params
     }
 
     override fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse {
@@ -239,3 +241,5 @@ class AuthenticationServiceImpl(
         private val UNHANDLED_EXCEPTION = "Unhandled exception"
     }
 }
+
+data class UserPair(val username: String, val method: AuthenticationMethod)
