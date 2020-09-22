@@ -25,7 +25,7 @@ interface AuthenticationMethodHandler  {
 
     fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO
 
-    fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod
+    fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod
 
     fun getEntityMethod(payload: MethodRequestPayload): EntityAuthenticationMethod?
 

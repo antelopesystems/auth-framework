@@ -67,11 +67,12 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         )
     }
 
-    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         try {
             val method = EntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
-            method.username(payload.username())
-            method.password(payload.password())
+            method.username(params.username())
+            method.password(params.password())
+            refreshPasswordExpiryTime(method)
             return method
         } catch (e: IllegalStateException) {
             throw RegistrationFailedException(e)
@@ -83,9 +84,8 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     }
 
     override fun changePassword(newPassword: String, method: EntityAuthenticationMethod) {
-        val securitySettings = securitySettingsHandler.getSecuritySettings(method.entity.type)
         method.password(passwordEncoder.encode(newPassword))
-        method.passwordExpiryTime(Date(System.currentTimeMillis() + securitySettings.passwordExpiryDays * 24L * 60L * 60L * 1000L))
+        refreshPasswordExpiryTime(method)
     }
 
     override fun checkPassword(payload: MethodRequestPayload, method: EntityAuthenticationMethod): Boolean {
@@ -95,6 +95,11 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     override fun isPasswordExpired(method: EntityAuthenticationMethod): Boolean {
         if(method.param3.isBlank()) return false
         return method.passwordExpiryTime().before(Date())
+    }
+
+    private fun refreshPasswordExpiryTime(method: EntityAuthenticationMethod) {
+        val securitySettings = securitySettingsHandler.getSecuritySettings(method.entity.type)
+        method.passwordExpiryTime(Date(System.currentTimeMillis() + securitySettings.passwordExpiryDays * 24L * 60L * 60L * 1000L))
     }
 
     private fun EntityAuthenticationMethod.username(username: String) {
@@ -108,6 +113,10 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
     private fun EntityAuthenticationMethod.username() = this.param1
 
     private fun EntityAuthenticationMethod.password() = this.param2
+
+    private fun CustomParamsDTO.username() = this.param1
+
+    private fun CustomParamsDTO.password() = this.param2
 
     private fun EntityAuthenticationMethod.passwordExpiryTime() = Date(this.param3.toLong())
 

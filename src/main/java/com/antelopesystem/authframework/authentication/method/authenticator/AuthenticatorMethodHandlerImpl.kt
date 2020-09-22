@@ -53,13 +53,17 @@ class AuthenticatorMethodHandlerImpl(
         return payload.authenticatorUsername()
     }
 
-    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         try {
-            val responsePayload = client.completeSetup(payload.authenticatorUsername(), payload.code())
+            val result = client.validate(params.key(), payload.code())
+            if(!result) {
+                error("Invalid code")
+            }
+
             val method = EntityAuthenticationMethod(entity, AuthenticationMethod.Authenticator)
-            method.authenticatorUsername(payload.authenticatorUsername())
-            method.key(responsePayload.key)
-            method.keyUrl(responsePayload.keyUrl)
+            method.authenticatorUsername(params.authenticatorUsername())
+            method.key(params.key())
+            method.keyUrl(params.keyUrl())
             return method
         } catch(e: Exception) {
             throw RegistrationFailedException(e)
@@ -86,6 +90,12 @@ class AuthenticatorMethodHandlerImpl(
     private fun EntityAuthenticationMethod.key() = this.param2
 
     private fun EntityAuthenticationMethod.keyUrl() = this.param3
+
+    private fun CustomParamsDTO.authenticatorUsername() = this.param1
+
+    private fun CustomParamsDTO.key() = this.param2
+
+    private fun CustomParamsDTO.keyUrl() = this.param3
 
     private fun EntityAuthenticationMethod.authenticatorUsername(authenticatorUsername: String) {
         this.param1 = authenticatorUsername

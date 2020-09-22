@@ -49,6 +49,10 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
+    override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
+        return payload.telephonePrefix() + payload.telephone()
+    }
+
     override fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): CustomParamsDTO {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
@@ -92,17 +96,13 @@ class NexmoAuthenticationMethodHandlerImpl(
         )
     }
 
-    override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
-        return payload.telephonePrefix() + payload.telephone()
-    }
-
-    override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
-            val fullTelephone = payload.telephonePrefix() + payload.telephone()
+            val fullTelephone = params.telephonePrefix() + params.telephone()
             val result = client.validateVerification(fullTelephone, payload.code())
             if(!result) {
-                throw RegistrationFailedException("Invalid code")
+                error("Invalid code")
             }
         } catch(e: NexmoException) {
             throw RegistrationFailedException(e)
@@ -127,6 +127,14 @@ class NexmoAuthenticationMethodHandlerImpl(
     }
 
     private fun EntityAuthenticationMethod.telephone(): String {
+        return this.param2
+    }
+
+    private fun CustomParamsDTO.telephonePrefix(): String {
+        return this.param1
+    }
+
+    private fun CustomParamsDTO.telephone(): String {
         return this.param2
     }
 

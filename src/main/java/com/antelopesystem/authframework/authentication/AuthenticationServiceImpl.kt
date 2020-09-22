@@ -51,6 +51,7 @@ class AuthenticationServiceImpl(
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
         try {
+            val username = methodHandler.getUsernameFromPayload(payload)
             methodHandler.getEntityMethod(payload)?.let {
                 if(settings.allowLoginOnRegistration) {
                     return doLogin(payload, tokenType)
@@ -58,8 +59,9 @@ class AuthenticationServiceImpl(
                 throw RegistrationFailedException("Entity already exists")
             }
 
+            val params = setups[UserPair(username, methodHandler.method)] ?: throw RegistrationFailedException("Registration was not initialized")
             var entity = AuthenticatedEntity(type = payload.type)
-            val method = methodHandler.doRegister(payload, entity)
+            val method = methodHandler.doRegister(payload, params, entity)
             entity.authenticationMethods.add(method)
             entity = crudHandler.create(entity).execute()
             authenticationNotifier.onRegistrationSuccess(payload, entity)
