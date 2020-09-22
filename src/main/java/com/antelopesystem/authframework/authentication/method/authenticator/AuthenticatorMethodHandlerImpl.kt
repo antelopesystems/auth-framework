@@ -6,6 +6,7 @@ import com.antelopesystem.authframework.authentication.RegistrationFailedExcepti
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.integrations.AuthenticatorClient
@@ -40,8 +41,12 @@ class AuthenticatorMethodHandlerImpl(
         }
     }
 
-    override fun initializeRegistration(payload: MethodRequestPayload): Any? {
-        return client.setup(payload.authenticatorUsername())
+    override fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO {
+        val response = client.setup(payload.authenticatorUsername())
+        return CustomParamsDTO(
+                response.key,
+                response.keyUrl
+        )
     }
 
     override fun getUsernameFromPayload(payload: MethodRequestPayload): String {

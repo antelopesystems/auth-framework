@@ -6,6 +6,7 @@ import com.antelopesystem.authframework.authentication.RegistrationFailedExcepti
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
@@ -42,6 +43,8 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
+
+
     override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
         try {
             val usernameMatches = payload.username() == method.username()
@@ -57,11 +60,18 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
+    override fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO {
+        return CustomParamsDTO(
+                payload.username(),
+                passwordEncoder.encode(payload.password())
+        )
+    }
+
     override fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod {
         try {
             val method = EntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
             method.username(payload.username())
-            changePassword(payload.password(), method)
+            method.password(payload.password())
             return method
         } catch (e: IllegalStateException) {
             throw RegistrationFailedException(e)

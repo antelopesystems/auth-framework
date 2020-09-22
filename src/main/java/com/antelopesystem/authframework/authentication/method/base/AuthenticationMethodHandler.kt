@@ -2,6 +2,7 @@ package com.antelopesystem.authframework.authentication.method.base
 
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey
@@ -24,9 +25,7 @@ interface AuthenticationMethodHandler  {
 
     fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod)
 
-    fun initializeRegistration(payload: MethodRequestPayload): Any? {
-        throw UnsupportedOperationException("initializeRegistration is not supported for [ $method ]")
-    }
+    fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO
 
     fun doRegister(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityAuthenticationMethod
 
