@@ -46,7 +46,7 @@ class TokenHandlerImpl : TokenHandler {
         val typeHandler = getAuthenticationTypeHandler(request)
         val token = typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
         if(token.expiryTime!!.before(Date())) {
-            log.info("Attempted usage of expired token (ID: ${token.id})") // todo: add useragent, ip etc.
+            log.info("Attempted usage of expired token (ID: ${token.id})")
             throw InvalidTokenException()
         }
         return token;

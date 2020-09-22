@@ -15,4 +15,8 @@ class MethodRequestPayload(
     } catch(e: Exception) {
         emptyMap()
     }
+
+    override fun toString(): String {
+        return "MethodRequestPayload(type='$type', queryParameters=$queryParameters, body=$body, parameters=$parameters)"
+    }
 }

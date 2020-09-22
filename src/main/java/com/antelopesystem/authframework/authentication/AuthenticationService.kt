@@ -11,6 +11,6 @@ interface AuthenticationService {
     fun initializeRegistration(payload: MethodRequestPayload, tokenType: TokenType): CustomParamsDTO
     fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse
     fun initializeForgotPassword(payload: MethodRequestPayload)
-    fun redeemForgotPasswordToken(tokenString: String, newPassword: String, objectType: String)
+    fun redeemForgotPasswordToken(tokenString: String, newPassword: String, entityType: String)
     fun changePassword(payload: MethodRequestPayload, newPassword: String, objectType: String)
 }

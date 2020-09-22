@@ -3,6 +3,7 @@ package com.antelopesystem.authframework.authentication.filter.base
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.exception.InvalidTokenException
 import com.antelopesystem.authframework.token.model.ObjectToken
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
@@ -41,6 +42,10 @@ abstract class AbstractAuthenticatedFilter(protected val objectType: String, pri
             return handlerExecutionChain.handler as HandlerMethod
         }
         return null
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(AbstractAuthenticatedFilter::class.java)
     }
 
 }
