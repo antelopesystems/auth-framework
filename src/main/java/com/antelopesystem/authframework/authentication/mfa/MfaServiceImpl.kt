@@ -12,22 +12,21 @@ import org.springframework.stereotype.Service
 
 @Service
 class MfaServiceImpl(private val crudHandler: CrudHandler,
-                     private val securitySettingsHandler: SecuritySettingsHandler,
                      private val entityHandler: EntityHandler,
                      private val tokenHandler: TokenHandler) : MfaService {
 
-    private val setupMfas = mutableMapOf<EntityPair, EntityMfaMethod>()
+    private val setupMfas = mutableMapOf<MfaTrio, CustomParamsDTO>()
 
     @ComponentMap
     private lateinit var mfaProviders: Map<MfaType, MfaProvider>
 
-    override fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo): EntityMfaMethodRO {
+    override fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo): CustomParamsDTO {
         val provider = getMfaProvider(mfaType, userInfo.entityType)
 
         val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
-        val mfaMethod = provider.setup(payload, entity)
-        setupMfas[userInfo.getEntityPair()] = mfaMethod
-        return crudHandler.getRO(mfaMethod, EntityMfaMethodRO::class.java)
+        val params = provider.setup(payload, entity)
+        setupMfas[MfaTrio(entity.id, entity.type, mfaType)] = params
+        return params
     }
 
     override fun activate(mfaType: MfaType, code: String, userInfo: UserInfo) {
@@ -36,14 +35,15 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
             error("[ $mfaType ] is already configured")
         }
 
-        val pendingSetup = setupMfas[userInfo.getEntityPair()] ?: error("No setup in progress")
-        if (pendingSetup.type != mfaType) {
-            error("No setup in progress")
-        }
+        val pendingParams = setupMfas[MfaTrio(userInfo.entityId, userInfo.entityType, mfaType)] ?: error("No setup in progress")
         val provider = getMfaProvider(mfaType, userInfo.entityType)
-        provider.validate(code, pendingSetup)
         val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
-        entity.mfaMethods.add(pendingSetup)
+        provider.validate(code, entity, pendingParams)
+        entity.mfaMethods.add(EntityMfaMethod(
+                entity,
+                mfaType,
+                pendingParams
+        ))
         crudHandler.update(entity).execute()
     }
 
@@ -53,20 +53,22 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
     }
 
     override fun issue(mfaType: MfaType, userInfo: UserInfo) {
+        val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
         val methodHandler = getMfaProvider(mfaType, userInfo.entityType)
-        val pendingSetup = setupMfas[userInfo.getEntityPair()]
-        if(pendingSetup != null && pendingSetup.type == mfaType) {
-            methodHandler.issue(pendingSetup)
+        val pendingParams = setupMfas[MfaTrio(userInfo.entityId, userInfo.entityType, mfaType)]
+        if(pendingParams != null) {
+            methodHandler.issue(entity, pendingParams)
             return
         }
         val existingMethod = getMfaMethodOrThrow(userInfo.entityId, userInfo.entityType, mfaType)
-        methodHandler.issue(existingMethod)
+        methodHandler.issue(entity, crudHandler.getRO(existingMethod, CustomParamsDTO::class.java))
     }
 
     override fun validateToCurrentToken(mfaType: MfaType, code: String, userInfo: UserInfo) {
         val existingMethod = getMfaMethodOrThrow(userInfo.entityId, userInfo.entityType, mfaType)
+        val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
         val methodHandler = getMfaProvider(mfaType, userInfo.entityType)
-        methodHandler.validate(code, existingMethod)
+        methodHandler.validate(code, entity, crudHandler.getRO(existingMethod, CustomParamsDTO::class.java))
         val token = tokenHandler.getCurrentToken()
         token.mfaRequired = false
         crudHandler.update(token).execute()
@@ -112,3 +114,5 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
 }
 
 data class ProviderDTO(val mfaType: MfaType, val enabled: Boolean)
+
+data class MfaTrio(val entityId: Long, val entityType: String, val mfaType: MfaType)

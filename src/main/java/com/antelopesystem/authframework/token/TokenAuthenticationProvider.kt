@@ -33,11 +33,7 @@ class TokenAuthenticationProvider(
             constraintValidator.validate(entity, authentication.token)
         }
 
-        val userInfo = UserInfo(
-                entity.id,
-                entity.type,
-                crudHandler.getROs(entity.grants, GrantRO::class.java)
-        )
+        val userInfo = crudHandler.getRO(entity, UserInfo::class.java)
         return TokenAuthentication(userInfo)
     }
 }

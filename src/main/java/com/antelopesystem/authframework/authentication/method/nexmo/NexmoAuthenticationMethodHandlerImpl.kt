@@ -28,8 +28,8 @@ class NexmoAuthenticationMethodHandlerImpl(
     override fun isSupportedForType(type: String): Boolean = securitySettingsHandler.getSecuritySettings(type).nexmoAuthenticationEnabled
 
     override fun isSupportedForPayload(payload: MethodRequestPayload): Boolean = try {
-            payload.telephone()
             payload.telephonePrefix()
+            payload.telephone()
             true
         } catch(e: IllegalStateException) { false }
 

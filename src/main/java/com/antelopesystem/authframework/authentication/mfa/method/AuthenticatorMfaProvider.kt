@@ -3,13 +3,11 @@ package com.antelopesystem.authframework.authentication.mfa.method
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaProvider
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.integrations.AuthenticatorClientProvider
-import com.antelopesystem.authframework.integrations.NexmoClientProvider
-import com.antelopesystem.authframework.integrations.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
-import org.springframework.stereotype.Component
 
 class AuthenticatorMfaProvider(
         private val authenticatorClientProvider: AuthenticatorClientProvider,
@@ -22,20 +20,18 @@ class AuthenticatorMfaProvider(
         return securitySettingsHandler.getSecuritySettings(entityType).authenticatorMfaEnabled
     }
 
-    override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityMfaMethod {
+    override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): CustomParamsDTO {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
         val response = client.setup("test")
-        return EntityMfaMethod(
-                entity,
-                MfaType.Authenticator,
+        return CustomParamsDTO(
                 response.key,
                 response.keyUrl
         )
     }
 
-    override fun validate(code: String, method: EntityMfaMethod) {
-        val client = authenticatorClientProvider.getAuthenticatorClient(method.entity.type)
-        val result = client.validate(method.key(), code.toInt())
+    override fun validate(code: String, entity: AuthenticatedEntity, params: CustomParamsDTO) {
+        val client = authenticatorClientProvider.getAuthenticatorClient(params.entity.type)
+        val result = client.validate(params.key(), code.toInt())
         if(!result) {
             error("Invalid code")
         }

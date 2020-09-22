@@ -5,15 +5,22 @@ import com.antelopesystem.authframework.authentication.notifier.listener.Registr
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
+import com.antelopesystem.authframework.authentication.notifier.postaction.EntityExternalIdResolver
+import com.antelopesystem.crudframework.crud.handler.CrudHandler
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cglib.beans.ImmutableBean
 
 
 // todo: modify component map to support lists
-class AuthenticationNotifierImpl(
+class AuthenticationPostProcessorImpl(
         @Autowired(required=false) private val loginListeners: List<LoginListener> = listOf(),
         @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf(),
-        @Autowired(required=false) private val forgotPasswordListeners: List<ForgotPasswordListener> = listOf()
-) : AuthenticationNotifier {
+        @Autowired(required=false) private val forgotPasswordListeners: List<ForgotPasswordListener> = listOf(),
+        private val crudHandler: CrudHandler
+) : AuthenticationPostProcessor {
+    @ComponentMap
+    private lateinit var externalIdResolvers: Map<String, EntityExternalIdResolver>
 
     override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
         getLoginListenersForEntity(entity.type).forEach {
@@ -31,6 +38,7 @@ class AuthenticationNotifierImpl(
         getRegistrationListenersForEntity(entity.type).forEach {
             it.onRegistrationSuccess(payload, entity)
         }
+        resolveAndLinkExternalId(entity)
     }
 
     override fun onRegistrationFailure(payload: MethodRequestPayload, error: String) {
@@ -63,5 +71,11 @@ class AuthenticationNotifierImpl(
         return registrationListeners.filter { it.type == type }
     }
 
+    private fun resolveAndLinkExternalId(entity: AuthenticatedEntity) {
+        val externalIdResolver = externalIdResolvers[entity.type] ?: return
+        val externalId = externalIdResolver.resolve(ImmutableBean.create(entity) as AuthenticatedEntity)
+        entity.externalId = externalId
+        crudHandler.update(entity).execute()
+    }
 
 }

@@ -1,9 +1,13 @@
 package com.antelopesystem.authframework.authentication.model
 
-data class UserInfo(
-        val entityId: Long,
+import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
 
-        val entityType: String,
+data class UserInfo(
+        val entityId: Long = 0,
+
+        val entityType: String = "",
+
+        val externalId: String? = null,
 
         val grants: List<GrantRO> = listOf(),
 

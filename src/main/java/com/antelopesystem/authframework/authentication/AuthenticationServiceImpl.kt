@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.*
-import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationPostProcessor
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.authframework.token.model.*
@@ -19,7 +19,7 @@ import com.antelopesystem.crudframework.utils.component.componentmap.annotation.
 // todo: Logging
 class AuthenticationServiceImpl(
         private val tokenHandler: TokenHandler,
-        private val authenticationNotifier: AuthenticationNotifier,
+        private val authenticationPostProcessor: AuthenticationPostProcessor,
         private val crudHandler: CrudHandler,
         private val securitySettingsHandler: SecuritySettingsHandler
 ) : AuthenticationService {
@@ -64,15 +64,14 @@ class AuthenticationServiceImpl(
             val method = methodHandler.doRegister(payload, params, entity)
             entity.authenticationMethods.add(method)
             entity = crudHandler.create(entity).execute()
-            authenticationNotifier.onRegistrationSuccess(payload, entity)
-
+            authenticationPostProcessor.onRegistrationSuccess(payload, entity);
             val request = buildTokenRequest(tokenType, method, payload.parameters)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
-            authenticationNotifier.onRegistrationFailure(payload, e.message.toString())
+            authenticationPostProcessor.onRegistrationFailure(payload, e.message.toString())
             throw e
         } catch(e: Exception) {
-            authenticationNotifier.onRegistrationFailure(payload, UNHANDLED_EXCEPTION)
+            authenticationPostProcessor.onRegistrationFailure(payload, UNHANDLED_EXCEPTION)
             throw RegistrationFailedException(UNHANDLED_EXCEPTION)
         }
     }
@@ -105,14 +104,14 @@ class AuthenticationServiceImpl(
 
         try {
             methodHandler.doLogin(payload, method)
-            authenticationNotifier.onLoginSuccess(payload, method.entity)
+            authenticationPostProcessor.onLoginSuccess(payload, method.entity)
             val request = buildTokenRequest(tokenType, method, payload.parameters)
             return tokenHandler.generateToken(request)
         } catch(e: AuthenticationMethodException) {
-            authenticationNotifier.onLoginFailure(payload, method.entity, e.message.toString())
+            authenticationPostProcessor.onLoginFailure(payload, method.entity, e.message.toString())
             throw e
         } catch(e: Exception) {
-            authenticationNotifier.onLoginFailure(payload, method.entity, UNHANDLED_EXCEPTION)
+            authenticationPostProcessor.onLoginFailure(payload, method.entity, UNHANDLED_EXCEPTION)
             throw LoginFailedException(UNHANDLED_EXCEPTION)
         }
     }
@@ -126,7 +125,7 @@ class AuthenticationServiceImpl(
         val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
 
         val token = crudHandler.create(ForgotPasswordToken(method)).execute()
-        authenticationNotifier.onForgotPasswordInitialized(token.token, method.entity)
+        authenticationPostProcessor.onForgotPasswordInitialized(token.token, method.entity)
     }
 
     override fun redeemForgotPasswordToken(tokenString: String, newPassword: String, objectType: String) {
@@ -146,7 +145,7 @@ class AuthenticationServiceImpl(
         methodHandler.changePassword(newPassword, method)
         crudHandler.update(method).execute()
         crudHandler.delete(token.id, ForgotPasswordToken::class.java).execute()
-        authenticationNotifier.onForgotPasswordSuccess(method.entity)
+        authenticationPostProcessor.onForgotPasswordSuccess(method.entity)
     }
 
     override fun changePassword(payload: MethodRequestPayload, newPassword: String, objectType: String) {

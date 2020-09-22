@@ -8,12 +8,11 @@ import com.antelopesystem.authframework.authentication.method.base.Authenticatio
 import com.antelopesystem.authframework.authentication.method.nexmo.NexmoAuthenticationMethodHandlerImpl
 import com.antelopesystem.authframework.integrations.NexmoClientProvider
 import com.antelopesystem.authframework.authentication.method.usernamepassword.UsernamePasswordAuthenticationMethodHandlerImpl
-import com.antelopesystem.authframework.authentication.mfa.MfaService
 import com.antelopesystem.authframework.authentication.mfa.MfaServiceImpl
 import com.antelopesystem.authframework.authentication.mfa.method.AuthenticatorMfaProvider
 import com.antelopesystem.authframework.authentication.mfa.method.NexmoMfaProvider
-import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifier
-import com.antelopesystem.authframework.authentication.notifier.AuthenticationNotifierImpl
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationPostProcessor
+import com.antelopesystem.authframework.authentication.notifier.AuthenticationPostProcessorImpl
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.entity.EntityHandler
 import com.antelopesystem.authframework.entity.EntityHandlerImpl
@@ -67,7 +66,7 @@ class AuthFrameworkConfig(
     fun authenticatorMethodHandler()  = AuthenticatorMethodHandlerImpl(crudHandler)
 
     @Bean
-    fun authenticationNotifier(): AuthenticationNotifier = AuthenticationNotifierImpl(loginListeners, registrationListeners, forgotPasswordListeners)
+    fun authenticationNotifier(): AuthenticationPostProcessor = AuthenticationPostProcessorImpl(loginListeners, registrationListeners, forgotPasswordListeners, crudHandler)
 
     @Bean
     fun tokenHandler(): TokenHandler = TokenHandlerImpl()

@@ -9,25 +9,22 @@ import javax.persistence.*
 
 @Entity
 @Table
-@DefaultMappingTarget(EntityMfaMethod::class)
 class EntityMfaMethod(
         @get:ManyToOne(fetch = FetchType.EAGER)
         @get:JoinColumn(name = "entity_id")
-        @MappedFields(
-                MappedField(mapFrom = "entity.id", mapTo = "entityId"),
-                MappedField(mapFrom = "entity.type", mapTo = "entityType")
-        )
         var entity: AuthenticatedEntity,
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var type: MfaType,
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var param1: String = "",
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var param2: String = "",
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var param3: String = "",
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var param4: String = "",
-        @MappedField
+        @MappedField(target = CustomParamsDTO::class)
         var param5: String = ""
-) : BaseJpaUpdatebleEntity()
+) : BaseJpaUpdatebleEntity() {
+        constructor(entity: AuthenticatedEntity, type: MfaType, params: CustomParamsDTO): this(entity, type, params.param1, params.param2, params.param3, params.param4, params.param5)
+}
