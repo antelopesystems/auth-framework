@@ -24,11 +24,12 @@ class AuthenticatorMfaProvider(
 
     override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): EntityMfaMethod {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
+        val response = client.setup("test")
         return EntityMfaMethod(
                 entity,
                 MfaType.Authenticator,
-                client.setup("test")
-
+                response.key,
+                response.keyUrl
         )
     }
 

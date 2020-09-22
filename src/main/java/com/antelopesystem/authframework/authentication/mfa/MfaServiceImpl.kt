@@ -2,10 +2,7 @@ package com.antelopesystem.authframework.authentication.mfa
 
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaProvider
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
-import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
-import com.antelopesystem.authframework.authentication.model.EntityPair
-import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
-import com.antelopesystem.authframework.authentication.model.UserInfo
+import com.antelopesystem.authframework.authentication.model.*
 import com.antelopesystem.authframework.entity.EntityHandler
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
@@ -24,12 +21,13 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
     @ComponentMap
     private lateinit var mfaProviders: Map<MfaType, MfaProvider>
 
-    override fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo) {
+    override fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo): EntityMfaMethodRO {
         val provider = getMfaProvider(mfaType, userInfo.entityType)
 
         val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
         val mfaMethod = provider.setup(payload, entity)
         setupMfas[userInfo.getEntityPair()] = mfaMethod
+        return crudHandler.getRO(mfaMethod, EntityMfaMethodRO::class.java)
     }
 
     override fun activate(mfaType: MfaType, code: String, userInfo: UserInfo) {

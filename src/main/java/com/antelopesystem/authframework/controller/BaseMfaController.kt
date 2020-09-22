@@ -21,8 +21,8 @@ abstract class BaseMfaController(
 
     @PostMapping("/{mfaType}/setup")
     fun setup(@PathVariable mfaType: MfaType, principal: Principal, request: HttpServletRequest, @RequestBody(required = false) body: String?) : ResultRO<*> {
-        return wrapVoidResult {
-            mfaService.setup(mfaType, MethodRequestPayload(objectType, request.parameterMap, body), principal.getUserInfo())
+        return wrapResult {
+            return@wrapResult mfaService.setup(mfaType, MethodRequestPayload(objectType, request.parameterMap, body), principal.getUserInfo())
         }
     }
 

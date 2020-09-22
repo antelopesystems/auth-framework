@@ -1,11 +1,12 @@
 package com.antelopesystem.authframework.authentication.mfa
 
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
+import com.antelopesystem.authframework.authentication.model.EntityMfaMethodRO
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.model.UserInfo
 
 interface MfaService {
-    fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo)
+    fun setup(mfaType: MfaType, payload: MethodRequestPayload, userInfo: UserInfo): EntityMfaMethodRO
     fun activate(mfaType: MfaType, code: String, userInfo: UserInfo)
     fun deactivate(mfaType: MfaType, userInfo: UserInfo)
     fun issue(mfaType: MfaType, userInfo: UserInfo)
