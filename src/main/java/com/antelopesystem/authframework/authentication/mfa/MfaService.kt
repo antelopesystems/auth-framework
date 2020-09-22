@@ -2,7 +2,6 @@ package com.antelopesystem.authframework.authentication.mfa
 
 import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
-import com.antelopesystem.authframework.authentication.model.EntityMfaMethodRO
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.model.UserInfo
 

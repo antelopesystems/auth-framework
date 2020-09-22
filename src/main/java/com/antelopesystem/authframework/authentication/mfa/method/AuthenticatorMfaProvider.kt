@@ -32,7 +32,7 @@ class AuthenticatorMfaProvider(
     }
 
     override fun validate(code: String, entity: AuthenticatedEntity, params: CustomParamsDTO) {
-        val client = authenticatorClientProvider.getAuthenticatorClient(params.entity.type)
+        val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
         val result = client.validate(params.key(), code.toInt())
         if(!result) {
             error("Invalid code")
@@ -41,6 +41,10 @@ class AuthenticatorMfaProvider(
 }
 
 private fun EntityMfaMethod.key(): String {
+    return this.param1
+}
+
+private fun CustomParamsDTO.key(): String {
     return this.param1
 }
 
