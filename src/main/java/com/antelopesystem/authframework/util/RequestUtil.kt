@@ -11,7 +11,7 @@ fun HttpServletRequest.getFingerprint(): String? {
 }
 
 // Todo: Ipv6 support
-fun HttpServletRequest.getIpAddress(): String? {
+fun HttpServletRequest.getIpAddress(): String {
     return try {
         var trustXForwardedForRaw = System.getenv("TRUST_X_FORWARDED_FOR")
         if (trustXForwardedForRaw == null) {
@@ -33,10 +33,10 @@ fun HttpServletRequest.getIpAddress(): String? {
             }
         }
         if (ipAddress == null) {
-            ipAddress = this.remoteAddr
+            return this.remoteAddr
         }
         ipAddress
     } catch (e: Exception) {
-        null
+        this.remoteAddr
     }
 }

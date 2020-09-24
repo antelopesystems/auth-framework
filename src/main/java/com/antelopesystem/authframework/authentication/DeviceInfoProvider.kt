@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.authentication
 
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
+import com.antelopesystem.authframework.geo.GeoIpResolver
 import com.antelopesystem.authframework.util.getFingerprint
 import com.antelopesystem.authframework.util.getIpAddress
 import com.antelopesystem.authframework.util.getUserAgent
@@ -9,7 +10,8 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class DeviceInfoProvider(
-        private val request: HttpServletRequest
+        private val request: HttpServletRequest,
+        private val geoIpResolver: GeoIpResolver
 ) {
 
     fun getDeviceInfoFromCurrentRequest(): DeviceInfo {
@@ -20,7 +22,7 @@ class DeviceInfoProvider(
         return DeviceInfo(
                 request.getUserAgent(),
                 request.getIpAddress(),
-                "XX", // todo
+                geoIpResolver.getCountryIso(request.getIpAddress()),
                 request.getFingerprint()
         )
     }
