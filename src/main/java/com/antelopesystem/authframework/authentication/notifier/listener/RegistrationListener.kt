@@ -10,7 +10,3 @@ interface RegistrationListener : AuthenticationListener{
     fun onRegistrationFailure(payload: MethodRequestPayload, loginDto: UserLoginDTO, error: String) {}
 }
 
-interface ForgotPasswordListener : AuthenticationListener {
-    fun onForgotPasswordInitialized(token: String, entity: AuthenticatedEntity, loginDto: UserLoginDTO) {}
-    fun onForgotPasswordSuccess(entity: AuthenticatedEntity, loginDto: UserLoginDTO) {}
-}
