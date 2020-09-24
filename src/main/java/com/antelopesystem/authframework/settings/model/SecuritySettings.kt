@@ -30,6 +30,9 @@ class SecuritySettings(
 
         var allowedTokenTypes: String = TokenType.values().joinToString(","),
 
+        @get:Enumerated(EnumType.STRING)
+        var defaultAuthenticationMethod: AuthenticationMethod? = null,
+
         @get:Fetch(FetchMode.SELECT)
         @get:ElementCollection(fetch = FetchType.EAGER)
         @get:CollectionTable(name = "settings_authentication_method_rel", joinColumns = [JoinColumn(name = "settings_id")])

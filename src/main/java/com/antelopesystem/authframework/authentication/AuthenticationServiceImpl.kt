@@ -215,6 +215,11 @@ class AuthenticationServiceImpl(
         return methodHandler
     }
 
+    override fun getAvailableMethods(entityType: String): List<AuthenticationMethodDTO> {
+        val securitySettings = securitySettingsHandler.getSecuritySettings(entityType)
+        return securitySettings.allowedAuthenticationMethods.map { AuthenticationMethodDTO(it, it == securitySettings.defaultAuthenticationMethod) }
+    }
+
     private fun getMethodHandlerByType(method: AuthenticationMethod, type: String): AuthenticationMethodHandler {
         val methodHandler = authenticationMethodHandlers[method] ?: throw error("Not suitable method found")
 
@@ -280,3 +285,5 @@ class AuthenticationServiceImpl(
 }
 
 data class UserPair(val username: String, val method: AuthenticationMethod)
+
+data class AuthenticationMethodDTO(val method: AuthenticationMethod, val default: Boolean)

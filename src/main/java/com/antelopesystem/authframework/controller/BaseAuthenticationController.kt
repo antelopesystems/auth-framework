@@ -4,13 +4,12 @@ import com.antelopesystem.authframework.authentication.AuthenticationService
 import com.antelopesystem.authframework.authentication.annotations.BypassPasswordExpiredCheck
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.token.type.enums.TokenType
+import com.antelopesystem.authframework.util.getUserInfo
 import com.antelopesystem.crudframework.web.controller.BaseController
 import com.antelopesystem.crudframework.web.ro.ResultRO
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
+import java.security.Principal
 import javax.servlet.http.HttpServletRequest
 
 abstract class BaseAuthenticationController(
@@ -67,6 +66,13 @@ abstract class BaseAuthenticationController(
     fun changePassword(@RequestBody(required = false) body: String, @RequestParam newPassword: String, request: HttpServletRequest): ResultRO<*> {
         return wrapResult {
             return@wrapResult authenticationService.changePassword(MethodRequestPayload(objectType, request.parameterMap, body), newPassword, objectType)
+        }
+    }
+
+    @GetMapping("/methods")
+    fun getAvailableMethodsForEntity(): ResultRO<*> {
+        return wrapResult {
+            return@wrapResult authenticationService.getAvailableMethods(objectType)
         }
     }
 }
