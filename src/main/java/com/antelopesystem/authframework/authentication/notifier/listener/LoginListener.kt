@@ -6,6 +6,6 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.token.model.ObjectToken
 
 interface LoginListener : AuthenticationListener{
-    fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, loginDto: DeviceInfo) {}
-    fun onLoginFailure(payload: MethodRequestPayload, entity: AuthenticatedEntity, loginDto: DeviceInfo, error: String) {}
+    fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, deviceInfo: DeviceInfo) {}
+    fun onLoginFailure(payload: MethodRequestPayload, entity: AuthenticatedEntity, deviceInfo: DeviceInfo, error: String) {}
 }

@@ -6,7 +6,7 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.token.model.ObjectToken
 
 interface RegistrationListener : AuthenticationListener{
-    fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, loginDto: DeviceInfo) {}
-    fun onRegistrationFailure(payload: MethodRequestPayload, loginDto: DeviceInfo, error: String) {}
+    fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, deviceInfo: DeviceInfo) {}
+    fun onRegistrationFailure(payload: MethodRequestPayload, deviceInfo: DeviceInfo, error: String) {}
 }
 

@@ -41,7 +41,7 @@ class SecuritySettings(
         var allowedTokenTypes: String = TokenType.values().joinToString(","),
 
         @get:Column
-        var suspiciousLoginCheckEnabled: Boolean = false,
+        var authenticationValidationEnabled: Boolean = false,
 
         @get:Column
         var passwordRegex: String = ".*",
