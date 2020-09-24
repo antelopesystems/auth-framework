@@ -1,10 +1,9 @@
 package com.antelopesystem.authframework.authentication.mfa
 
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaProvider
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaProvider
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.authentication.model.*
 import com.antelopesystem.authframework.entity.EntityHandler
-import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap

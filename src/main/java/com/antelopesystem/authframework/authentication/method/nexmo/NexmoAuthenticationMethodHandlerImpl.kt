@@ -51,6 +51,10 @@ class NexmoAuthenticationMethodHandlerImpl(
         }
     }
 
+    override fun getUsername(method: EntityAuthenticationMethod): String {
+        return method.telephonePrefix() + method.telephone()
+    }
+
     override fun getUsernameFromPayload(payload: MethodRequestPayload): String {
         return payload.telephonePrefix() + payload.telephone()
     }

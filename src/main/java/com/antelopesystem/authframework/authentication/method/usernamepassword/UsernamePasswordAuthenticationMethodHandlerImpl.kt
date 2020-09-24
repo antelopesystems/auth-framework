@@ -99,6 +99,10 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         return method.passwordExpiryTime().before(Date())
     }
 
+    override fun getUsername(method: EntityAuthenticationMethod): String {
+        return method.username()
+    }
+
     private fun refreshPasswordExpiryTime(method: EntityAuthenticationMethod) {
         val securitySettings = securitySettingsHandler.getSecuritySettings(method.entity.type)
         method.passwordExpiryTime(Date(System.currentTimeMillis() + securitySettings.passwordExpiryDays * 24L * 60L * 60L * 1000L))

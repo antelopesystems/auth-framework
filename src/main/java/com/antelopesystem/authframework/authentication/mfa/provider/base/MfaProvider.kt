@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.mfa.method.base
+package com.antelopesystem.authframework.authentication.mfa.provider.base
 
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO

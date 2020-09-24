@@ -75,6 +75,7 @@ class AuthenticationServiceImpl(
             val params = setups[UserPair(username, methodHandler.method)] ?: throw RegistrationFailedException("Registration was not initialized")
             var entity = AuthenticatedEntity(type = payload.type)
             val method = methodHandler.doRegister(payload, params, entity)
+            method.primary = true
             entity.authenticationMethods.add(method)
             entity = crudHandler.create(entity).execute()
             log.trace { "Performed registration for ${method.forLog()}, params: [ $params ]" }

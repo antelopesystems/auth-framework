@@ -1,11 +1,12 @@
-package com.antelopesystem.authframework.authentication.mfa.method
+package com.antelopesystem.authframework.authentication.mfa.provider
 
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaProvider
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaProvider
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
+import com.antelopesystem.authframework.entity.EntityHandler
 import com.antelopesystem.authframework.integrations.AuthenticatorClientProvider
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import org.springframework.stereotype.Component
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Component
 @Component
 class AuthenticatorMfaProvider(
         private val authenticatorClientProvider: AuthenticatorClientProvider,
-        private val securitySettingsHandler: SecuritySettingsHandler
+        private val securitySettingsHandler: SecuritySettingsHandler,
+        private val entityHandler: EntityHandler
 ) : MfaProvider {
     override val type: MfaType
         get() = MfaType.Authenticator
@@ -24,7 +26,7 @@ class AuthenticatorMfaProvider(
 
     override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): CustomParamsDTO {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
-        val response = client.setup("test")
+        val response = client.setup(entityHandler.getEntityUsername(entity))
         return CustomParamsDTO(
                 response.key,
                 response.keyUrl

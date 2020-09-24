@@ -1,9 +1,7 @@
 package com.antelopesystem.authframework.authentication.model
 
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
-import com.antelopesystem.crudframework.fieldmapper.annotation.DefaultMappingTarget
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField
-import com.antelopesystem.crudframework.fieldmapper.annotation.MappedFields
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import javax.persistence.*
 

@@ -18,5 +18,8 @@ class EntityAuthenticationMethod(
         var param5: String = "",
 
         @get:Column(name = "is_active")
-        var active: Boolean = true
+        var active: Boolean = true,
+
+        @get:Column(name = "is_primary")
+        var primary: Boolean = false
 ) : BaseJpaUpdatebleEntity()

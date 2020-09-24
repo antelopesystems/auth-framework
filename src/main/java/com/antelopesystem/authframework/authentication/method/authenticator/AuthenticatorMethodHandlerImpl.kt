@@ -43,6 +43,10 @@ class AuthenticatorMethodHandlerImpl(
         }
     }
 
+    override fun getUsername(method: EntityAuthenticationMethod): String {
+        return method.authenticatorUsername()
+    }
+
     override fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO {
         val response = client.setup(payload.authenticatorUsername())
         return CustomParamsDTO(

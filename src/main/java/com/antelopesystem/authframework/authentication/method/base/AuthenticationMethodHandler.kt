@@ -40,4 +40,6 @@ interface AuthenticationMethodHandler  {
     fun isPasswordExpired(method: EntityAuthenticationMethod): Boolean {
         throw UnsupportedOperationException("isPasswordExpired is not supported for [ ${this.method} ]")
     }
+
+    fun getUsername(method: EntityAuthenticationMethod): String
 }

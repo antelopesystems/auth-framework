@@ -1,7 +1,5 @@
 package com.antelopesystem.authframework.authentication.model
 
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
-
 data class UserInfo(
         val entityId: Long = 0,
 

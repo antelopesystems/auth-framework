@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.controller
 
 import com.antelopesystem.authframework.authentication.annotations.BypassMfa
 import com.antelopesystem.authframework.authentication.mfa.MfaService
-import com.antelopesystem.authframework.authentication.mfa.method.base.MfaType
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.util.getUserInfo
 import com.antelopesystem.crudframework.web.controller.BaseController
