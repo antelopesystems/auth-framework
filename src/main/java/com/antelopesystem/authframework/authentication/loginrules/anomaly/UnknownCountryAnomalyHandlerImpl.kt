@@ -22,7 +22,7 @@ class UnknownCountryAnomalyHandlerImpl : UserLoginAnomalyHandler {
             return false
         }
 
-        if(loginDTO.countryIso.isBlank()) {
+        if(loginDTO.countryIso.isNullOrBlank()) {
             return true
         }
 

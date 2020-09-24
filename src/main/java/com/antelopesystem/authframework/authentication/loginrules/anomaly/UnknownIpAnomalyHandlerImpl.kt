@@ -22,7 +22,7 @@ class UnknownIpAnomalyHandlerImpl : UserLoginAnomalyHandler {
             return false
         }
 
-        if(loginDTO.ip.isBlank()) {
+        if(loginDTO.ip.isNullOrBlank()) {
             return true
         }
 

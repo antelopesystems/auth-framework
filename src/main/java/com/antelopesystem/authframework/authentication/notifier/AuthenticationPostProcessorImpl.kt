@@ -7,6 +7,7 @@ import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.authentication.notifier.postaction.EntityExternalIdResolver
+import com.antelopesystem.authframework.token.model.ObjectToken
 import com.antelopesystem.authframework.util.getFingerprint
 import com.antelopesystem.authframework.util.getIpAddress
 import com.antelopesystem.authframework.util.getUserAgent
@@ -30,9 +31,9 @@ class AuthenticationPostProcessorImpl(
     @ComponentMap
     private lateinit var externalIdResolvers: Map<String, EntityExternalIdResolver>
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken) {
         getLoginListenersForEntity(entity.type).forEach {
-            it.onLoginSuccess(payload, entity, generateLoginDtoFromRequest(entity.id))
+            it.onLoginSuccess(payload, entity, token, generateLoginDtoFromRequest(entity.id))
         }
     }
 
@@ -42,9 +43,9 @@ class AuthenticationPostProcessorImpl(
         }
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken) {
         getRegistrationListenersForEntity(entity.type).forEach {
-            it.onRegistrationSuccess(payload, entity, generateLoginDtoFromRequest(entity.id))
+            it.onRegistrationSuccess(payload, entity, token, generateLoginDtoFromRequest(entity.id))
         }
         resolveAndLinkExternalId(entity)
     }

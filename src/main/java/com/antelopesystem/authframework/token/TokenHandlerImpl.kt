@@ -69,7 +69,7 @@ class TokenHandlerImpl : TokenHandler {
         }
     }
 
-    override fun <T : TokenRequest> generateToken(payload: T): TokenResponse {
+    override fun <T : TokenRequest> generateToken(payload: T): Pair<TokenResponse, ObjectToken> {
         // todo. add settings such as supported token types for object etc.
         val securitySettings = securitySettingsHandler.getSecuritySettings(payload.objectType)
         val typeHandler = authenticationTypeHandlers[payload.type]
@@ -89,7 +89,7 @@ class TokenHandlerImpl : TokenHandler {
         crudHandler.create(objectToken)
                 .execute()
 
-        return TokenResponse(processedToken, objectToken.sessionId, payload.type)
+        return TokenResponse(processedToken, objectToken.sessionId, payload.type) to objectToken
     }
 
     override fun deleteAllTokensById(objectId: Long, objectType: String) {

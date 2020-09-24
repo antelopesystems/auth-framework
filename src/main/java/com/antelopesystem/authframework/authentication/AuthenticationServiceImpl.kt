@@ -78,9 +78,10 @@ class AuthenticationServiceImpl(
             entity.authenticationMethods.add(method)
             entity = crudHandler.create(entity).execute()
             log.trace { "Performed registration for ${method.forLog()}, params: [ $params ]" }
-            authenticationPostProcessor.onRegistrationSuccess(payload, entity);
             val request = buildTokenRequest(tokenType, method, payload.parameters)
-            return tokenHandler.generateToken(request)
+            val (tokenResponse, token) = tokenHandler.generateToken(request)
+            authenticationPostProcessor.onRegistrationSuccess(payload, entity, token)
+            return tokenResponse
         } catch(e: AuthenticationMethodException) {
             authenticationPostProcessor.onRegistrationFailure(payload, e.message.toString())
             log.info("Registration failed: ${e.message}")
@@ -128,9 +129,10 @@ class AuthenticationServiceImpl(
             log.trace { "Performing login request for ${method.forLog()}, method: [ ${methodHandler.method} ]" }
             methodHandler.doLogin(payload, method)
             log.trace { "Performed login request for ${method.forLog()}, method: [ ${methodHandler.method} ]" }
-            authenticationPostProcessor.onLoginSuccess(payload, method.entity)
             val request = buildTokenRequest(tokenType, method, payload.parameters)
-            return tokenHandler.generateToken(request)
+            val (tokenResponse, token) = tokenHandler.generateToken(request)
+            authenticationPostProcessor.onLoginSuccess(payload, method.entity, token)
+            return tokenResponse
         } catch(e: AuthenticationMethodException) {
             authenticationPostProcessor.onLoginFailure(payload, method.entity, e.message.toString())
             log.info("Login failed: ${e.message}")

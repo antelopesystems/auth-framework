@@ -34,5 +34,7 @@ data class ObjectToken(
         var fingerprint: String? = "",
 
         @get:Temporal(TemporalType.TIMESTAMP)
-        var expiryTime: Date? = null
+        var expiryTime: Date? = null,
+
+        var score: Int = 0
 ): BaseJpaEntity()

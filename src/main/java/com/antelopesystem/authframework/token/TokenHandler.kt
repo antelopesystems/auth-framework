@@ -4,7 +4,7 @@ import com.antelopesystem.authframework.token.model.*
 import javax.servlet.http.HttpServletRequest
 
 interface TokenHandler {
-    fun <T: TokenRequest> generateToken(payload: T): TokenResponse
+    fun <T: TokenRequest> generateToken(payload: T): Pair<TokenResponse, ObjectToken>
 
     fun getToken(token: String, objectType: String): ObjectToken
 

@@ -11,35 +11,28 @@ import javax.persistence.*
 @Table(name = "user_login_device_rel")
 @CachedBy("com.mycompany.cache.USER_LOGIN_DEVICE_CACHE")
 data class UserLoginDeviceRel(
-        @get:Id
-        @get:Column(name = "user_id")
+        @Id
         var userId: Long,
 
-        @get:Id
-        @get:Column(name = "user_agent")
+        @Id
         var userAgent: String? = null,
 
-        @get:Id
-        @get:Column(name = "ip")
+        @Id
         var ip: String? = null,
 
-        @get:Id
-        @get:Column(name = "fingerprint")
+        @Id
         var fingerprint: String? = null,
 
-        @get:Id
-        @get:Column(name = "country_iso")
+        @Id
         var countryIso: String,
 
-        @get:Enumerated
-        @get:Column(name = "status", columnDefinition = "INT(11) DEFAULT 0")
+        @Enumerated
         var status: UserLoginDeviceStatus = UserLoginDeviceStatus.Unknown,
 
-        @get:Column(name = "first_seen", updatable = false)
+        @Column(updatable = false)
         @Temporal(TemporalType.TIMESTAMP)
         var firstSeen: Date = Date(),
 
-        @get:Column(name = "last_seen")
         @Temporal(TemporalType.TIMESTAMP)
         var lastSeen: Date = Date()
 

@@ -22,7 +22,7 @@ class UnknownFingerprintAnomalyHandlerImpl : UserLoginAnomalyHandler {
             return false
         }
 
-        if(loginDTO.fingerprint.isBlank()) {
+        if(loginDTO.fingerprint.isNullOrBlank()) {
             return true
         }
 

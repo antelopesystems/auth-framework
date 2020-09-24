@@ -22,7 +22,7 @@ class UnknownUserAgentAnomalyHandlerImpl : UserLoginAnomalyHandler {
             return false
         }
 
-        if(loginDTO.userAgent.isBlank()) {
+        if(loginDTO.userAgent.isNullOrBlank()) {
             return true
         }
 
