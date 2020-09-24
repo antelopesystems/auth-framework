@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.authentication.loginrules
+package com.antelopesystem.authframework.authentication.rules
 
 import com.antelopesystem.crudframework.crud.annotation.CachedBy
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
@@ -9,14 +9,14 @@ import javax.persistence.Enumerated
 import javax.persistence.Table
 
 @Entity
-@Table(name = "user_login_rule")
+@Table(name = "authentication_rule")
 @Deleteable(softDelete = false)
-@CachedBy("com.mycompany.cache.USER_LOGIN_RULE_CACHE")
-data class UserLoginRule(
+//@CachedBy("com.mycompany.cache.USER_LOGIN_RULE_CACHE")
+data class AuthenticationRule(
         @get:Column(name = "min_score", columnDefinition = "INT DEFAULT 0")
         var minScore: Int = 0,
 
         @get:Enumerated
         @get:Column(name = "action")
-        var action: UserLoginRuleActionType? = null
+        var action: RuleActionType? = null
 ) : BaseJpaUpdatebleEntity()

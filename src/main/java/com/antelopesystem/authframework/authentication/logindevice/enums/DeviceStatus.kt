@@ -1,5 +1,5 @@
 package com.antelopesystem.authframework.authentication.logindevice.enums
 
-enum class UserLoginDeviceStatus {
+enum class DeviceStatus {
     Unknown, Verified, Invalid
 }
