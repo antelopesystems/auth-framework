@@ -1,17 +1,14 @@
 package com.antelopesystem.authframework.authentication.notifier
 
 import com.antelopesystem.authframework.authentication.DeviceInfoProvider
-import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.authentication.notifier.postaction.ExternalEntityCreator
 import com.antelopesystem.authframework.token.model.ObjectToken
-import com.antelopesystem.authframework.util.getFingerprint
-import com.antelopesystem.authframework.util.getIpAddress
-import com.antelopesystem.authframework.util.getUserAgent
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,25 +28,26 @@ class AuthenticationPostProcessorImpl(
         private val deviceInfoProvider: DeviceInfoProvider
 ) : AuthenticationPostProcessor {
     @ComponentMap
-    private lateinit var externalIdResolvers: Map<String, ExternalEntityCreator>
+    private lateinit var externalEntityCreator: Map<String, ExternalEntityCreator>
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken) {
-        getLoginListenersForEntity(entity.type).forEach {
-            it.onLoginSuccess(payload, entity, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken) {
+        getLoginListenersForEntity(method.entity.type).forEach {
+            it.onLoginSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
     }
 
-    override fun onLoginFailure(payload: MethodRequestPayload, entity: AuthenticatedEntity, error: String) {
-        getLoginListenersForEntity(entity.type).forEach {
-            it.onLoginFailure(payload, entity, deviceInfoProvider.getDeviceInfoFromCurrentRequest(), error)
+    override fun onLoginFailure(payload: MethodRequestPayload, method: EntityAuthenticationMethod, error: String) {
+        getLoginListenersForEntity(method.entity.type).forEach {
+            it.onLoginFailure(payload, method, deviceInfoProvider.getDeviceInfoFromCurrentRequest(), error)
         }
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken) {
-        getRegistrationListenersForEntity(entity.type).forEach {
-            it.onRegistrationSuccess(payload, entity, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken) {
+        resolveAndLinkExternalId(method.entity)
+        getRegistrationListenersForEntity(method.entity.type).forEach {
+            it.onRegistrationSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
-        resolveAndLinkExternalId(entity)
+
     }
 
     override fun onRegistrationFailure(payload: MethodRequestPayload, error: String) {
@@ -58,15 +56,15 @@ class AuthenticationPostProcessorImpl(
         }
     }
 
-    override fun onForgotPasswordInitialized(token: String, entity: AuthenticatedEntity) {
-        getForgotPasswordListenersForEntity(entity.type).forEach {
-            it.onForgotPasswordInitialized(token, entity, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+    override fun onForgotPasswordInitialized(token: String, method: EntityAuthenticationMethod) {
+        getForgotPasswordListenersForEntity(method.entity.type).forEach {
+            it.onForgotPasswordInitialized(token, method, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
     }
 
-    override fun onForgotPasswordSuccess(entity: AuthenticatedEntity) {
-        getForgotPasswordListenersForEntity(entity.type).forEach {
-            it.onForgotPasswordSuccess(entity, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+    override fun onForgotPasswordSuccess(method: EntityAuthenticationMethod) {
+        getForgotPasswordListenersForEntity(method.entity.type).forEach {
+            it.onForgotPasswordSuccess(method, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
     }
 
@@ -83,8 +81,8 @@ class AuthenticationPostProcessorImpl(
     }
 
     private fun resolveAndLinkExternalId(entity: AuthenticatedEntity) {
-        val externalIdResolver = externalIdResolvers[entity.type] ?: return
-        val externalId = externalIdResolver.create(ImmutableBean.create(entity) as AuthenticatedEntity)
+        val externalEntityCreator = externalEntityCreator[entity.type] ?: return
+        val externalId = externalEntityCreator.create(ImmutableBean.create(entity) as AuthenticatedEntity)
         entity.externalId = externalId
         crudHandler.update(entity).execute()
     }

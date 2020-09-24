@@ -11,7 +11,6 @@ class EntityMfaMethod(
         @get:ManyToOne(fetch = FetchType.EAGER)
         @get:JoinColumn(name = "entity_id")
         var entity: AuthenticatedEntity,
-        @MappedField(target = CustomParamsDTO::class)
         var type: MfaType,
         @MappedField(target = CustomParamsDTO::class)
         var param1: String = "",

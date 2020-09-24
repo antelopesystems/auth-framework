@@ -4,6 +4,7 @@ import com.antelopesystem.authframework.authentication.logindevice.EntityDeviceH
 import com.antelopesystem.authframework.authentication.logindevice.model.EntityDevice
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
 import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
@@ -23,17 +24,17 @@ class DeviceListener(
     override val type: String?
         get() = null
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, deviceInfo: DeviceInfo) {
-        if(shouldValidateAuthentication(entity)) {
-            token.score = authenticationValidator.validate(entity, deviceInfo)
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken, deviceInfo: DeviceInfo) {
+        if(shouldValidateAuthentication(method.entity)) {
+            token.score = authenticationValidator.validate(method.entity, deviceInfo)
             crudHandler.update(token).execute()
         }
-        entityDeviceHandler.createOrUpdateDevice(EntityDevice(entity.id, deviceInfo))
+        entityDeviceHandler.createOrUpdateDevice(EntityDevice(method.entity.id, deviceInfo))
 
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, entity: AuthenticatedEntity, token: ObjectToken, deviceInfo: DeviceInfo) {
-        entityDeviceHandler.createOrUpdateDevice(EntityDevice(entity.id, deviceInfo))
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken, deviceInfo: DeviceInfo) {
+        entityDeviceHandler.createOrUpdateDevice(EntityDevice(method.entity.id, deviceInfo))
     }
 
     private fun shouldValidateAuthentication(entity: AuthenticatedEntity): Boolean {

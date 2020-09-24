@@ -81,7 +81,7 @@ class AuthenticationServiceImpl(
             log.trace { "Performed registration for ${method.forLog()}, params: [ $params ]" }
             val request = buildTokenRequest(tokenType, method, payload.parameters)
             val (tokenResponse, token) = tokenHandler.generateToken(request)
-            authenticationPostProcessor.onRegistrationSuccess(payload, entity, token)
+            authenticationPostProcessor.onRegistrationSuccess(payload, method, token)
             return tokenResponse
         } catch(e: AuthenticationMethodException) {
             authenticationPostProcessor.onRegistrationFailure(payload, e.message.toString())
@@ -132,14 +132,14 @@ class AuthenticationServiceImpl(
             log.trace { "Performed login request for ${method.forLog()}, method: [ ${methodHandler.method} ]" }
             val request = buildTokenRequest(tokenType, method, payload.parameters)
             val (tokenResponse, token) = tokenHandler.generateToken(request)
-            authenticationPostProcessor.onLoginSuccess(payload, method.entity, token)
+            authenticationPostProcessor.onLoginSuccess(payload, method, token)
             return tokenResponse
         } catch(e: AuthenticationMethodException) {
-            authenticationPostProcessor.onLoginFailure(payload, method.entity, e.message.toString())
+            authenticationPostProcessor.onLoginFailure(payload, method, e.message.toString())
             log.info("Login failed: ${e.message}")
             throw e
         } catch(e: Exception) {
-            authenticationPostProcessor.onLoginFailure(payload, method.entity, UNHANDLED_EXCEPTION)
+            authenticationPostProcessor.onLoginFailure(payload, method, UNHANDLED_EXCEPTION)
             log.error("Login failed:", e)
             throw LoginFailedException(UNHANDLED_EXCEPTION)
         }
@@ -155,7 +155,7 @@ class AuthenticationServiceImpl(
 
         val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
         val token = crudHandler.create(ForgotPasswordToken(method)).execute()
-        authenticationPostProcessor.onForgotPasswordInitialized(token.token, method.entity)
+        authenticationPostProcessor.onForgotPasswordInitialized(token.token, method)
         log.trace { "Performed initializeForgotPassword for ${method.forLog()}: {$payload}" }
     }
 
@@ -178,7 +178,7 @@ class AuthenticationServiceImpl(
         methodHandler.changePassword(newPassword, method)
         crudHandler.update(method).execute()
         crudHandler.delete(token.id, ForgotPasswordToken::class.java).execute()
-        authenticationPostProcessor.onForgotPasswordSuccess(method.entity)
+        authenticationPostProcessor.onForgotPasswordSuccess(method)
         log.trace { "Performed redeemForgotPasswordToken for ${method.forLog()}" }
     }
 
