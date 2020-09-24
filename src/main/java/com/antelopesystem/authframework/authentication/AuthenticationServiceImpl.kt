@@ -207,10 +207,11 @@ class AuthenticationServiceImpl(
     private fun getMethodHandler(payload: MethodRequestPayload): AuthenticationMethodHandler {
         val methodHandler = authenticationMethodHandlers.values.find { it.isSupportedForPayload(payload) } ?: throw error("Not suitable method found")
 
-        if(!methodHandler.isSupportedForType(payload.type)) {
+        val securitySettings = securitySettingsHandler.getSecuritySettings(payload.type)
+
+        if(!securitySettings.allowedAuthenticationMethods.contains(methodHandler.method) || !methodHandler.isSupportedForType(payload.type)) {
             error("Method [ ${methodHandler.method} ] is not supported")
         }
-
         return methodHandler
     }
 

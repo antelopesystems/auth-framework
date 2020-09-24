@@ -1,57 +1,52 @@
 package com.antelopesystem.authframework.settings.model
 
+import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Table
-import javax.persistence.Transient
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
+import javax.persistence.*
 
 @Entity
 @Table(name = "security_settings")
 class SecuritySettings(
-        @get:Column
         var objectType: String,
 
-        @get:Column
         var tokenLifetimeHours: Long = 24L,
 
-        @get:Column
         var authenticatorMfaEnabled: Boolean = false,
 
-        @get:Column
         var authenticatorName: String? = "Not configured", // change to issuer todo
 
-        @get:Column
         var nexmoMfaEnabled: Boolean = false,
 
-        @get:Column
         var nexmoAuthenticationEnabled: Boolean = false,
 
-        @get:Column
         var nexmoApiKey: String = "",
 
-        @get:Column
         var nexmoApiSecret: String = "",
 
-        @get:Column
         var nexmoBranding: String = "",
 
-        @get:Column
         var allowedTokenTypes: String = TokenType.values().joinToString(","),
 
-        @get:Column
+        @get:Fetch(FetchMode.SELECT)
+        @get:ElementCollection(fetch = FetchType.EAGER)
+        @get:CollectionTable(name = "settings_authentication_method_rel", joinColumns = [JoinColumn(name = "settings_id")])
+        @get:Column(name = "method")
+        @get:Enumerated(EnumType.STRING)
+        var allowedAuthenticationMethods: MutableList<AuthenticationMethod> = mutableListOf(),
+
+        var allowedMfaTypes: String = "",
+
         var authenticationValidationEnabled: Boolean = false,
 
-        @get:Column
         var passwordRegex: String = ".*",
 
         var passwordExpiryDays: Long = 0,
 
-        @get:Column
         var allowRegistrationOnLogin: Boolean = false,
 
-        @get:Column
         var allowLoginOnRegistration: Boolean = false
 ) : BaseJpaUpdatebleEntity() {
         @Transient
