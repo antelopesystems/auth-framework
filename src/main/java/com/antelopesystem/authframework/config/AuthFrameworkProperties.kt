@@ -9,7 +9,8 @@ private const val ROOT_PREFIX = "auth-framework"
 @ConfigurationProperties(ROOT_PREFIX)
 class AuthFrameworkProperties
 
-@Configuration(ROOT_PREFIX + ".maxmind")
+@Configuration
+@ConfigurationProperties("$ROOT_PREFIX.maxmind")
 class MaxmindProperties {
     /**
      * Path to the .mmdb file in the classpath
