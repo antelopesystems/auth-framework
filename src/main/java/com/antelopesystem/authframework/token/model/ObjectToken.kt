@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.token.model
 
 import com.antelopesystem.authframework.token.type.enums.TokenType
+import com.antelopesystem.authframework.util.cleanUuid
 import com.antelopesystem.crudframework.crud.annotation.CachedBy
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
 import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity
@@ -12,7 +13,7 @@ import javax.persistence.*
 @Deleteable(softDelete = true)
 @CachedBy("com.mycompany.cache.TOKEN_CACHE")
 data class ObjectToken(
-        var token: String = UUID.randomUUID().toString(),
+        var token: String = UUID.randomUUID().cleanUuid(),
 
         @get:Enumerated
         var tokenType: TokenType = TokenType.Legacy,
@@ -29,7 +30,7 @@ data class ObjectToken(
 
         var immutable: Boolean = false,
 
-        var sessionId: String = UUID.randomUUID().toString(),
+        var sessionId: String = UUID.randomUUID().cleanUuid(),
 
         var fingerprint: String? = "",
 

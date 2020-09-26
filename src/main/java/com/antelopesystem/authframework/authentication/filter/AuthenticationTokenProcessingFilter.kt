@@ -13,10 +13,9 @@ import javax.servlet.http.HttpServletResponse
 
 class AuthenticationTokenProcessingFilter
 (
-        objectType: String,
         tokenHandler: TokenHandler,
         private val authenticationManager: AuthenticationManager
-) : AbstractAuthenticatedFilter(objectType, tokenHandler) {
+) : AbstractAuthenticatedFilter(tokenHandler) {
     @Throws(IOException::class, ServletException::class)
     override fun processFilter(token: ObjectToken, request: HttpServletRequest, response: HttpServletResponse) {
         val authentication = TokenAuthenticationRequest(token)

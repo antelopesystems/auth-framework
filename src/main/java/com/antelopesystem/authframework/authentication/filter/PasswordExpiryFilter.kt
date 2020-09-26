@@ -12,9 +12,8 @@ import javax.servlet.http.HttpServletResponse
 
 class PasswordExpiryFilter
 (
-        objectType: String,
         tokenHandler: TokenHandler
-) : AbstractAuthenticatedFilter(objectType, tokenHandler) {
+) : AbstractAuthenticatedFilter(tokenHandler) {
     @Throws(IOException::class, ServletException::class)
     override fun processFilter(token: ObjectToken, request: HttpServletRequest, response: HttpServletResponse) {
         val handler = getRequestHandler(request) ?: return

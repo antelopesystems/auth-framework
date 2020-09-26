@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
-abstract class AbstractAuthenticatedFilter(protected val objectType: String, private val tokenHandler: TokenHandler) : AbstractExceptionHandlingFilter() {
+abstract class AbstractAuthenticatedFilter(private val tokenHandler: TokenHandler) : AbstractExceptionHandlingFilter() {
 
     @Autowired
     private lateinit var mappings: RequestMappingHandlerMapping
@@ -24,9 +24,6 @@ abstract class AbstractAuthenticatedFilter(protected val objectType: String, pri
         }
         if (tokenHandler.isTokenPresent(requestWrapper)) {
             val token = tokenHandler.getTokenFromRequest(requestWrapper)
-            if (token.objectType != objectType) {
-                throw InvalidTokenException()
-            }
             processFilter(token, requestWrapper, response)
         }
         chain.doFilter(requestWrapper, response)
