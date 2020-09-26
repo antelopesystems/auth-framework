@@ -8,13 +8,14 @@ import com.antelopesystem.crudframework.transformer.EntityListToRoListTransforme
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
 import javax.persistence.*
+import javax.persistence.Entity
 
 @Entity
-@Table(name = "authenticated_entity")
+@Table
 @MappedFields(
         MappedField(target = UserInfo::class, mapFrom = "id", mapTo = "entityId")
 )
-class AuthenticatedEntity(
+class Entity(
         @MappedField(target = UserInfo::class, mapTo = "entityType")
         var type: String = "",
 
@@ -22,10 +23,10 @@ class AuthenticatedEntity(
         var active: Boolean = true,
 
         @get:Fetch(FetchMode.SELECT)
-        @get:OneToMany(fetch = FetchType.EAGER, mappedBy = "authenticatedEntity", orphanRemoval = true, cascade = [CascadeType.ALL])
+        @get:OneToMany(fetch = FetchType.EAGER, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])
         @JvmTransient
         @MappedField(target = UserInfo::class, transformer = EntityListToRoListTransformer::class)
-        var grants: MutableList<AuthenticatedEntityGrant> = mutableListOf(),
+        var grants: MutableList<EntityGrant> = mutableListOf(),
 
         @get:Fetch(FetchMode.SELECT)
         @get:OneToMany(fetch = FetchType.EAGER, targetEntity = EntityAuthenticationMethod::class, mappedBy = "entity", orphanRemoval = true, cascade = [CascadeType.ALL])

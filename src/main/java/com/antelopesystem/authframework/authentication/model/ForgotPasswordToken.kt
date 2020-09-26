@@ -6,8 +6,9 @@ import com.antelopesystem.crudframework.crud.annotation.Deleteable
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import java.util.*
 import javax.persistence.*
+import javax.persistence.Entity as JpaEntity
 
-@Entity
+@JpaEntity
 @Table
 @Deleteable(softDelete = true)
 data class ForgotPasswordToken(

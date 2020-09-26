@@ -4,13 +4,14 @@ import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import javax.persistence.*
+import javax.persistence.Entity as JpaEntity
 
-@Entity
+@JpaEntity
 @Table
 class EntityMfaMethod(
         @get:ManyToOne(fetch = FetchType.EAGER)
         @get:JoinColumn(name = "entity_id")
-        var entity: AuthenticatedEntity,
+        var entity: Entity,
         var type: MfaType,
         @MappedField(target = CustomParamsDTO::class)
         var param1: String = "",
@@ -23,5 +24,5 @@ class EntityMfaMethod(
         @MappedField(target = CustomParamsDTO::class)
         var param5: String = ""
 ) : BaseJpaUpdatebleEntity() {
-        constructor(entity: AuthenticatedEntity, type: MfaType, params: CustomParamsDTO): this(entity, type, params.param1, params.param2, params.param3, params.param4, params.param5)
+        constructor(entity: Entity, type: MfaType, params: CustomParamsDTO): this(entity, type, params.param1, params.param2, params.param3, params.param4, params.param5)
 }

@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.rules.anomaly
 
 import com.antelopesystem.authframework.authentication.logindevice.EntityDeviceHandler
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.rules.DeviceAnomalyType
 import com.antelopesystem.authframework.authentication.rules.anomaly.base.DeviceAnomalyHandler
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
@@ -17,7 +17,7 @@ class UnknownFingerprintAnomalyHandlerImpl : DeviceAnomalyHandler {
     override val anomalyType: DeviceAnomalyType
         get() = DeviceAnomalyType.UNKNOWN_FINGERPRINT
 
-    override fun handle(entity: AuthenticatedEntity, deviceInfo: DeviceInfo): Boolean {
+    override fun handle(entity: Entity, deviceInfo: DeviceInfo): Boolean {
         val knownFingerprints: List<String> = entityDeviceHandler.getEntityKnownFingerprints(entity.id)
         if(knownFingerprints.isNullOrEmpty()) {
             return false

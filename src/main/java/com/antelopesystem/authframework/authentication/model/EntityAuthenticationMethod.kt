@@ -3,13 +3,14 @@ package com.antelopesystem.authframework.authentication.model
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import javax.persistence.*
+import javax.persistence.Entity as JpaEntity
 
-@Entity
+@JpaEntity
 @Table
 class EntityAuthenticationMethod(
         @get:ManyToOne(fetch = FetchType.EAGER)
         @get:JoinColumn(name = "entity_id")
-        var entity: AuthenticatedEntity,
+        var entity: Entity,
         var method: AuthenticationMethod,
         var param1: String = "",
         var param2: String = "",

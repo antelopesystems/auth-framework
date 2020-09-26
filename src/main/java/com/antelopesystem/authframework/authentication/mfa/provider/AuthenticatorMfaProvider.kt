@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.authentication.mfa.provider
 
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaProvider
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
@@ -24,7 +24,7 @@ class AuthenticatorMfaProvider(
         return securitySettingsHandler.getSecuritySettings(entityType).authenticatorMfaEnabled
     }
 
-    override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): CustomParamsDTO {
+    override fun setup(payload: MethodRequestPayload, entity: Entity): CustomParamsDTO {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
         val response = client.setup(entityHandler.getEntityUsername(entity))
         return CustomParamsDTO(
@@ -33,7 +33,7 @@ class AuthenticatorMfaProvider(
         )
     }
 
-    override fun validate(code: String, entity: AuthenticatedEntity, params: CustomParamsDTO) {
+    override fun validate(code: String, entity: Entity, params: CustomParamsDTO) {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
         val result = client.validate(params.key(), code.toInt())
         if(!result) {

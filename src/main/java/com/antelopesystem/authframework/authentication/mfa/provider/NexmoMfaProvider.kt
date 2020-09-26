@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.authentication.mfa.provider
 
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaProvider
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
@@ -23,14 +23,14 @@ class NexmoMfaProvider(
         return securitySettingsHandler.getSecuritySettings(entityType).nexmoMfaEnabled
     }
 
-    override fun setup(payload: MethodRequestPayload, entity: AuthenticatedEntity): CustomParamsDTO {
+    override fun setup(payload: MethodRequestPayload, entity: Entity): CustomParamsDTO {
         return CustomParamsDTO(
                 payload.telephonePrefix(),
                 payload.telephone()
         )
     }
 
-    override fun issue(entity: AuthenticatedEntity, params: CustomParamsDTO) {
+    override fun issue(entity: Entity, params: CustomParamsDTO) {
         val client = nexmoClientProvider.getNexmoClient(entity.type)
         try {
             client.requestVerification(params.telephonePrefix() + params.telephone())
@@ -41,7 +41,7 @@ class NexmoMfaProvider(
         } // todo
     }
 
-    override fun validate(code: String, entity: AuthenticatedEntity, params: CustomParamsDTO) {
+    override fun validate(code: String, entity: Entity, params: CustomParamsDTO) {
         val client = nexmoClientProvider.getNexmoClient(entity.type)
         try {
             val result = client.validateVerification(params.telephonePrefix() + params.telephone(), code)

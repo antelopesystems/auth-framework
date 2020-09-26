@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.authentication.rules
 
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.rules.action.base.RuleActionHandler
 import com.antelopesystem.authframework.authentication.rules.anomaly.base.DeviceAnomalyHandler
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
@@ -20,7 +20,7 @@ class AuthenticationValidatorImpl(
     @ComponentMap
     private lateinit var anomalyHandlers: Map<DeviceAnomalyType, DeviceAnomalyHandler>
 
-    override fun validate(entity: AuthenticatedEntity, deviceInfo: DeviceInfo): Int {
+    override fun validate(entity: Entity, deviceInfo: DeviceInfo): Int {
         val score = computeScore(entity, deviceInfo)
         val ruleRanges = getRuleRanges()
 
@@ -33,7 +33,7 @@ class AuthenticationValidatorImpl(
         return score
     }
 
-    private fun computeScore(entity: AuthenticatedEntity, deviceInfo: DeviceInfo) : Int {
+    private fun computeScore(entity: Entity, deviceInfo: DeviceInfo) : Int {
         var points = 0
         for ((type, handler) in anomalyHandlers) {
             val result = handler.handle(entity, deviceInfo)

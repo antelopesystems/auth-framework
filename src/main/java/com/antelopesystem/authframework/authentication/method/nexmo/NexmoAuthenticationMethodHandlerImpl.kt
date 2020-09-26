@@ -5,7 +5,7 @@ import com.antelopesystem.authframework.authentication.LoginFailedException
 import com.antelopesystem.authframework.authentication.RegistrationFailedException
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
@@ -102,7 +102,7 @@ class NexmoAuthenticationMethodHandlerImpl(
         )
     }
 
-    override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod {
+    override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: Entity): EntityAuthenticationMethod {
         val client = nexmoClientProvider.getNexmoClient(payload.type)
         try {
             val fullTelephone = params.telephonePrefix() + params.telephone()

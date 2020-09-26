@@ -2,8 +2,7 @@ package com.antelopesystem.authframework.token
 
 import com.antelopesystem.authframework.authentication.AccessDeniedException
 import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
-import com.antelopesystem.authframework.authentication.model.GrantRO
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.token.model.TokenAuthentication
 import com.antelopesystem.authframework.authentication.model.UserInfo
 import com.antelopesystem.authframework.token.model.TokenAuthenticationRequest
@@ -28,7 +27,7 @@ class TokenAuthenticationProvider(
         val entity = crudHandler.showBy(where {
             "id" Equal authentication.token.entityId
             "type" Equal authentication.token.entityType
-        }, AuthenticatedEntity::class.java)
+        }, Entity::class.java)
                 .execute() ?: throw AccessDeniedException("Entity not found")
         for (constraintValidator in constraintValidators) {
             constraintValidator.validate(entity, authentication.token)

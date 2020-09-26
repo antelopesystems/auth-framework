@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.util
 
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import org.slf4j.Logger
 
@@ -66,6 +66,6 @@ fun Logger.error(ex: Throwable? = null, supplier: () -> String) {
 }
 
 
-fun AuthenticatedEntity.forLog() = "[ Entity ID: ${this.id}, Entity Type: ${this.type} ]"
+fun Entity.forLog() = "[ Entity ID: ${this.id}, Entity Type: ${this.type} ]"
 
 fun EntityAuthenticationMethod.forLog() = "[ Method ID: ${this.id}, Method Type: ${this.method}, Entity: ${this.entity.forLog()} ]"

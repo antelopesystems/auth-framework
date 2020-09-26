@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.method.base
 
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
@@ -25,7 +25,7 @@ interface AuthenticationMethodHandler  {
 
     fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO
 
-    fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: AuthenticatedEntity): EntityAuthenticationMethod
+    fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: Entity): EntityAuthenticationMethod
 
     fun getEntityMethod(payload: MethodRequestPayload): EntityAuthenticationMethod?
 

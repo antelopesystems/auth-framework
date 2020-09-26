@@ -1,7 +1,6 @@
 package com.antelopesystem.authframework.authentication.notifier.listener
 
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 
 interface ForgotPasswordListener : AuthenticationListener {

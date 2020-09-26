@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication.notifier
 import com.antelopesystem.authframework.authentication.DeviceInfoProvider
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
-import com.antelopesystem.authframework.authentication.model.AuthenticatedEntity
+import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
@@ -24,7 +24,6 @@ class AuthenticationPostProcessorImpl(
         @Autowired(required=false) private val registrationListeners: List<RegistrationListener> = listOf(),
         @Autowired(required=false) private val forgotPasswordListeners: List<ForgotPasswordListener> = listOf(),
         private val crudHandler: CrudHandler,
-        private val request: HttpServletRequest,
         private val deviceInfoProvider: DeviceInfoProvider
 ) : AuthenticationPostProcessor {
     @ComponentMap
@@ -80,9 +79,9 @@ class AuthenticationPostProcessorImpl(
         return registrationListeners.filter { it.type == type || it.type == null }
     }
 
-    private fun resolveAndLinkExternalId(entity: AuthenticatedEntity) {
+    private fun resolveAndLinkExternalId(entity: Entity) {
         val externalEntityCreator = externalEntityCreator[entity.type] ?: return
-        val externalId = externalEntityCreator.create(ImmutableBean.create(entity) as AuthenticatedEntity)
+        val externalId = externalEntityCreator.create(ImmutableBean.create(entity) as Entity)
         entity.externalId = externalId
         crudHandler.update(entity).execute()
     }
