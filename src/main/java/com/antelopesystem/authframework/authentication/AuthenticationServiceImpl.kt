@@ -12,6 +12,7 @@ import com.antelopesystem.authframework.token.model.request.LegacyTokenRequest
 import com.antelopesystem.authframework.token.model.request.PFTTokenRequest
 import com.antelopesystem.authframework.token.model.request.TimestampTokenRequest
 import com.antelopesystem.authframework.token.type.enums.TokenType
+import com.antelopesystem.authframework.util.error
 import com.antelopesystem.authframework.util.forLog
 import com.antelopesystem.authframework.util.trace
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
@@ -89,7 +90,7 @@ class AuthenticationServiceImpl(
             throw e
         } catch(e: Exception) {
             authenticationPostProcessor.onRegistrationFailure(payload, UNHANDLED_EXCEPTION)
-            log.error("Registration failed", e)
+            log.error(e) { "Registration failed" }
             throw RegistrationFailedException(UNHANDLED_EXCEPTION)
         }
     }
@@ -140,7 +141,7 @@ class AuthenticationServiceImpl(
             throw e
         } catch(e: Exception) {
             authenticationPostProcessor.onLoginFailure(payload, method, UNHANDLED_EXCEPTION)
-            log.error("Login failed:", e)
+            log.error(e) { "Login Failed" }
             throw LoginFailedException(UNHANDLED_EXCEPTION)
         }
     }
@@ -149,7 +150,7 @@ class AuthenticationServiceImpl(
         log.trace { "Received initializeForgotPassword with payload: {$payload}" }
         val methodHandler = getMethodHandler(payload)
         if(!methodHandler.isPasswordBased()) {
-            log.error("initializeForgotPassword failed for method [ ${methodHandler.method} ] as it is not password based")
+            log.error { "initializeForgotPassword failed for method [ ${methodHandler.method} ] as it is not password based" }
             error("Method [ ${methodHandler.method} ] is not supported")
         }
 
@@ -171,7 +172,7 @@ class AuthenticationServiceImpl(
         val methodHandler = getMethodHandlerByType(method.method, entityType)
 
         if(!methodHandler.isPasswordBased()) {
-            log.error("redeemForgotPasswordToken failed for method [ ${methodHandler.method} ] as it is not password based")
+            log.error { "redeemForgotPasswordToken failed for method [ ${methodHandler.method} ] as it is not password based" }
             throw error("Method [ ${methodHandler.method} ] is not supported")
         }
 
