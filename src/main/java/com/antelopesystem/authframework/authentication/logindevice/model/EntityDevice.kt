@@ -9,7 +9,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "entity_device")
-//@CachedBy("com.mycompany.cache.USER_LOGIN_DEVICE_CACHE")
+//@CachedBy()
 data class EntityDevice(
         var entityId: Long,
 

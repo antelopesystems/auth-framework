@@ -11,7 +11,7 @@ import javax.persistence.Table
 @Entity
 @Table(name = "authentication_rule")
 @Deleteable(softDelete = false)
-//@CachedBy("com.mycompany.cache.USER_LOGIN_RULE_CACHE")
+//@CachedBy()
 data class AuthenticationRule(
         @get:Column(name = "min_score", columnDefinition = "INT DEFAULT 0")
         var minScore: Int = 0,

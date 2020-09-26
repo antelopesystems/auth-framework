@@ -11,7 +11,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "token")
 @Deleteable(softDelete = true)
-@CachedBy("com.mycompany.cache.TOKEN_CACHE")
+//@CachedBy()
 data class Token(
         var token: String = UUID.randomUUID().cleanUuid(),
 
