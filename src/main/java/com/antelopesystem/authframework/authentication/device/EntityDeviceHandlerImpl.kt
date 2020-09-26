@@ -65,7 +65,7 @@ class EntityDeviceHandlerImpl(
     }
 
     companion object {
-        const val CACHE_NAME = "com.mycompany.cache.USER_LOGIN_DEVICE_CACHE"
+        const val CACHE_NAME = "DEVICE_CACHE"
         const val KNOWN_IPS_CACHE_KEY = "#entityId + '_known_ips'"
         const val KNOWN_COUNTRY_ISOS_CACHE_KEY = "#entityId + '_known_country_isos'"
         const val KNOWN_USER_AGENTS_CACHE_KEY = "#entityId + '_known_user_agents'"
