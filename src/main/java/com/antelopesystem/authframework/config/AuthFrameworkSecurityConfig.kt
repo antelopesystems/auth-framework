@@ -1,14 +1,11 @@
 package com.antelopesystem.authframework.config
 
 import com.antelopesystem.authframework.authentication.CustomAuthenticationEntryPoint
-import com.antelopesystem.authframework.authentication.constraint.ActiveConstraintValidator
-import com.antelopesystem.authframework.authentication.constraint.base.AuthenticationConstraintValidator
 import com.antelopesystem.authframework.authentication.filter.AuthenticationTokenProcessingFilter
 import com.antelopesystem.authframework.authentication.filter.MfaFilter
 import com.antelopesystem.authframework.authentication.filter.PasswordExpiryFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler
-import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -73,7 +70,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
 
     /* Validates token */
     @Bean
-    fun authenticationTokenProcessingFilter() = AuthenticationTokenProcessingFilter("User", tokenHandler, authenticationManagerBean())
+    fun authenticationTokenProcessingFilter() = AuthenticationTokenProcessingFilter(tokenHandler, authenticationManagerBean())
 
     @Bean
     fun authenticationTokenProcessingFilterRegistration(): FilterRegistrationBean<AuthenticationTokenProcessingFilter> {
@@ -85,7 +82,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
 
     /* Validates the operator is not blocked */
     @Bean
-    fun passwordExpiryFilter() = PasswordExpiryFilter("User", tokenHandler)
+    fun passwordExpiryFilter() = PasswordExpiryFilter(tokenHandler)
 
     @Bean
     fun passwordExpiryFilterRegistration(): FilterRegistrationBean<PasswordExpiryFilter> {
@@ -97,7 +94,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
 
     /* Validates the operator is not blocked */
     @Bean
-    fun mfaFilter() = MfaFilter("User", tokenHandler)
+    fun mfaFilter() = MfaFilter(tokenHandler)
 
     @Bean
     fun mfaFilterRegistration(): FilterRegistrationBean<MfaFilter> {
