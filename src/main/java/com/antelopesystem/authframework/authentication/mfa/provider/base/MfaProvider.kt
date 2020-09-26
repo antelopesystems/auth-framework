@@ -14,8 +14,6 @@ interface MfaProvider {
     @get:ComponentMapKey
     val type: MfaType
 
-    fun isSupportedForType(entityType: String): Boolean = true
-
     fun setup(payload: MethodRequestPayload, entity: Entity): CustomParamsDTO
 
     fun issue(entity: Entity, params: CustomParamsDTO) {

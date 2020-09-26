@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.rules
 
-import com.antelopesystem.authframework.authentication.logindevice.EntityDeviceHandler
-import com.antelopesystem.authframework.authentication.logindevice.model.EntityDevice
+import com.antelopesystem.authframework.authentication.device.EntityDeviceHandler
+import com.antelopesystem.authframework.authentication.device.model.EntityDevice
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
 import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod

@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.authentication.rules.anomaly
 
-import com.antelopesystem.authframework.authentication.logindevice.EntityDeviceHandler
+import com.antelopesystem.authframework.authentication.device.EntityDeviceHandler
 import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.rules.DeviceAnomalyType
 import com.antelopesystem.authframework.authentication.rules.anomaly.base.DeviceAnomalyHandler

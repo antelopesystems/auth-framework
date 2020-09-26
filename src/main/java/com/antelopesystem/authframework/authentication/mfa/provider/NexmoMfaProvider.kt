@@ -19,10 +19,6 @@ class NexmoMfaProvider(
     override val type: MfaType
         get() = MfaType.Nexmo
 
-    override fun isSupportedForType(entityType: String): Boolean {
-        return securitySettingsHandler.getSecuritySettings(entityType).nexmoMfaEnabled
-    }
-
     override fun setup(payload: MethodRequestPayload, entity: Entity): CustomParamsDTO {
         return CustomParamsDTO(
                 payload.telephonePrefix(),

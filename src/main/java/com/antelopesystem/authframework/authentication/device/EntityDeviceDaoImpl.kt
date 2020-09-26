@@ -1,7 +1,7 @@
-package com.antelopesystem.authframework.authentication.logindevice
+package com.antelopesystem.authframework.authentication.device
 
-import com.antelopesystem.authframework.authentication.logindevice.enums.DeviceStatus
-import com.antelopesystem.authframework.authentication.logindevice.model.EntityDevice
+import com.antelopesystem.authframework.authentication.device.enums.DeviceStatus
+import com.antelopesystem.authframework.authentication.device.model.EntityDevice
 import com.antelopesystem.crudframework.jpa.dao.AbstractBaseDao
 import org.hibernate.criterion.Restrictions
 import org.springframework.stereotype.Repository

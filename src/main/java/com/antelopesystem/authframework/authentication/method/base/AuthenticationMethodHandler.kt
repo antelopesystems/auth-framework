@@ -11,8 +11,6 @@ interface AuthenticationMethodHandler  {
     @get:ComponentMapKey
     val method: AuthenticationMethod
 
-    fun isSupportedForType(type: String): Boolean = true
-
     fun isSupportedForPayload(payload: MethodRequestPayload): Boolean
 
     fun getUsernameFromPayload(payload: MethodRequestPayload) : String

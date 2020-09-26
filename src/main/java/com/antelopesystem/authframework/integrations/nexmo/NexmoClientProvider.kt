@@ -12,7 +12,7 @@ class NexmoClientProvider(
     fun getNexmoClient(entityType: String) : NexmoClient {
         return nexmoClients.getOrPut(entityType) {
             val settings = securitySettingsHandler.getSecuritySettings(entityType)
-            NexmoClient(settings.nexmoApiKey, settings.nexmoApiSecret, settings.nexmoBranding)
+            NexmoClient(settings.nexmo.apiKey, settings.nexmo.apiSecret, settings.nexmo.brand)
         }
     }
 }

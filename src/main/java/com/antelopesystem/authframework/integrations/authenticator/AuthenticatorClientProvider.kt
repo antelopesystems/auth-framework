@@ -12,7 +12,7 @@ class AuthenticatorClientProvider(
     fun getAuthenticatorClient(entityType: String) : AuthenticatorClient {
         return authenticatorClients.getOrPut(entityType) {
             val settings = securitySettingsHandler.getSecuritySettings(entityType)
-            AuthenticatorClient(settings.authenticatorName ?: "Not configured")
+            AuthenticatorClient(settings.authenticator.issuer)
         }
     }
 }

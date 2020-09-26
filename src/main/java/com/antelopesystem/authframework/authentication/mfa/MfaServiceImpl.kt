@@ -4,6 +4,7 @@ import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaProv
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.authentication.model.*
 import com.antelopesystem.authframework.entity.EntityHandler
+import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.TokenHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
@@ -12,7 +13,8 @@ import org.springframework.stereotype.Service
 @Service
 class MfaServiceImpl(private val crudHandler: CrudHandler,
                      private val entityHandler: EntityHandler,
-                     private val tokenHandler: TokenHandler) : MfaService {
+                     private val tokenHandler: TokenHandler,
+                     private val securitySettingsHandler: SecuritySettingsHandler) : MfaService {
 
     private val setupMfas = mutableMapOf<MfaTrio, CustomParamsDTO>()
 
@@ -75,9 +77,10 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
 
     override fun getAvailableProviders(userInfo: UserInfo): List<ProviderDTO> {
         val entity = entityHandler.getEntity(userInfo.entityId, userInfo.entityType)
+        val securitySettings = securitySettingsHandler.getSecuritySettings(entity.type)
         val providers = mutableListOf<ProviderDTO>()
         for (mfaProvider in mfaProviders.values) {
-            if(mfaProvider.isSupportedForType(userInfo.entityType)) {
+            if(securitySettings.allowedMfaTypes.contains(mfaProvider.type)) {
                 providers.add(ProviderDTO(
                         mfaProvider.type,
                         entity.mfaMethods.any { it.type == mfaProvider.type }
@@ -105,7 +108,8 @@ class MfaServiceImpl(private val crudHandler: CrudHandler,
 
     private fun getMfaProvider(mfaType: MfaType, entityType: String): MfaProvider {
         val provider = mfaProviders[mfaType] ?: error("No provider found")
-        if (!provider.isSupportedForType(entityType)) {
+        val securitySettings = securitySettingsHandler.getSecuritySettings(entityType)
+        if (!securitySettings.allowedMfaTypes.contains(provider.type)) {
             error("Provider [ ${provider.type} ] is not supported")
         }
         return provider

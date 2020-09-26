@@ -1,6 +1,6 @@
-package com.antelopesystem.authframework.authentication.logindevice.model
+package com.antelopesystem.authframework.authentication.device.model
 
-import com.antelopesystem.authframework.authentication.logindevice.enums.DeviceStatus
+import com.antelopesystem.authframework.authentication.device.enums.DeviceStatus
 import com.antelopesystem.authframework.authentication.rules.dto.DeviceInfo
 import com.antelopesystem.authframework.util.hashSHA256
 import java.io.Serializable

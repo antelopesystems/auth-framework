@@ -1,46 +1,28 @@
 package com.antelopesystem.authframework.settings.model
 
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.token.type.enums.TokenType
 import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
+import java.io.Serializable
 import javax.persistence.*
 
-@Entity
-@Table(name = "security_settings")
 class SecuritySettings(
-        var entityType: String,
-
         var tokenLifetimeHours: Long = 24L,
 
-        var authenticatorMfaEnabled: Boolean = false,
+        var authenticator: AuthenticatorSettings = AuthenticatorSettings(),
 
-        var authenticatorName: String? = "Not configured", // change to issuer todo
+        var nexmo: NexmoSettings = NexmoSettings(),
 
-        var nexmoMfaEnabled: Boolean = false,
+        var allowedTokenTypes: MutableSet<TokenType> = TokenType.values().toMutableSet(),
 
-        var nexmoAuthenticationEnabled: Boolean = false,
-
-        var nexmoApiKey: String = "",
-
-        var nexmoApiSecret: String = "",
-
-        var nexmoBranding: String = "",
-
-        var allowedTokenTypes: String = TokenType.values().joinToString(","),
-
-        @get:Enumerated(EnumType.STRING)
         var defaultAuthenticationMethod: AuthenticationMethod? = null,
 
-        @get:Fetch(FetchMode.SELECT)
-        @get:ElementCollection(fetch = FetchType.EAGER)
-        @get:CollectionTable(name = "settings_authentication_method_rel", joinColumns = [JoinColumn(name = "settings_id")])
-        @get:Column(name = "method")
-        @get:Enumerated(EnumType.STRING)
-        var allowedAuthenticationMethods: MutableList<AuthenticationMethod> = mutableListOf(),
+        var allowedAuthenticationMethods: MutableSet<AuthenticationMethod> = mutableSetOf(),
 
-        var allowedMfaTypes: String = "",
+        var allowedMfaTypes: MutableSet<MfaType> = mutableSetOf(),
 
         var authenticationValidationEnabled: Boolean = false,
 
@@ -51,10 +33,14 @@ class SecuritySettings(
         var allowRegistrationOnLogin: Boolean = false,
 
         var allowLoginOnRegistration: Boolean = false
-) : BaseJpaUpdatebleEntity() {
-        @Transient
-        fun getAllowedTokenTypeEnums() : List<TokenType> {
-                return allowedTokenTypes.split(",")
-                        .map { TokenType.valueOf(it) }
-        }
-}
+) : Serializable
+
+data class AuthenticatorSettings(
+        var issuer: String = "Not configured"
+) : Serializable
+
+data class NexmoSettings(
+        var apiKey: String = "",
+        var apiSecret: String = "",
+        var brand: String = ""
+) : Serializable

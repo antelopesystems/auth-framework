@@ -20,10 +20,6 @@ class AuthenticatorMfaProvider(
     override val type: MfaType
         get() = MfaType.Authenticator
 
-    override fun isSupportedForType(entityType: String): Boolean {
-        return securitySettingsHandler.getSecuritySettings(entityType).authenticatorMfaEnabled
-    }
-
     override fun setup(payload: MethodRequestPayload, entity: Entity): CustomParamsDTO {
         val client = authenticatorClientProvider.getAuthenticatorClient(entity.type)
         val response = client.setup(entityHandler.getEntityUsername(entity))

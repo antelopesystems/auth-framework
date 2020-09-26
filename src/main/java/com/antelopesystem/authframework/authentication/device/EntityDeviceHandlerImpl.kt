@@ -1,8 +1,7 @@
-package com.antelopesystem.authframework.authentication.logindevice
+package com.antelopesystem.authframework.authentication.device
 
-import com.antelopesystem.authframework.authentication.logindevice.enums.DeviceStatus
-import com.antelopesystem.authframework.authentication.logindevice.model.EntityDevice
-import org.springframework.beans.factory.annotation.Autowired
+import com.antelopesystem.authframework.authentication.device.enums.DeviceStatus
+import com.antelopesystem.authframework.authentication.device.model.EntityDevice
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.cache.annotation.Caching

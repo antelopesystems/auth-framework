@@ -1,6 +1,6 @@
-package com.antelopesystem.authframework.authentication.logindevice
+package com.antelopesystem.authframework.authentication.device
 
-import com.antelopesystem.authframework.authentication.logindevice.model.EntityDevice
+import com.antelopesystem.authframework.authentication.device.model.EntityDevice
 import com.antelopesystem.crudframework.jpa.dao.BaseDao
 import java.util.*
 

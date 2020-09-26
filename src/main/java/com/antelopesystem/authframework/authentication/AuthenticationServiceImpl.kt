@@ -200,7 +200,7 @@ class AuthenticationServiceImpl(
 
     private fun validateTokenType(payload: MethodRequestPayload, tokenType: TokenType) {
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
-        if(!settings.getAllowedTokenTypeEnums().contains(tokenType)) {
+        if(!settings.allowedTokenTypes.contains(tokenType)) {
             error("Unsupported token type")
         }
     }
@@ -210,7 +210,7 @@ class AuthenticationServiceImpl(
 
         val securitySettings = securitySettingsHandler.getSecuritySettings(payload.type)
 
-        if(!securitySettings.allowedAuthenticationMethods.contains(methodHandler.method) || !methodHandler.isSupportedForType(payload.type)) {
+        if(!securitySettings.allowedAuthenticationMethods.contains(methodHandler.method)) {
             error("Method [ ${methodHandler.method} ] is not supported")
         }
         return methodHandler
@@ -221,10 +221,11 @@ class AuthenticationServiceImpl(
         return securitySettings.allowedAuthenticationMethods.map { AuthenticationMethodDTO(it, it == securitySettings.defaultAuthenticationMethod) }
     }
 
-    private fun getMethodHandlerByType(method: AuthenticationMethod, type: String): AuthenticationMethodHandler {
+    private fun getMethodHandlerByType(method: AuthenticationMethod, entityType: String): AuthenticationMethodHandler {
         val methodHandler = authenticationMethodHandlers[method] ?: throw error("Not suitable method found")
+        val securitySettings = securitySettingsHandler.getSecuritySettings(entityType)
 
-        if(!methodHandler.isSupportedForType(type)) {
+        if(!securitySettings.allowedAuthenticationMethods.contains(methodHandler.method)) {
             error("Method [ ${methodHandler.method} ] is not supported")
         }
 
