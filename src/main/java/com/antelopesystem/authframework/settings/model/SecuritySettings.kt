@@ -10,7 +10,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "security_settings")
 class SecuritySettings(
-        var objectType: String,
+        var entityType: String,
 
         var tokenLifetimeHours: Long = 24L,
 

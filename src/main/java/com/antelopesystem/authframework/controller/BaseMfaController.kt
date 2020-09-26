@@ -13,7 +13,7 @@ import java.security.Principal
 import javax.servlet.http.HttpServletRequest
 
 abstract class BaseMfaController(
-        private val objectType: String
+        private val entityType: String
 ) : BaseController() {
 
     @Autowired
@@ -22,7 +22,7 @@ abstract class BaseMfaController(
     @PostMapping("/{mfaType}/setup")
     fun setup(@PathVariable mfaType: MfaType, principal: Principal, request: HttpServletRequest, @RequestBody(required = false) body: String?) : ResultRO<*> {
         return wrapResult {
-            return@wrapResult mfaService.setup(mfaType, MethodRequestPayload(objectType, request.parameterMap, body), principal.getUserInfo())
+            return@wrapResult mfaService.setup(mfaType, MethodRequestPayload(entityType, request.parameterMap, body), principal.getUserInfo())
         }
     }
 

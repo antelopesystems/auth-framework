@@ -8,7 +8,7 @@ import com.antelopesystem.authframework.authentication.model.EntityAuthenticatio
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.authentication.notifier.postaction.ExternalEntityCreator
-import com.antelopesystem.authframework.token.model.ObjectToken
+import com.antelopesystem.authframework.token.model.Token
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,7 +30,7 @@ class AuthenticationPostProcessorImpl(
     @ComponentMap
     private lateinit var externalEntityCreator: Map<String, ExternalEntityCreator>
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token) {
         getLoginListenersForEntity(method.entity.type).forEach {
             it.onLoginSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
@@ -42,7 +42,7 @@ class AuthenticationPostProcessorImpl(
         }
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token) {
         resolveAndLinkExternalId(method.entity)
         getRegistrationListenersForEntity(method.entity.type).forEach {
             it.onRegistrationSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())

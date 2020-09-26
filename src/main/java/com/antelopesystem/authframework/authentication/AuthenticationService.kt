@@ -13,6 +13,6 @@ interface AuthenticationService {
     fun doRegister(payload: MethodRequestPayload, tokenType: TokenType): TokenResponse
     fun initializeForgotPassword(payload: MethodRequestPayload)
     fun redeemForgotPasswordToken(tokenString: String, newPassword: String, entityType: String)
-    fun changePassword(payload: MethodRequestPayload, newPassword: String, objectType: String)
+    fun changePassword(payload: MethodRequestPayload, newPassword: String, entityType: String)
     fun getAvailableMethods(entityType: String): List<AuthenticationMethodDTO>
 }

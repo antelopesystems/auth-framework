@@ -182,7 +182,7 @@ class AuthenticationServiceImpl(
         log.trace { "Performed redeemForgotPasswordToken for ${method.forLog()}" }
     }
 
-    override fun changePassword(payload: MethodRequestPayload, newPassword: String, objectType: String) {
+    override fun changePassword(payload: MethodRequestPayload, newPassword: String, entityType: String) {
         val methodHandler = getMethodHandler(payload)
         val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
         if(!methodHandler.checkPassword(payload, method)) {

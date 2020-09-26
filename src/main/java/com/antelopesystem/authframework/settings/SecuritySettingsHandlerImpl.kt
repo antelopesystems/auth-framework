@@ -12,7 +12,7 @@ class SecuritySettingsHandlerImpl(
     // todo: cache
     override fun getSecuritySettings(entityType: String): SecuritySettings {
         return crudHandler.showBy(where {
-            "objectType" Equal entityType
+            "entityType" Equal entityType
         }, SecuritySettings::class.java)
                 .execute() ?: SecuritySettings(entityType)
     }

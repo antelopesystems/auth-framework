@@ -9,7 +9,7 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
-import com.antelopesystem.authframework.token.model.ObjectToken
+import com.antelopesystem.authframework.token.model.Token
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import org.springframework.stereotype.Component
 
@@ -24,7 +24,7 @@ class DeviceListener(
     override val type: String?
         get() = null
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken, deviceInfo: DeviceInfo) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token, deviceInfo: DeviceInfo) {
         if(shouldValidateAuthentication(method.entity)) {
             token.score = authenticationValidator.validate(method.entity, deviceInfo)
             crudHandler.update(token).execute()
@@ -33,7 +33,7 @@ class DeviceListener(
 
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: ObjectToken, deviceInfo: DeviceInfo) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token, deviceInfo: DeviceInfo) {
         entityDeviceHandler.createOrUpdateDevice(EntityDevice(method.entity.id, deviceInfo))
     }
 

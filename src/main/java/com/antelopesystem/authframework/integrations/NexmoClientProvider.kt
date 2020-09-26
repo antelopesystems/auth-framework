@@ -9,9 +9,9 @@ class NexmoClientProvider(
 ) {
     private val nexmoClients = mutableMapOf<String, NexmoClient>()
 
-    fun getNexmoClient(objectType: String) : NexmoClient {
-        return nexmoClients.getOrPut(objectType) {
-            val settings = securitySettingsHandler.getSecuritySettings(objectType)
+    fun getNexmoClient(entityType: String) : NexmoClient {
+        return nexmoClients.getOrPut(entityType) {
+            val settings = securitySettingsHandler.getSecuritySettings(entityType)
             NexmoClient(settings.nexmoApiKey, settings.nexmoApiSecret, settings.nexmoBranding)
         }
     }

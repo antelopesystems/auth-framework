@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.token.type
 
-import com.antelopesystem.authframework.token.model.ObjectToken
+import com.antelopesystem.authframework.token.model.Token
 import com.antelopesystem.authframework.token.model.TokenRequest
 import com.antelopesystem.authframework.token.type.base.TokenTypeHandler
 import com.antelopesystem.authframework.token.type.enums.TokenType
@@ -18,19 +18,19 @@ class LegacyAuthenticationHandlerImpl : TokenTypeHandler {
     @Autowired
     lateinit var crudHandler: CrudHandler
 
-    override fun getTokenFromRequest(request: HttpServletRequest): ObjectToken? {
+    override fun getTokenFromRequest(request: HttpServletRequest): Token? {
         val authTokenString = request.getHeader(AUTH_TOKEN_NAME)
 
         return crudHandler.showBy(where {
             "token" Equal authTokenString
             "tokenType" Equal type
-        }, ObjectToken::class.java)
+        }, Token::class.java)
                 .fromCache()
                 .execute()
     }
 
-    override fun <T : TokenRequest> generateToken(objectToken: ObjectToken, payload: T): String {
-        return objectToken.token
+    override fun <T : TokenRequest> generateToken(token: Token, payload: T): String {
+        return token.token
     }
 
     override fun isTokenPresent(request: HttpServletRequest): Boolean {

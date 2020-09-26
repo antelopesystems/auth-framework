@@ -4,19 +4,19 @@ import com.antelopesystem.authframework.token.model.*
 import javax.servlet.http.HttpServletRequest
 
 interface TokenHandler {
-    fun <T: TokenRequest> generateToken(payload: T): Pair<TokenResponse, ObjectToken>
+    fun <T: TokenRequest> generateToken(payload: T): Pair<TokenResponse, Token>
 
-    fun getToken(token: String, objectType: String): ObjectToken
+    fun getToken(token: String, entityType: String): Token
 
-    fun deleteAllTokensById(objectId: Long, objectType: String)
+    fun deleteAllTokensById(entityId: Long, entityType: String)
 
     fun isTokenPresent(request: HttpServletRequest): Boolean
 
     fun isCurrentTokenPresent(): Boolean
 
-    fun getCurrentToken(): ObjectToken
+    fun getCurrentToken(): Token
 
-    fun getTokenFromRequest(request: HttpServletRequest): ObjectToken
+    fun getTokenFromRequest(request: HttpServletRequest): Token
 
     fun deleteCurrentToken()
 }

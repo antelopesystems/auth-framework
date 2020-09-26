@@ -9,9 +9,9 @@ class AuthenticatorClientProvider(
 ) {
     private val authenticatorClients = mutableMapOf<String, AuthenticatorClient>()
 
-    fun getAuthenticatorClient(objectType: String) : AuthenticatorClient {
-        return authenticatorClients.getOrPut(objectType) {
-            val settings = securitySettingsHandler.getSecuritySettings(objectType)
+    fun getAuthenticatorClient(entityType: String) : AuthenticatorClient {
+        return authenticatorClients.getOrPut(entityType) {
+            val settings = securitySettingsHandler.getSecuritySettings(entityType)
             AuthenticatorClient(settings.authenticatorName ?: "Not configured")
         }
     }

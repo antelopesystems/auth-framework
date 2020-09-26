@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.token.type.base
 
-import com.antelopesystem.authframework.token.model.ObjectToken
+import com.antelopesystem.authframework.token.model.Token
 import com.antelopesystem.authframework.token.model.request.TimestampTokenRequest
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
@@ -20,16 +20,16 @@ abstract class AbstractTimestampAuthenticationHandler: TokenTypeHandler {
     @Autowired
     lateinit var crudHandler: CrudHandler
 
-    abstract fun getStringToHash(token: ObjectToken, timestamp: String, request: HttpServletRequest): String
+    abstract fun getStringToHash(token: Token, timestamp: String, request: HttpServletRequest): String
 
-    final override fun getTokenFromRequest(request: HttpServletRequest): ObjectToken? {
+    final override fun getTokenFromRequest(request: HttpServletRequest): Token? {
         val hashedAuthToken = request.getHeader(AUTH_TOKEN_NAME)
         val timestamp = request.getHeader(TIMESTAMP_NAME)
         val sessionId = request.getHeader(SESSIONID_NAME)
 
         val token = crudHandler.showBy(where {
             "sessionId" Equal sessionId
-        }, ObjectToken::class.java)
+        }, Token::class.java)
                 .fromCache()
                 .execute()
 

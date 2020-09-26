@@ -9,18 +9,18 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "object_token")
+@Table(name = "token")
 @Deleteable(softDelete = true)
 @CachedBy("com.mycompany.cache.TOKEN_CACHE")
-data class ObjectToken(
+data class Token(
         var token: String = UUID.randomUUID().cleanUuid(),
 
         @get:Enumerated
-        var tokenType: TokenType = TokenType.Legacy,
+        var type: TokenType = TokenType.Legacy,
 
-        var objectId: Long,
+        var entityId: Long,
 
-        var objectType: String,
+        var entityType: String,
 
         var ip: String?,
 
