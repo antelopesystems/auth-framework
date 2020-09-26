@@ -1,13 +1,13 @@
 package com.antelopesystem.authframework.util
 
+import com.antelopesystem.authframework.settings.model.SecuritySettings
 import com.google.gson.GsonBuilder
-import java.io.Serializable
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
 @Converter
-class JsonObjectAttributeConverter : AttributeConverter<Serializable, String> {
-    override fun convertToDatabaseColumn(attribute: Serializable?): String? {
+class SecuritySettingsConverter : AttributeConverter<SecuritySettings, String> {
+    override fun convertToDatabaseColumn(attribute: SecuritySettings?): String? {
         attribute ?: return null
         return try {
             gson.toJson(attribute)
@@ -18,10 +18,10 @@ class JsonObjectAttributeConverter : AttributeConverter<Serializable, String> {
 
     }
 
-    override fun convertToEntityAttribute(dbData: String?): Serializable? {
+    override fun convertToEntityAttribute(dbData: String?): SecuritySettings? {
         dbData ?: return null
         return try {
-            gson.fromJson(dbData, Serializable::class.java)
+            gson.fromJson(dbData, SecuritySettings::class.java)
         } catch(e: Exception) {
             log.error(e) { "Deserialization failed" }
             null
@@ -30,6 +30,6 @@ class JsonObjectAttributeConverter : AttributeConverter<Serializable, String> {
 
     companion object {
         private val gson = GsonBuilder().setPrettyPrinting().serializeNulls().create()
-        private val log = JsonObjectAttributeConverter.logger()
+        private val log = SecuritySettingsConverter.logger()
     }
 }

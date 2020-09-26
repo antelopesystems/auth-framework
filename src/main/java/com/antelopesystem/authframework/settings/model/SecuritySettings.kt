@@ -16,6 +16,8 @@ class SecuritySettings(
 
         var nexmo: NexmoSettings = NexmoSettings(),
 
+        var google: GoogleSettings = GoogleSettings(),
+
         var allowedTokenTypes: MutableSet<TokenType> = TokenType.values().toMutableSet(),
 
         var defaultAuthenticationMethod: AuthenticationMethod? = null,
@@ -43,4 +45,9 @@ data class NexmoSettings(
         var apiKey: String = "",
         var apiSecret: String = "",
         var brand: String = ""
+) : Serializable
+
+data class GoogleSettings(
+        var clientId: String = "",
+        var clientSecret: String = ""
 ) : Serializable
