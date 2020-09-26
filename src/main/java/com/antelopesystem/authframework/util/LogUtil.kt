@@ -3,7 +3,9 @@ package com.antelopesystem.authframework.util
 import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
+inline fun Any.logger(): Logger = LoggerFactory.getLogger(this::class.java)
 
 fun Logger.trace(supplier: () -> String) = this.trace(null, supplier)
 

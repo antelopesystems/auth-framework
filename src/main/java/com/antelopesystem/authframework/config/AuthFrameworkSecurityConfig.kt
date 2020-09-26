@@ -6,6 +6,7 @@ import com.antelopesystem.authframework.authentication.filter.MfaFilter
 import com.antelopesystem.authframework.authentication.filter.PasswordExpiryFilter
 import com.antelopesystem.authframework.token.TokenAuthenticationProvider
 import com.antelopesystem.authframework.token.TokenHandler
+import com.antelopesystem.authframework.util.logger
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -32,7 +33,7 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
                 .csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(CustomAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(compositeSecurityFilter(), UsernamePasswordAuthenticationFilter::class.java)
+                .addFilterBefore(getCompositeSecurityFilter(), UsernamePasswordAuthenticationFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .cors()
@@ -42,33 +43,11 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         auth.authenticationProvider(tokenAuthenticationProvder)
     }
 
-    /* Beans */
     @Bean(name = [BeanIds.AUTHENTICATION_MANAGER, "authenticationManager"])
     override fun authenticationManagerBean(): AuthenticationManager {
         return super.authenticationManagerBean()
     }
 
-    /* Composite security filter */
-    @Bean
-    fun compositeSecurityFilter(): CompositeFilter {
-        val compositeSecurityFilter = CompositeFilter()
-        compositeSecurityFilter.setFilters(mutableListOf(
-                authenticationTokenProcessingFilter(),
-                mfaFilter(),
-                passwordExpiryFilter()
-        ))
-        return compositeSecurityFilter
-    }
-
-    @Bean
-    fun compositeSecurityFilterRegistration(): FilterRegistrationBean<CompositeFilter> {
-        val registration = FilterRegistrationBean<CompositeFilter>()
-        registration.filter = compositeSecurityFilter()
-        registration.isEnabled = false
-        return registration
-    }
-
-    /* Validates token */
     @Bean
     fun authenticationTokenProcessingFilter() = AuthenticationTokenProcessingFilter(tokenHandler, authenticationManagerBean())
 
@@ -80,7 +59,6 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         return registration
     }
 
-    /* Validates the operator is not blocked */
     @Bean
     fun passwordExpiryFilter() = PasswordExpiryFilter(tokenHandler)
 
@@ -92,7 +70,6 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         return registration
     }
 
-    /* Validates the operator is not blocked */
     @Bean
     fun mfaFilter() = MfaFilter(tokenHandler)
 
@@ -102,5 +79,13 @@ class AuthFrameworkSecurityConfig : WebSecurityConfigurerAdapter() {
         registration.filter = mfaFilter()
         registration.isEnabled = false
         return registration
+    }
+
+    private fun getCompositeSecurityFilter() = CompositeFilter().apply {
+        setFilters(mutableListOf(
+                authenticationTokenProcessingFilter(),
+                mfaFilter(),
+                passwordExpiryFilter()
+        ))
     }
 }
