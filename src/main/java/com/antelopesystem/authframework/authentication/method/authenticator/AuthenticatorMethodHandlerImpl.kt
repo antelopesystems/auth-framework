@@ -9,7 +9,7 @@ import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
-import com.antelopesystem.authframework.integrations.AuthenticatorClient
+import com.antelopesystem.authframework.integrations.authenticator.AuthenticatorClient
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where
 import org.springframework.stereotype.Component

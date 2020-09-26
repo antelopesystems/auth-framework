@@ -7,7 +7,7 @@ import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.entity.EntityHandler
-import com.antelopesystem.authframework.integrations.AuthenticatorClientProvider
+import com.antelopesystem.authframework.integrations.authenticator.AuthenticatorClientProvider
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import org.springframework.stereotype.Component
 

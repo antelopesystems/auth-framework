@@ -9,8 +9,8 @@ import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
-import com.antelopesystem.authframework.integrations.NexmoClientProvider
-import com.antelopesystem.authframework.integrations.NexmoException
+import com.antelopesystem.authframework.integrations.nexmo.NexmoClientProvider
+import com.antelopesystem.authframework.integrations.nexmo.exception.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.modelfilter.dsl.where

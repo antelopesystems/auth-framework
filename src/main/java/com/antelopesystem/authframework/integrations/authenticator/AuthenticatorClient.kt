@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.integrations
+package com.antelopesystem.authframework.integrations.authenticator
 
 import com.warrenstrange.googleauth.GoogleAuthenticator
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator

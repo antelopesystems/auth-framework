@@ -1,4 +1,4 @@
-package com.antelopesystem.authframework.integrations
+package com.antelopesystem.authframework.integrations.authenticator
 
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import org.springframework.stereotype.Component

@@ -1,5 +1,8 @@
-package com.antelopesystem.authframework.integrations
+package com.antelopesystem.authframework.integrations.nexmo
 
+import com.antelopesystem.authframework.integrations.nexmo.exception.NexmoCooldownException
+import com.antelopesystem.authframework.integrations.nexmo.exception.NexmoGeneralException
+import com.antelopesystem.authframework.integrations.nexmo.exception.NexmoRequestNotFoundException
 import com.nexmo.client.NexmoClient
 import com.nexmo.client.verify.VerifyRequest
 import com.nexmo.client.verify.VerifyStatus
@@ -27,7 +30,7 @@ class NexmoClient(apiKey: String, apiSecret: String, private val brand: String) 
         }
 
         if(response.status != VerifyStatus.OK) {
-            throw NexmoGeneralError(response.errorText)
+            throw NexmoGeneralException(response.errorText)
         }
 
         numberRequestIds[number] = NumberRequestDTO(response.requestId)
@@ -82,10 +85,3 @@ class NexmoClient(apiKey: String, apiSecret: String, private val brand: String) 
     }
 }
 
-data class NumberRequestDTO(val requestId: String, val timeOfRequest: Long = System.currentTimeMillis())
-
-abstract class NexmoException(message: String) : RuntimeException(message)
-
-data class NexmoGeneralError(override val message: String) : NexmoException(message)
-class NexmoRequestNotFoundException : NexmoException("No request found")
-data class NexmoCooldownException(val secondsRemaining: Long) : NexmoException("Please try again in $secondsRemaining seconds")

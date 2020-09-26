@@ -6,8 +6,8 @@ import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.CustomParamsDTO
 import com.antelopesystem.authframework.authentication.model.EntityMfaMethod
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
-import com.antelopesystem.authframework.integrations.NexmoClientProvider
-import com.antelopesystem.authframework.integrations.NexmoException
+import com.antelopesystem.authframework.integrations.nexmo.NexmoClientProvider
+import com.antelopesystem.authframework.integrations.nexmo.exception.NexmoException
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import org.springframework.stereotype.Component
 
