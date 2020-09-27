@@ -9,10 +9,10 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "token")
+@Table(name = "auth_token")
 @Deleteable(softDelete = true)
 //@CachedBy()
-data class Token(
+data class AuthToken(
         var token: String = UUID.randomUUID().cleanUuid(),
 
         @get:Enumerated

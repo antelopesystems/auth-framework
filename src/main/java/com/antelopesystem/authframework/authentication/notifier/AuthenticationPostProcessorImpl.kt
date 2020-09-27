@@ -8,13 +8,12 @@ import com.antelopesystem.authframework.authentication.model.EntityAuthenticatio
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.authentication.notifier.postaction.ExternalEntityCreator
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cglib.beans.ImmutableBean
 import org.springframework.stereotype.Component
-import javax.servlet.http.HttpServletRequest
 
 
 // todo: modify component map to support lists
@@ -29,9 +28,9 @@ class AuthenticationPostProcessorImpl(
     @ComponentMap
     private lateinit var externalEntityCreator: Map<String, ExternalEntityCreator>
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, authToken: AuthToken) {
         getLoginListenersForEntity(method.entity.type).forEach {
-            it.onLoginSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+            it.onLoginSuccess(payload, method, authToken, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
     }
 
@@ -41,10 +40,10 @@ class AuthenticationPostProcessorImpl(
         }
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, authToken: AuthToken) {
         resolveAndLinkExternalId(method.entity)
         getRegistrationListenersForEntity(method.entity.type).forEach {
-            it.onRegistrationSuccess(payload, method, token, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+            it.onRegistrationSuccess(payload, method, authToken, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
 
     }

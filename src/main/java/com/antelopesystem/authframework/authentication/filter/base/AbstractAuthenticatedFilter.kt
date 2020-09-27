@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.filter.base
 
 import com.antelopesystem.authframework.token.TokenHandler
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.method.HandlerMethod
@@ -30,7 +30,7 @@ abstract class AbstractAuthenticatedFilter(private val tokenHandler: TokenHandle
 
     override fun getAlreadyFilteredAttributeName(): String = this.javaClass.simpleName
 
-    protected abstract fun processFilter(token: Token, request: HttpServletRequest, response: HttpServletResponse)
+    protected abstract fun processFilter(authToken: AuthToken, request: HttpServletRequest, response: HttpServletResponse)
 
     protected fun getRequestHandler(request: HttpServletRequest): HandlerMethod? {
         val handlerExecutionChain = mappings.getHandler(request)

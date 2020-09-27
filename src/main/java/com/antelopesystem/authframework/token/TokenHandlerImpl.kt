@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.token
 
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
 import com.antelopesystem.authframework.token.exception.InvalidTokenException
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import com.antelopesystem.authframework.token.model.TokenRequest
 import com.antelopesystem.authframework.token.model.TokenResponse
 import com.antelopesystem.authframework.token.type.base.TokenTypeHandler
@@ -32,17 +32,17 @@ class TokenHandlerImpl : TokenHandler {
     @Autowired
     private lateinit var request: HttpServletRequest
 
-    override fun getToken(token: String, entityType: String): Token {
+    override fun getToken(token: String, entityType: String): AuthToken {
         return crudHandler.showBy(where {
             "token" Equal token
             "entityType" Equal entityType
 
-        }, Token::class.java)
+        }, AuthToken::class.java)
                 .fromCache()
                 .execute() ?: throw InvalidTokenException()
     }
 
-    override fun getTokenFromRequest(request: HttpServletRequest): Token {
+    override fun getTokenFromRequest(request: HttpServletRequest): AuthToken {
         val typeHandler = getAuthenticationTypeHandler(request)
         val token = typeHandler.getTokenFromRequest(request) ?: throw InvalidTokenException()
         if(token.expiryTime!!.before(Date())) {
@@ -53,12 +53,12 @@ class TokenHandlerImpl : TokenHandler {
     }
 
 
-    override fun getCurrentToken(): Token = getTokenFromRequest(request)
+    override fun getCurrentToken(): AuthToken = getTokenFromRequest(request)
 
     override fun deleteCurrentToken() {
         try {
             val token = getCurrentToken()
-            crudHandler.delete(token.id, Token::class.java).execute()
+            crudHandler.delete(token.id, AuthToken::class.java).execute()
 
         } catch(e: Exception) {
             when(e) {
@@ -68,12 +68,12 @@ class TokenHandlerImpl : TokenHandler {
         }
     }
 
-    override fun <T : TokenRequest> generateToken(payload: T): Pair<TokenResponse, Token> {
+    override fun <T : TokenRequest> generateToken(payload: T): Pair<TokenResponse, AuthToken> {
         // todo. add settings such as supported token types for object etc.
         val securitySettings = securitySettingsHandler.getSecuritySettings(payload.entityType)
         val typeHandler = authenticationTypeHandlers[payload.type]
 
-        val objectToken = Token(
+        val objectToken = AuthToken(
                 type = payload.type,
                 entityId = payload.entityId,
                 entityType = payload.entityType,
@@ -96,10 +96,10 @@ class TokenHandlerImpl : TokenHandler {
             "entityId" Equal entityId
             "entityType" Equal entityType
             "immutable" Equal false
-        }, Token::class.java).execute()
+        }, AuthToken::class.java).execute()
 
         for (token in tokens.data) {
-            crudHandler.delete(token.id, Token::class.java).execute()
+            crudHandler.delete(token.id, AuthToken::class.java).execute()
         }
     }
 

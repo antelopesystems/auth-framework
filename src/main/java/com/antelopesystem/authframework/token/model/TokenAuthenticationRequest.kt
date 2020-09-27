@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.token.model
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-data class TokenAuthenticationRequest(val token: Token) : Authentication {
+data class TokenAuthenticationRequest(val authToken: AuthToken) : Authentication {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority>? {
         return null
     }

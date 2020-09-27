@@ -9,7 +9,7 @@ import com.antelopesystem.authframework.authentication.model.MethodRequestPayloa
 import com.antelopesystem.authframework.authentication.notifier.listener.LoginListener
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import com.antelopesystem.crudframework.crud.handler.CrudHandler
 import org.springframework.stereotype.Component
 
@@ -24,16 +24,16 @@ class DeviceListener(
     override val type: String?
         get() = null
 
-    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token, deviceInfo: DeviceInfo) {
+    override fun onLoginSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, authToken: AuthToken, deviceInfo: DeviceInfo) {
         if(shouldValidateAuthentication(method.entity)) {
-            token.score = authenticationValidator.validate(method.entity, deviceInfo)
-            crudHandler.update(token).execute()
+            authToken.score = authenticationValidator.validate(method.entity, deviceInfo)
+            crudHandler.update(authToken).execute()
         }
         entityDeviceHandler.createOrUpdateDevice(EntityDevice(method.entity.id, deviceInfo))
 
     }
 
-    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, token: Token, deviceInfo: DeviceInfo) {
+    override fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, authToken: AuthToken, deviceInfo: DeviceInfo) {
         entityDeviceHandler.createOrUpdateDevice(EntityDevice(method.entity.id, deviceInfo))
     }
 

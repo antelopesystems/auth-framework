@@ -25,12 +25,12 @@ class TokenAuthenticationProvider(
     override fun authenticate(authentication: Authentication): Authentication {
         authentication as TokenAuthenticationRequest
         val entity = crudHandler.showBy(where {
-            "id" Equal authentication.token.entityId
-            "type" Equal authentication.token.entityType
+            "id" Equal authentication.authToken.entityId
+            "type" Equal authentication.authToken.entityType
         }, Entity::class.java)
                 .execute() ?: throw AccessDeniedException("Entity not found")
         for (constraintValidator in constraintValidators) {
-            constraintValidator.validate(entity, authentication.token)
+            constraintValidator.validate(entity, authentication.authToken)
         }
 
         val userInfo = crudHandler.getRO(entity, UserInfo::class.java)

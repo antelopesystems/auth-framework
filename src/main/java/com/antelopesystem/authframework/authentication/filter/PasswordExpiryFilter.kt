@@ -4,7 +4,7 @@ import com.antelopesystem.authframework.authentication.AccessDeniedException
 import com.antelopesystem.authframework.authentication.annotations.BypassPasswordExpiredCheck
 import com.antelopesystem.authframework.authentication.filter.base.AbstractAuthenticatedFilter
 import com.antelopesystem.authframework.token.TokenHandler
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import java.io.IOException
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -15,9 +15,9 @@ class PasswordExpiryFilter
         tokenHandler: TokenHandler
 ) : AbstractAuthenticatedFilter(tokenHandler) {
     @Throws(IOException::class, ServletException::class)
-    override fun processFilter(token: Token, request: HttpServletRequest, response: HttpServletResponse) {
+    override fun processFilter(authToken: AuthToken, request: HttpServletRequest, response: HttpServletResponse) {
         val handler = getRequestHandler(request) ?: return
-        if(token.passwordChangeRequired) {
+        if(authToken.passwordChangeRequired) {
             handler.getMethodAnnotation(BypassPasswordExpiredCheck::class.java) ?: throw AccessDeniedException("Password expired")
         }
     }

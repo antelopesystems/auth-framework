@@ -1,6 +1,6 @@
 package com.antelopesystem.authframework.token.type
 
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import com.antelopesystem.authframework.token.model.request.TimestampTokenRequest
 import com.antelopesystem.authframework.token.model.TokenRequest
 import com.antelopesystem.authframework.token.type.base.AbstractTimestampAuthenticationHandler
@@ -13,10 +13,10 @@ class TimestampAuthenticationHandlerImpl: AbstractTimestampAuthenticationHandler
 
     override val type: TokenType = TokenType.Timestamp
 
-    override fun getStringToHash(token: Token, timestamp: String, request: HttpServletRequest) = (token.token + timestamp)
+    override fun getStringToHash(authToken: AuthToken, timestamp: String, request: HttpServletRequest) = (authToken.token + timestamp)
 
-    override fun <T : TokenRequest> generateToken(token: Token, payload: T): String {
-        return encrypt(payload as TimestampTokenRequest, token.token)
+    override fun <T : TokenRequest> generateToken(authToken: AuthToken, payload: T): String {
+        return encrypt(payload as TimestampTokenRequest, authToken.token)
     }
 
 

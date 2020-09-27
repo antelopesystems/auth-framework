@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.authentication.filter
 
 import com.antelopesystem.authframework.authentication.filter.base.AbstractAuthenticatedFilter
 import com.antelopesystem.authframework.token.TokenHandler
-import com.antelopesystem.authframework.token.model.Token
+import com.antelopesystem.authframework.token.model.AuthToken
 import com.antelopesystem.authframework.token.model.TokenAuthenticationRequest
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
@@ -17,8 +17,8 @@ class AuthenticationTokenProcessingFilter
         private val authenticationManager: AuthenticationManager
 ) : AbstractAuthenticatedFilter(tokenHandler) {
     @Throws(IOException::class, ServletException::class)
-    override fun processFilter(token: Token, request: HttpServletRequest, response: HttpServletResponse) {
-        val authentication = TokenAuthenticationRequest(token)
+    override fun processFilter(authToken: AuthToken, request: HttpServletRequest, response: HttpServletResponse) {
+        val authentication = TokenAuthenticationRequest(authToken)
 //        authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
         SecurityContextHolder.getContext().authentication = authenticationManager.authenticate(authentication)
     }
