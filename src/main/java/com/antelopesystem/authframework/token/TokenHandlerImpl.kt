@@ -58,7 +58,6 @@ class TokenHandlerImpl : TokenHandler {
     override fun deleteCurrentToken() {
         try {
             val token = getCurrentToken()
-            if(token.immutable) return
             crudHandler.delete(token.id, Token::class.java).execute()
 
         } catch(e: Exception) {

@@ -28,8 +28,6 @@ data class Token(
 
         var passwordChangeRequired: Boolean = false,
 
-        var immutable: Boolean = false,
-
         var sessionId: String = UUID.randomUUID().cleanUuid(),
 
         var fingerprint: String? = "",
