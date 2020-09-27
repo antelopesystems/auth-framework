@@ -3,11 +3,7 @@ package com.antelopesystem.authframework.settings.model
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
 import com.antelopesystem.authframework.authentication.mfa.provider.base.MfaType
 import com.antelopesystem.authframework.token.type.enums.TokenType
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
-import org.hibernate.annotations.Fetch
-import org.hibernate.annotations.FetchMode
 import java.io.Serializable
-import javax.persistence.*
 
 class SecuritySettings(
         var tokenLifetimeHours: Long = 24L,

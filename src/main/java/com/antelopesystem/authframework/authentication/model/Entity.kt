@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication.model
 import com.antelopesystem.authframework.util.JvmTransient
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedFields
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatableEntity
 import com.antelopesystem.crudframework.transformer.EntityListToRoListTransformer
 import org.hibernate.annotations.Fetch
 import org.hibernate.annotations.FetchMode
@@ -38,6 +38,6 @@ class Entity(
 
         @MappedField(target = UserInfo::class)
         var externalId: String? = null
-) : BaseJpaUpdatebleEntity()
+) : BaseJpaUpdatableEntity()
 
 

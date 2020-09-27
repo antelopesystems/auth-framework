@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.authentication.model
 
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatableEntity
 import javax.persistence.*
 import javax.persistence.Entity as JpaEntity
 
@@ -23,4 +23,4 @@ class EntityAuthenticationMethod(
 
         @get:Column(name = "is_primary")
         var primary: Boolean = false
-) : BaseJpaUpdatebleEntity()
+) : BaseJpaUpdatableEntity()

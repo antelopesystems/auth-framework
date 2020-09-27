@@ -1,8 +1,7 @@
 package com.antelopesystem.authframework.authentication.rules
 
-import com.antelopesystem.crudframework.crud.annotation.CachedBy
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatableEntity
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Enumerated
@@ -19,4 +18,4 @@ data class AuthenticationRule(
         @get:Enumerated
         @get:Column(name = "action")
         var action: RuleActionType? = null
-) : BaseJpaUpdatebleEntity()
+) : BaseJpaUpdatableEntity()

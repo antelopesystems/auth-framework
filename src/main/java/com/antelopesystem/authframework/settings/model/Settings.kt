@@ -1,7 +1,7 @@
 package com.antelopesystem.authframework.settings.model
 
 import com.antelopesystem.authframework.util.SecuritySettingsConverter
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatableEntity
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
@@ -15,6 +15,6 @@ data class Settings(
         @get:Convert(converter = SecuritySettingsConverter::class)
         @get:Column(columnDefinition = "TEXT")
         var security: SecuritySettings = SecuritySettings()
-): BaseJpaUpdatebleEntity() {
+): BaseJpaUpdatableEntity() {
 
 }

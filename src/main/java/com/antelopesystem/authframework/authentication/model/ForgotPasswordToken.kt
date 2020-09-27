@@ -3,7 +3,7 @@ package com.antelopesystem.authframework.authentication.model
 import com.antelopesystem.authframework.util.cleanUuid
 import com.antelopesystem.crudframework.crud.annotation.DeleteColumn
 import com.antelopesystem.crudframework.crud.annotation.Deleteable
-import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatebleEntity
+import com.antelopesystem.crudframework.jpa.model.BaseJpaUpdatableEntity
 import java.util.*
 import javax.persistence.*
 import javax.persistence.Entity as JpaEntity
@@ -20,4 +20,4 @@ data class ForgotPasswordToken(
 
     @DeleteColumn
     var expired: Boolean = false
-) : BaseJpaUpdatebleEntity()
+) : BaseJpaUpdatableEntity()
