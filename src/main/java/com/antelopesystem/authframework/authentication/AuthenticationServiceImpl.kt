@@ -2,6 +2,7 @@ package com.antelopesystem.authframework.authentication
 
 import com.antelopesystem.authframework.authentication.method.base.AuthenticationMethodHandler
 import com.antelopesystem.authframework.authentication.method.enums.AuthenticationMethod
+import com.antelopesystem.authframework.authentication.method.enums.UsernameType
 import com.antelopesystem.authframework.authentication.model.*
 import com.antelopesystem.authframework.authentication.notifier.AuthenticationPostProcessor
 import com.antelopesystem.authframework.settings.SecuritySettingsHandler
@@ -84,7 +85,35 @@ class AuthenticationServiceImpl(
             val method = methodHandler.doRegister(payload, params, entity)
             method.primary = true
             entity.authenticationMethods.add(method)
-            entity = crudHandler.create(entity).execute()
+            when(method.method.usernameType) {
+                UsernameType.Email -> {
+                    val email = methodHandler.getUsername(method)
+                    val existingEntity = crudHandler.showBy(where {
+                        "email" Equal email
+                    }, Entity::class.java)
+                            .fromCache()
+                            .execute()
+                    if(existingEntity != null) {
+                        throw RegistrationFailedException("Email in use")
+                    }
+
+                    entity.email = email
+                }
+                UsernameType.Telephone -> {
+                    val telephone = methodHandler.getUsername(method)
+                    val existingEntity = crudHandler.showBy(where {
+                        "telephone" Equal telephone
+                    }, Entity::class.java)
+                            .fromCache()
+                            .execute()
+                    if(existingEntity != null) {
+                        throw RegistrationFailedException("Telephone in use")
+                    }
+                    entity.telephone = methodHandler.getUsername(method)
+                }
+                else -> {}
+            }
+            crudHandler.create(entity).execute()
             log.trace { "Performed registration for ${method.forLog()}, params: [ $params ]" }
             val request = buildTokenRequest(tokenType, method, payload.parameters)
             val (tokenResponse, token) = tokenHandler.generateToken(request)

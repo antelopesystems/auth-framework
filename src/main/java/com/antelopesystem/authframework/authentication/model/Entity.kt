@@ -37,7 +37,9 @@ class Entity(
         var mfaMethods: MutableList<EntityMfaMethod> = mutableListOf(),
 
         @MappedField(target = UserInfo::class)
-        var externalId: String? = null
+        var externalId: String? = null,
+
+        var email: String? = null,
+
+        var telephone: String? = null
 ) : BaseJpaUpdatableEntity()
-
-
