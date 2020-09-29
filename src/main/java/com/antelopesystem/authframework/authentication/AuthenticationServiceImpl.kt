@@ -42,11 +42,11 @@ class AuthenticationServiceImpl(
         val settings = securitySettingsHandler.getSecuritySettings(payload.type)
         val methodHandler = getMethodHandler(payload)
         methodHandler.getEntityMethod(payload)?.let {
-            if(settings.allowLoginOnRegistration) {
+            if(settings.allowLoginOnRegistration && methodHandler.method.canCrossActions) {
                 log.trace { "${it.forLog()} exists and allowLoginOnRegistration=true, switching to initializeLogin" }
                 return initializeLogin(payload, tokenType)
             }
-            log.trace { "${it.forLog()} exists and login is not allowed on registration, terminating" }
+            log.trace { "${it.forLog()} exists and allowLoginOnRegistration=false or canCrossActions=false, terminating" }
             throw RegistrationFailedException("Entity already exists")
         }
 
@@ -65,11 +65,11 @@ class AuthenticationServiceImpl(
         try {
             val username = methodHandler.getUsernameFromPayload(payload)
             methodHandler.getEntityMethod(payload)?.let {
-                if(settings.allowLoginOnRegistration) {
+                if(settings.allowLoginOnRegistration && methodHandler.method.canCrossActions) {
                     log.trace { "${it.forLog()} exists and allowLoginOnRegistration=true, switching to doLogin" }
                     return doLogin(payload, tokenType)
                 }
-                log.trace { "${it.forLog()} exists and login is not allowed on registration, terminating" }
+                log.trace { "${it.forLog()} exists and allowLoginOnRegistration=false or canCrossActions=false, terminating" }
                 throw RegistrationFailedException(ENTITY_NOT_FOUND)
             }
 
@@ -108,11 +108,11 @@ class AuthenticationServiceImpl(
         val methodHandler = getMethodHandler(payload)
         val method = methodHandler.getEntityMethod(payload)
         if(method == null) {
-            if(settings.allowRegistrationOnLogin) {
+            if(settings.allowRegistrationOnLogin && methodHandler.method.canCrossActions) {
                 log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=true, switching to initializeRegistration" }
                 return initializeRegistration(payload, tokenType)
             }
-            log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=false, terminating" }
+            log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=false or canCrossActions=false, terminating" }
             error(ENTITY_NOT_FOUND)
         }
         return methodHandler.initializeLogin(payload, method)
@@ -125,11 +125,11 @@ class AuthenticationServiceImpl(
         val methodHandler = getMethodHandler(payload)
         val method = methodHandler.getEntityMethod(payload)
         if(method == null) {
-            if(settings.allowRegistrationOnLogin) {
+            if(settings.allowRegistrationOnLogin && methodHandler.method.canCrossActions) {
                 log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=true, switching to initializeRegistration" }
                 return doRegister(payload, tokenType)
             }
-            log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=false, terminating" }
+            log.trace { "Username [ ${methodHandler.getUsernameFromPayload(payload)} ] for method [ ${methodHandler.method} ] does not exist and allowRegistrationOnLogin=false or canCrossActions=false, terminating" }
             error(ENTITY_NOT_FOUND)
         }
 
