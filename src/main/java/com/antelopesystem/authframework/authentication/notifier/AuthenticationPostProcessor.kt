@@ -1,6 +1,7 @@
 package com.antelopesystem.authframework.authentication.notifier
 
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
+import com.antelopesystem.authframework.authentication.model.ForgotPasswordToken
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.token.model.AuthToken
 
@@ -10,5 +11,5 @@ interface AuthenticationPostProcessor {
     fun onRegistrationSuccess(payload: MethodRequestPayload, method: EntityAuthenticationMethod, authToken: AuthToken)
     fun onRegistrationFailure(payload: MethodRequestPayload, error: String)
     fun onForgotPasswordInitialized(token: String, method: EntityAuthenticationMethod)
-    fun onForgotPasswordSuccess(method: EntityAuthenticationMethod)
+    fun onForgotPasswordSuccess(token: ForgotPasswordToken, method: EntityAuthenticationMethod)
 }

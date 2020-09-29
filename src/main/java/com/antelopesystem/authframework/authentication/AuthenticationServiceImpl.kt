@@ -161,7 +161,7 @@ class AuthenticationServiceImpl(
         }
 
         val method = methodHandler.getEntityMethod(payload) ?: error(ENTITY_NOT_FOUND)
-        val token = crudHandler.create(ForgotPasswordToken(method)).execute()
+        val token = crudHandler.create(ForgotPasswordToken(method, method.entity.id)).execute()
         authenticationPostProcessor.onForgotPasswordInitialized(token.token, method)
         log.trace { "Performed initializeForgotPassword for ${method.forLog()}: {$payload}" }
     }
@@ -174,7 +174,7 @@ class AuthenticationServiceImpl(
                 .execute()
                 ?: error("Invalid token")
 
-        val method = token.entityMethod
+        val method = token.method
         val methodHandler = getMethodHandlerByType(method.method, entityType)
 
         if(!methodHandler.method.passwordBased) {
@@ -184,8 +184,8 @@ class AuthenticationServiceImpl(
 
         methodHandler.changePassword(newPassword, method)
         crudHandler.update(method).execute()
+        authenticationPostProcessor.onForgotPasswordSuccess(token, method)
         crudHandler.delete(token.id, ForgotPasswordToken::class.java).execute()
-        authenticationPostProcessor.onForgotPasswordSuccess(method)
         log.trace { "Performed redeemForgotPasswordToken for ${method.forLog()}" }
     }
 

@@ -5,6 +5,7 @@ import com.antelopesystem.authframework.authentication.notifier.listener.LoginLi
 import com.antelopesystem.authframework.authentication.notifier.listener.RegistrationListener
 import com.antelopesystem.authframework.authentication.model.Entity
 import com.antelopesystem.authframework.authentication.model.EntityAuthenticationMethod
+import com.antelopesystem.authframework.authentication.model.ForgotPasswordToken
 import com.antelopesystem.authframework.authentication.model.MethodRequestPayload
 import com.antelopesystem.authframework.authentication.notifier.listener.ForgotPasswordListener
 import com.antelopesystem.authframework.authentication.notifier.postaction.ExternalEntityCreator
@@ -60,9 +61,9 @@ class AuthenticationPostProcessorImpl(
         }
     }
 
-    override fun onForgotPasswordSuccess(method: EntityAuthenticationMethod) {
+    override fun onForgotPasswordSuccess(token: ForgotPasswordToken, method: EntityAuthenticationMethod) {
         getForgotPasswordListenersForEntity(method.entity.type).forEach {
-            it.onForgotPasswordSuccess(method, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
+            it.onForgotPasswordSuccess(token, method, deviceInfoProvider.getDeviceInfoFromCurrentRequest())
         }
     }
 

@@ -7,12 +7,12 @@ import javax.persistence.Enumerated
 import javax.persistence.Table
 
 enum class AuthenticationLogAction {
-    Registration, Login
+    Registration, Login, InitializeForgotPassword, CompleteForgotPassword
 }
 
 @Entity
 @Table
-data class AuthenticationLog(
+data class ActionLog(
         var entityId: Long = 0L,
         var methodId: Long = 0L,
         var deviceHash: String = "",
