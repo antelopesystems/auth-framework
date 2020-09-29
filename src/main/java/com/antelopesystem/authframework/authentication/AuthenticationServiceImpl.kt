@@ -73,7 +73,13 @@ class AuthenticationServiceImpl(
                 throw RegistrationFailedException(ENTITY_NOT_FOUND)
             }
 
-            val params = setups[UserPair(username, methodHandler.method)] ?: throw RegistrationFailedException("Registration was not initialized")
+            var params = setups[UserPair(username, methodHandler.method)]
+            if(params == null && methodHandler.method.registrationInitializationRequired) {
+                throw RegistrationFailedException("Registration was not initialized")
+            } else {
+                params = CustomParamsDTO()
+            }
+
             var entity = Entity(type = payload.type)
             val method = methodHandler.doRegister(payload, params, entity)
             method.primary = true

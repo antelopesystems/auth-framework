@@ -2,7 +2,7 @@ package com.antelopesystem.authframework.authentication.method.enums
 
 enum class AuthenticationMethod(
         val registrationInitializationRequired: Boolean = false,
-        val loginInitializationRequired: Boolean = false,
+        val loginInitializationRequired: Boolean = false, // todo: enforce
         val passwordBased: Boolean = false
 ) {
     UsernamePassword(
