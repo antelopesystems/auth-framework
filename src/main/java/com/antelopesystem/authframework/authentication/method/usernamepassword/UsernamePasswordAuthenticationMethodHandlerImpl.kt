@@ -60,19 +60,11 @@ class UsernamePasswordAuthenticationMethodHandlerImpl(
         }
     }
 
-    override fun initializeRegistration(payload: MethodRequestPayload): CustomParamsDTO {
-        return CustomParamsDTO(
-                payload.username(),
-                passwordEncoder.encode(payload.password())
-        )
-    }
-
     override fun doRegister(payload: MethodRequestPayload, params: CustomParamsDTO, entity: Entity): EntityAuthenticationMethod {
         try {
             val method = EntityAuthenticationMethod(entity, AuthenticationMethod.UsernamePassword)
-            method.username(params.username())
-            method.password(params.password())
-            refreshPasswordExpiryTime(method)
+            method.username(payload.username())
+            changePassword(payload.password(), method)
             return method
         } catch (e: IllegalStateException) {
             throw RegistrationFailedException(e)

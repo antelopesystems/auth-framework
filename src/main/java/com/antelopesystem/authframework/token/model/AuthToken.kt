@@ -35,5 +35,7 @@ data class AuthToken(
         @get:Temporal(TemporalType.TIMESTAMP)
         var expiryTime: Date? = null,
 
-        var score: Int = 0
+        var score: Int = 0,
+
+        var deviceHash: String = ""
 ): BaseJpaEntity()
