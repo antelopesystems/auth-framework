@@ -25,8 +25,6 @@ class NexmoAuthenticationMethodHandlerImpl(
     override val method: AuthenticationMethod
         get() = AuthenticationMethod.Nexmo
 
-    override fun isPasswordBased(): Boolean = false
-
     override fun isSupportedForPayload(payload: MethodRequestPayload): Boolean = try {
             payload.telephonePrefix()
             payload.telephone()

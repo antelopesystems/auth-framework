@@ -15,8 +15,6 @@ interface AuthenticationMethodHandler  {
 
     fun getUsernameFromPayload(payload: MethodRequestPayload) : String
 
-    fun isPasswordBased(): Boolean
-
     fun initializeLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod): CustomParamsDTO = CustomParamsDTO()
 
     fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod)

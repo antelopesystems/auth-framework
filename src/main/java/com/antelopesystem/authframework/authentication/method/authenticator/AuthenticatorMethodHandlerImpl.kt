@@ -23,8 +23,6 @@ class AuthenticatorMethodHandlerImpl(
     override val method: AuthenticationMethod
         get() = AuthenticationMethod.Authenticator
 
-    override fun isPasswordBased(): Boolean = false
-
     override fun isSupportedForPayload(payload: MethodRequestPayload): Boolean = try {
         payload.authenticatorUsername()
         true

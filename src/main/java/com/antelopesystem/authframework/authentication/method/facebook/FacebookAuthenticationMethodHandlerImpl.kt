@@ -29,8 +29,6 @@ class FacebookAuthenticationMethodHandlerImpl(
         return payload.accessToken()
     }
 
-    override fun isPasswordBased(): Boolean = false
-
     override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
         val facebookDTO = getFacebookDTO(payload.accessToken())
         if(facebookDTO.id != method.uid()) {

@@ -36,8 +36,6 @@ class GoogleAuthenticationMethodHandlerImpl(
         return payload.idToken()
     }
 
-    override fun isPasswordBased(): Boolean = false
-
     override fun doLogin(payload: MethodRequestPayload, method: EntityAuthenticationMethod) {
         val idToken = validateIdToken(payload.idToken())
         if(idToken.payload.subject != method.uid()) {

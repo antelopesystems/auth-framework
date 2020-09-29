@@ -149,7 +149,7 @@ class AuthenticationServiceImpl(
     override fun initializeForgotPassword(payload: MethodRequestPayload) {
         log.trace { "Received initializeForgotPassword with payload: {$payload}" }
         val methodHandler = getMethodHandler(payload)
-        if(!methodHandler.isPasswordBased()) {
+        if(!methodHandler.method.passwordBased) {
             log.error { "initializeForgotPassword failed for method [ ${methodHandler.method} ] as it is not password based" }
             error("Method [ ${methodHandler.method} ] is not supported")
         }
@@ -171,7 +171,7 @@ class AuthenticationServiceImpl(
         val method = token.entityMethod
         val methodHandler = getMethodHandlerByType(method.method, entityType)
 
-        if(!methodHandler.isPasswordBased()) {
+        if(!methodHandler.method.passwordBased) {
             log.error { "redeemForgotPasswordToken failed for method [ ${methodHandler.method} ] as it is not password based" }
             throw error("Method [ ${methodHandler.method} ] is not supported")
         }
@@ -234,12 +234,11 @@ class AuthenticationServiceImpl(
 
     private fun buildTokenRequest(type: TokenType, method: EntityAuthenticationMethod, parameters: Map<String, Any>): TokenRequest {
         val entity = method.entity
-        val methodHandler = getMethodHandlerByType(method.method, entity.type)
         var passwordChangeRequired = false
-        if(methodHandler.isPasswordBased()) {
+        if(method.method.passwordBased) {
+            val methodHandler = getMethodHandlerByType(method.method, entity.type)
             passwordChangeRequired = methodHandler.isPasswordExpired(method)
         }
-
         val mfaRequired = entity.mfaMethods.isNotEmpty()
 
         return when(type) {
