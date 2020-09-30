@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.antelopesystem.authframework</groupId>
     <artifactId>auth-framework</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>auth-framework</name>
     <description>Auth Framework</description>
     <properties>
@@ -40,7 +40,7 @@
         <connection>scm:git:git://github.com/antelopesystems/auth-framework.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/antelopesystems/auth-framework.git</developerConnection>
         <url>https://github.com/antelopesystems/auth-framework</url>
-        <tag>auth-framework-0.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
